@@ -10,5 +10,9 @@ wheels/
 .venv
 .env
 
+output.log
 # tests folder
 tests/
+
+local_store/
+vector_store/
