@@ -1,0 +1,110 @@
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.0.11:8501
+
+[2025-09-22 12:00:32,215: INFO: helper]: C:\Users\Ramakrishna\Documents\WorkFolder\ProgramPractice\python\genai\rag_chatbot
+[2025-09-22 12:00:39,068: INFO: config]: GEMINI API Key loaded successfully.
+[2025-09-22 12:00:39,068: INFO: config]: GROQ API Key loaded successfully.
+[2025-09-22 12:01:09,211: INFO: index_files]: Returning existing vector store at vector_store
+[2025-09-22 12:01:15,174: INFO: CrossEncoder]: Use pytorch device: cpu
+[2025-09-22 12:01:29,972: INFO: final_block_rag]: ---CHECKING FOLLOW-UP---
+[2025-09-22 12:01:30,787: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:01:30,813: INFO: final_block_rag]: ---CORRECTING GRAMMAR---
+[2025-09-22 12:01:31,278: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:01:31,284: INFO: final_block_rag]: ---RETRIEVING & RERANKING DOCUMENTS---
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|##########| 1/1 [00:00<00:00,  1.77it/s]
+Batches: 100%|##########| 1/1 [00:00<00:00,  1.77it/s]
+[2025-09-22 12:01:32,080: INFO: final_block_rag]: ---CALLING LLM FOR INITIAL ANSWER---
+[2025-09-22 12:01:33,012: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:01:33,021: INFO: final_block_rag]: ---EVALUATING AI RESPONSE---
+[2025-09-22 12:01:33,761: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 400 Bad Request"
+[2025-09-22 12:01:33,762: INFO: final_block_rag]: Evaluation output not as expected Error code: 400 - {'error': {'message': 'tool call validation failed: parameters for tool ConfidenceScore did not match schema: errors: [`/confidence_score`: expected integer, but got string]', 'type': 'invalid_request_error', 'code': 'tool_use_failed', 'failed_generation': '[\n {\n "name": "ConfidenceScore",\n "parameters": {\n "confidence_score": "90",\n "reasoning": "The AI\'s answer accurately describes Akhenaten as an ancient Egyptian pharaoh who introduced monotheism by banning other gods and worshiping only Aten, the sun god. He built a new city, Akhet-Aten, and created a hymn to Aten that was influenced by Vedic hymns, as supported by the provided documents. The details about Akhenaten\'s religious reforms and his hymn to Aten align with the information in the documents."\n }\n }\n]'}}. using fallback
+[2025-09-22 12:01:33,762: ERROR: final_block_rag]: Failed to parse confidence score. Error: expected string or bytes-like object, got 'BadRequestError'
+[2025-09-22 12:01:33,763: INFO: final_block_rag]: Evaluation: {'confidence_score': -1, 'reasoning': 'Could not Evaluate.'}%
+[2025-09-22 12:01:33,763: INFO: final_block_rag]: Confidence is high enough. Ending the process.
+[2025-09-22 12:01:33,764: INFO: final_block_rag]: ---UPDATING CHAT HISTORY---
+[2025-09-22 12:07:42,348: INFO: helper]: C:\Users\Ramakrishna\Documents\WorkFolder\ProgramPractice\python\genai\rag_chatbot
+[2025-09-22 12:07:42,373: INFO: config]: GEMINI API Key loaded successfully.
+[2025-09-22 12:07:42,373: INFO: config]: GROQ API Key loaded successfully.
+[2025-09-22 12:07:50,694: INFO: final_block_rag]: ---CHECKING FOLLOW-UP---
+[2025-09-22 12:07:51,164: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:07:51,166: INFO: final_block_rag]: ---CORRECTING GRAMMAR---
+[2025-09-22 12:07:51,508: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:07:51,511: INFO: final_block_rag]: ---RETRIEVING & RERANKING DOCUMENTS---
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|##########| 1/1 [00:00<00:00,  2.49it/s]
+Batches: 100%|##########| 1/1 [00:00<00:00,  2.49it/s]
+[2025-09-22 12:07:52,247: INFO: final_block_rag]: ---CALLING LLM FOR INITIAL ANSWER---
+[2025-09-22 12:07:53,037: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:07:53,040: INFO: final_block_rag]: ---EVALUATING AI RESPONSE---
+[2025-09-22 12:07:53,811: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:07:53,812: INFO: final_block_rag]: Evaluation: {'confidence_score': 90, 'reasoning': "The AI's answer accurately describes Akhenaten as an ancient Egyptian pharaoh who introduced monotheism by banning other gods and worshiping only Aten, the sun god. He built a new city, Akhet-Aten, and created a hymn to Aten that was influenced by Vedic hymns. This information is directly supported by the provided documents, which discuss Akhenaten's religious reforms, the construction of Akhet-Aten, and the influence of Vedic hymns on his hymn to Aten."}%
+[2025-09-22 12:07:53,813: INFO: final_block_rag]: Confidence is high enough. Ending the process.
+[2025-09-22 12:07:53,813: INFO: final_block_rag]: ---UPDATING CHAT HISTORY---
+[2025-09-22 12:19:43,163: INFO: helper]: C:\Users\Ramakrishna\Documents\WorkFolder\ProgramPractice\python\genai\rag_chatbot
+[2025-09-22 12:19:43,217: INFO: config]: GEMINI API Key loaded successfully.
+[2025-09-22 12:19:43,217: INFO: config]: GROQ API Key loaded successfully.
+[2025-09-22 12:20:00,848: INFO: final_block_rag]: ---CHECKING FOLLOW-UP---
+[2025-09-22 12:20:01,402: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:20:01,404: INFO: final_block_rag]: ---PROCESSING FOLLOW-UP---
+[2025-09-22 12:20:01,914: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:20:02,642: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:20:02,644: INFO: final_block_rag]: ---RETRIEVING & RERANKING DOCUMENTS---
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|##########| 1/1 [00:00<00:00,  1.94it/s]
+Batches: 100%|##########| 1/1 [00:00<00:00,  1.94it/s]
+[2025-09-22 12:20:03,475: INFO: final_block_rag]: ---CALLING LLM FOR INITIAL ANSWER---
+[2025-09-22 12:20:04,082: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:20:04,085: INFO: final_block_rag]: ---EVALUATING AI RESPONSE---
+[2025-09-22 12:20:04,631: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:20:04,633: INFO: final_block_rag]: Evaluation: {'confidence_score': -1, 'reasoning': 'Not enough information'}%
+[2025-09-22 12:20:04,634: INFO: final_block_rag]: Confidence is high enough. Ending the process.
+[2025-09-22 12:20:04,634: INFO: final_block_rag]: ---UPDATING CHAT HISTORY---
+[2025-09-22 12:20:16,040: INFO: final_block_rag]: ---CHECKING FOLLOW-UP---
+[2025-09-22 12:20:16,451: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:20:16,453: INFO: final_block_rag]: ---CORRECTING GRAMMAR---
+[2025-09-22 12:20:16,760: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:20:16,762: INFO: final_block_rag]: ---RETRIEVING & RERANKING DOCUMENTS---
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|##########| 1/1 [00:00<00:00,  3.20it/s]
+Batches: 100%|##########| 1/1 [00:00<00:00,  3.20it/s]
+[2025-09-22 12:20:17,331: INFO: final_block_rag]: ---CALLING LLM FOR INITIAL ANSWER---
+[2025-09-22 12:20:17,435: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[2025-09-22 12:20:17,436: INFO: _base_client]: Retrying request to /openai/v1/chat/completions in 20.000000 seconds
+[2025-09-22 12:20:38,233: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:20:38,235: INFO: final_block_rag]: ---EVALUATING AI RESPONSE---
+[2025-09-22 12:20:39,016: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 400 Bad Request"
+[2025-09-22 12:20:39,016: INFO: final_block_rag]: Evaluation output not as expected Error code: 400 - {'error': {'message': 'tool call validation failed: parameters for tool ConfidenceScore did not match schema: errors: [`/confidence_score`: expected integer, but got string]', 'type': 'invalid_request_error', 'code': 'tool_use_failed', 'failed_generation': '[\n {\n "name": "ConfidenceScore",\n "parameters": {\n "confidence_score": "-1",\n "reasoning": "Not enough information"\n }\n }\n]'}}. using fallback
+[2025-09-22 12:20:39,017: ERROR: final_block_rag]: Failed to parse confidence score. Error: expected string or bytes-like object, got 'BadRequestError'
+[2025-09-22 12:20:39,017: INFO: final_block_rag]: Evaluation: {'confidence_score': -1, 'reasoning': 'Could not Evaluate.'}%
+[2025-09-22 12:20:39,017: INFO: final_block_rag]: Confidence is high enough. Ending the process.
+[2025-09-22 12:20:39,018: INFO: final_block_rag]: ---UPDATING CHAT HISTORY---
+[2025-09-22 12:20:50,967: INFO: final_block_rag]: ---CHECKING FOLLOW-UP---
+[2025-09-22 12:20:51,125: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[2025-09-22 12:20:51,126: INFO: _base_client]: Retrying request to /openai/v1/chat/completions in 1.000000 seconds
+[2025-09-22 12:20:52,534: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:20:52,536: INFO: final_block_rag]: ---CORRECTING GRAMMAR---
+[2025-09-22 12:20:52,620: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[2025-09-22 12:20:52,620: INFO: _base_client]: Retrying request to /openai/v1/chat/completions in 1.000000 seconds
+[2025-09-22 12:20:53,940: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:20:53,942: INFO: final_block_rag]: ---RETRIEVING & RERANKING DOCUMENTS---
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|##########| 1/1 [00:00<00:00,  3.01it/s]
+Batches: 100%|##########| 1/1 [00:00<00:00,  3.01it/s]
+[2025-09-22 12:20:54,523: INFO: final_block_rag]: ---CALLING LLM FOR INITIAL ANSWER---
+[2025-09-22 12:20:54,614: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[2025-09-22 12:20:54,614: INFO: _base_client]: Retrying request to /openai/v1/chat/completions in 27.000000 seconds
+[2025-09-22 12:21:22,651: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:21:22,654: INFO: final_block_rag]: ---EVALUATING AI RESPONSE---
+[2025-09-22 12:21:23,457: INFO: _client]: HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2025-09-22 12:21:23,459: INFO: final_block_rag]: Evaluation: {'confidence_score': 80, 'reasoning': "The AI's answer discusses the significance of the Aryan migration and Akhenaten in ancient Egyptian history, highlighting their role in the early encounter between the Indic and Western worlds and the potential influence on monotheistic traditions. This is supported by the provided documents, which explore the connection between Akhenaten's worship of Aten and Indic beliefs of the Mitanni. However, the answer could be more detailed and directly supported by specific page numbers from the documents."}%
+[2025-09-22 12:21:23,459: INFO: final_block_rag]: Confidence is high enough. Ending the process.
+[2025-09-22 12:21:23,459: INFO: final_block_rag]: ---UPDATING CHAT HISTORY---
