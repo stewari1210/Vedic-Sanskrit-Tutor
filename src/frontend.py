@@ -7,7 +7,7 @@ from utils.retriever import create_retriever
 import os
 import io
 from helper import project_root
-from config import LOCAL_FOLDER
+from config import LOCAL_FOLDER, COLLECTION_NAME
 import json
 
 # do streamlit front end for simplicity, that passes on uploaded documents to backend for vector store.
@@ -188,7 +188,7 @@ def cached_process_files(uploaded_files):
     """
     # Extract the file content (bytes) from the UploadedFile objects
 
-    file_path = os.path.join(project_root, LOCAL_FOLDER)
+    file_path = os.path.join(project_root, LOCAL_FOLDER, COLLECTION_NAME)
     os.makedirs(file_path, exist_ok=True)
     file_paths = [None] * len(uploaded_files)
     for i, file in enumerate(uploaded_files):

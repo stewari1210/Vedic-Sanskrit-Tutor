@@ -18,10 +18,12 @@ def load_documents_with_metadata(main_folder: str):
     """
     Loads markdown files and their metadata from the specified folder structure.
     """
+    logger.info(f"Loading documents from {main_folder}")
     all_documents = []
     # Loop through each subdirectory, which corresponds to a document
     for filename in os.listdir(main_folder):
         file_path = os.path.join(main_folder, filename)
+        logger.info(f"File path {file_path}")
         if os.path.isdir(file_path):
             md_file = os.path.join(file_path, f"{filename}.md")
             json_file = os.path.join(file_path, f"{filename}_metadata.json")
@@ -38,6 +40,9 @@ def load_documents_with_metadata(main_folder: str):
                 # Create a LangChain Document object
                 doc = Document(page_content=md_content, metadata=metadata)
                 all_documents.append(doc)
+            else:
+                logger.error(f"File does not exists {md_file} and {json_file}")
+
     logger.info(f"Loaded {len(all_documents)} documents stored in {LOCAL_FOLDER}")
     return all_documents
 
@@ -70,12 +75,16 @@ def create_qdrant_vector_store(force_recreate: bool = True) -> Qdrant:
         Qdrant: An initialized LangChain Qdrant vector store object.
     """
     # Initialize Qdrant client to a local path
-    os.makedirs(VECTORDB_FOLDER, exist_ok=True)
-    CHUNKS_FILE = os.path.join(VECTORDB_FOLDER, "docs_chunks.pkl")
+    vec_store = os.path.join(VECTORDB_FOLDER, COLLECTION_NAME)
+    os.makedirs(vec_store, exist_ok=True)
+    CHUNKS_FILE = os.path.join(vec_store, "docs_chunks.pkl")
 
     if force_recreate and not Path(CHUNKS_FILE).is_file():
+        logger.info(f"Document Chunks file: {CHUNKS_FILE} does not exist. Re-Indexing")
         # chunk documents
-        documents = load_documents_with_metadata(LOCAL_FOLDER)
+        documents = load_documents_with_metadata(
+            os.path.join(LOCAL_FOLDER, COLLECTION_NAME)
+        )
         chunks = chunk_doc(documents)
 
         # save chunks for retrieval
@@ -89,8 +98,13 @@ def create_qdrant_vector_store(force_recreate: bool = True) -> Qdrant:
             collection_name=COLLECTION_NAME,
             force_recreate_collection=force_recreate,
         )
-        logger.info(f"Successfully created vector store at {VECTORDB_FOLDER}")
+        logger.info(
+            f"Successfully created vector store at {VECTORDB_FOLDER}/{COLLECTION_NAME}"
+        )
     else:
+        logger.info(
+            f"Document Chunks file: {CHUNKS_FILE} Present. Returning existing Index"
+        )
         with open(CHUNKS_FILE, "rb") as f:
             chunks = pickle.load(f)
 
