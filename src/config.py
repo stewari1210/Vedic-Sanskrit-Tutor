@@ -29,7 +29,7 @@ MODEL_SPECS = {
     # "seed": int(os.getenv("SEED", 42)),
 }
 
-EVAL_MODEL = os.getenv("EVAL_MODEL", "llama-3.2-70b")
+EVAL_MODEL = os.getenv("EVAL_MODEL") or model_name or None
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "ancient_history")
 LOCAL_FOLDER = os.getenv("LOCAL_FOLDER", "local_store")
 VECTORDB_FOLDER = os.getenv("VECTORDB_FOLDER", "vector_store")

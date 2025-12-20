@@ -1,0 +1,22 @@
+# Core (pinned to versions known to work in development)
+langchain==1.2.0
+langchain-core==1.2.3
+langchain-community==0.4.1
+qdrant-client==1.16.2
+
+# LangChain subpackages / integrations (loose pins — update if needed)
+langchain-text-splitters>=0.1.0
+langchain-groq>=0.0.1
+langchain-google-genai>=0.0.1
+langgraph>=0.0.1
+
+# Utilities
+python-dotenv>=0.21.0
+pydantic>=2.0.0
+pymupdf>=1.22.0
+
+# Optional extras
+# BM25 retriever (optional)
+rank_bm25>=0.5.8
+# If you prefer the standalone LangChain -> Qdrant integration
+# langchain-qdrant>=0.0.1

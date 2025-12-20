@@ -81,8 +81,47 @@ def get_metadata(file_path: str, markdown: str):
 
     prompt = prompt_template.format(text=markdown[:9000])
     response = run_llm(prompt)
-    response = Metadata.model_validate_json(response)
-    llm_metadata = json.loads(response.model_dump_json(indent=4, exclude_none=True))
+
+    def extract_first_json(s: str) -> str | None:
+        """Extract the first balanced JSON object from a string.
+
+        Returns the substring including the outer braces, or None if not found.
+        """
+        if not s or "{" not in s:
+            return None
+        start = s.find("{")
+        brace_count = 0
+        for i in range(start, len(s)):
+            ch = s[i]
+            if ch == "{":
+                brace_count += 1
+            elif ch == "}":
+                brace_count -= 1
+                if brace_count == 0:
+                    return s[start : i + 1]
+        return None
+
+    # Try to validate the full response first. If the LLM returned extra text
+    # around the JSON (common), extract the JSON substring and try again.
+    try:
+        metadata_obj = Metadata.model_validate_json(response)
+    except Exception as e:
+        logger.warning("Metadata JSON validation failed: %s. Attempting to extract JSON substring.", e)
+        json_sub = extract_first_json(response)
+        if json_sub:
+            try:
+                metadata_obj = Metadata.model_validate_json(json_sub)
+            except Exception:
+                logger.exception("Failed to parse extracted JSON from LLM response. Falling back to empty metadata.")
+                metadata_obj = None
+        else:
+            logger.error("No JSON object could be extracted from LLM response. Falling back to empty metadata.")
+            metadata_obj = None
+
+    if metadata_obj:
+        llm_metadata = json.loads(metadata_obj.model_dump_json(indent=4, exclude_none=True))
+    else:
+        llm_metadata = {}
 
     doc_metadata = merge_metadata(llm_metadata, metadata)
     doc_metadata = json.dumps(doc_metadata, indent=4)

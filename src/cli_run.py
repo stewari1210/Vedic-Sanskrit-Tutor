@@ -20,7 +20,7 @@ import shutil
 import json
 
 from helper import project_root, logger
-from config import LOCAL_FOLDER, COLLECTION_NAME
+from config import LOCAL_FOLDER, COLLECTION_NAME, VECTORDB_FOLDER
 from utils.process_files import process_uploaded_pdfs
 from utils.index_files import create_qdrant_vector_store
 from utils.retriever import create_retriever
@@ -49,8 +49,31 @@ def prepare_and_process(pdf_path: str):
     process_uploaded_pdfs([dest_path], extract_metadata=True)
 
 
-def build_index_and_retriever():
-    """Create Qdrant vector store and retriever from processed docs."""
+def build_index_and_retriever(force: bool = False):
+    """Create Qdrant vector store and retriever from processed docs.
+
+    If `force` is True, remove any existing vector store directory and
+    the chunks file so indexing starts from a clean state.
+    """
+    # Remove previous vector store and chunks file if forcing a clean index
+    if force:
+        vec_store_path = os.path.join(project_root, VECTORDB_FOLDER, COLLECTION_NAME)
+        chunks_file = os.path.join(vec_store_path, "docs_chunks.pkl")
+        try:
+            if os.path.isdir(vec_store_path):
+                shutil.rmtree(vec_store_path)
+                logger.info("Removed existing vector store at %s", vec_store_path)
+        except Exception:
+            logger.exception("Failed to remove existing vector store %s", vec_store_path)
+
+        try:
+            # If chunks file existed elsewhere, attempt deletion as well
+            if os.path.isfile(chunks_file):
+                os.remove(chunks_file)
+                logger.info("Removed existing chunks file %s", chunks_file)
+        except Exception:
+            logger.exception("Failed to remove chunks file %s", chunks_file)
+
     vec_db, docs = create_qdrant_vector_store(force_recreate=True)
     retriever = create_retriever(vec_db, docs)
     return vec_db, docs, retriever
@@ -106,6 +129,11 @@ def run_repl(retriever):
 def main():
     parser = argparse.ArgumentParser(description="Process a hardcoded PDF and query it via CLI")
     parser.add_argument("--pdf", type=str, help="Path to PDF (overrides hardcoded path)")
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force clean reindex: delete any existing vector store and chunks before indexing",
+    )
     args = parser.parse_args()
 
     pdf = args.pdf or HARDCODED_PDF
@@ -121,9 +149,13 @@ def main():
         return
 
     try:
-        vec_db, docs, retriever = build_index_and_retriever()
+        vec_db, docs, retriever = build_index_and_retriever(force=args.force)
     except Exception as e:
-        logger.error(f"Failed to build index/retriever: {e}")
+        # Log full traceback to help debug where the error originates
+        logger.exception("Failed to build index/retriever")
+        import traceback
+
+        traceback.print_exc()
         print(f"Indexing error: {e}")
         return
 
