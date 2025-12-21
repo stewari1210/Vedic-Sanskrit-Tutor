@@ -303,8 +303,7 @@ def evaluate_response_node(state: GraphState):
             }
         )
         evals = evaluation_result.model_dump()
-        score = int(evals.get("confidence_score", "0"))
-        evals["confidence_score"] = score
+        # confidence_score is now an int from the schema, no conversion needed
         answer_dict["confidence"] = evals
     except groq.BadRequestError as e:
         logger.info(f"Evaluation output not as expected {e}. using fallback")

@@ -18,6 +18,7 @@ import argparse
 import os
 import shutil
 import json
+import glob
 
 from helper import project_root, logger
 from config import LOCAL_FOLDER, COLLECTION_NAME, VECTORDB_FOLDER
@@ -30,6 +31,66 @@ from utils.final_block_rag import create_langgraph_app, run_rag_with_langgraph
 # Change this to your preferred default PDF (absolute or relative to project root).
 # Example relative path: os.path.join(project_root, "examples", "my_doc.pdf")
 HARDCODED_PDF = os.path.join(project_root, "sample.pdf")
+
+
+def cleanup_temp_folders():
+    """Clean up temporary vector_store_tmp_* folders."""
+    pattern = os.path.join(project_root, "vector_store_tmp_*")
+    temp_folders = glob.glob(pattern)
+
+    if temp_folders:
+        logger.info(f"Cleaning up {len(temp_folders)} temporary folder(s)...")
+        for folder in temp_folders:
+            try:
+                shutil.rmtree(folder)
+                logger.info(f"Removed temporary folder: {folder}")
+            except Exception as e:
+                logger.warning(f"Failed to remove {folder}: {e}")
+    else:
+        logger.info("No temporary folders to clean up.")
+
+
+def cleanup_session_folders():
+    """Clean up session-specific folders: local_store and vector_store."""
+    folders_to_clean = [
+        os.path.join(project_root, LOCAL_FOLDER),
+        os.path.join(project_root, VECTORDB_FOLDER),
+    ]
+
+    for folder in folders_to_clean:
+        if os.path.exists(folder):
+            try:
+                shutil.rmtree(folder)
+                logger.info(f"Removed session folder: {folder}")
+                print(f"✓ Deleted: {folder}")
+            except Exception as e:
+                logger.error(f"Failed to remove {folder}: {e}")
+                print(f"✗ Failed to delete {folder}: {e}")
+        else:
+            logger.info(f"Folder does not exist: {folder}")
+
+
+def prompt_cleanup_session():
+    """Prompt user to clean up session folders before starting."""
+    print("\n" + "=" * 60)
+    print("SESSION CLEANUP OPTIONS")
+    print("=" * 60)
+    print(f"The following folders contain session-specific data:")
+    print(f"  • {LOCAL_FOLDER}/")
+    print(f"  • {VECTORDB_FOLDER}/")
+    print()
+
+    while True:
+        response = input("Delete these folders before starting? (y/n): ").strip().lower()
+        if response in ['y', 'yes']:
+            cleanup_session_folders()
+            print()
+            return True
+        elif response in ['n', 'no']:
+            print("Keeping existing session data.\n")
+            return False
+        else:
+            print("Please enter 'y' or 'n'")
 
 
 def prepare_and_process(pdf_path: str):
@@ -87,11 +148,13 @@ def run_repl(retriever):
             question = input("Q> ").strip()
         except (EOFError, KeyboardInterrupt):
             print("\nExiting.")
+            cleanup_temp_folders()
             break
         if not question:
             continue
         if question.lower() in {"exit", "quit"}:
             print("Goodbye.")
+            cleanup_temp_folders()
             break
 
         graph_state = {
@@ -134,7 +197,16 @@ def main():
         action="store_true",
         help="Force clean reindex: delete any existing vector store and chunks before indexing",
     )
+    parser.add_argument(
+        "--no-cleanup-prompt",
+        action="store_true",
+        help="Skip the session cleanup prompt and keep existing data",
+    )
     args = parser.parse_args()
+
+    # Prompt for session cleanup unless --no-cleanup-prompt is specified
+    if not args.no_cleanup_prompt:
+        prompt_cleanup_session()
 
     pdf = args.pdf or HARDCODED_PDF
     if not os.path.isabs(pdf):

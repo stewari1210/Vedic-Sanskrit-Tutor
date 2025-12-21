@@ -38,7 +38,7 @@ class ConfidenceScore(BaseModel):
     A structured output for the confidence score evaluation.
     """
 
-    confidence_score: str = Field(
+    confidence_score: int = Field(
         ...,
         description="A confidence score from 0 to 100, representing how well the AI's answer is supported by the provided documents.",
     )

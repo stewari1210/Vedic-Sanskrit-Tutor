@@ -126,9 +126,32 @@ EMBED_MODEL=gemini-embedding-001
 
 When the CLI finishes ingesting and building the index it starts a small REPL where you can type questions. Type `exit` or `quit` to stop.
 
+### Session Cleanup Options
+
+The CLI now provides automatic cleanup features:
+
+- **On Startup**: You'll be prompted to delete session-specific folders (`local_store/` and `vector_store/`) before processing a new PDF. This is useful for starting fresh with a new document.
+  - Answer `y` to delete existing session data
+  - Answer `n` to keep existing session data
+  - Use `--no-cleanup-prompt` flag to skip this prompt and keep existing data
+
+- **On Exit**: When you type `exit` or `quit` (or press Ctrl+C), the CLI automatically deletes all temporary `vector_store_tmp_*` folders that were created during the session.
+
+Example usage:
+```zsh
+# With cleanup prompt (default)
+python src/cli_run.py --pdf path/to/your_doc.pdf
+
+# Skip cleanup prompt
+python src/cli_run.py --pdf path/to/your_doc.pdf --no-cleanup-prompt
+
+# Force clean reindex (deletes vector store before processing)
+python src/cli_run.py --pdf path/to/your_doc.pdf --force
+```
+
 Notes and troubleshooting
 - If the embedding or LLM calls return authentication/permission errors, verify the corresponding API keys (GEMINI_API_KEY, GROQ_API_KEY) or configure Google ADC (`GOOGLE_APPLICATION_CREDENTIALS`) for Google embedding.
-- The local Qdrant store is created under `vector_store/`. If another process has the on-disk store open you may see a lock/`AlreadyLocked` error — the CLI contains a fallback to create a temporary local store (you can safely remove temporary `vector_store_tmp_*` folders later).
+- The local Qdrant store is created under `vector_store/`. If another process has the on-disk store open you may see a lock/`AlreadyLocked` error — the CLI contains a fallback to create a temporary local store. These temporary `vector_store_tmp_*` folders are automatically cleaned up when you exit the CLI.
 - Optional functionality:
     - BM25 retriever: install `rank_bm25` to enable BM25-based retrieval:
 
