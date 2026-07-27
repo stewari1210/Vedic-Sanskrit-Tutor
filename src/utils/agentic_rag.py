@@ -374,15 +374,42 @@ def classify_and_plan_node(state: AgentState):
     question = state["question"]
 
     # Classify query type
+    # ── Construction (English → Sanskrit translation) keywords ─────────────────
+    # Use whole-phrase or sufficiently long tokens to avoid substring false-fires.
+    # REMOVED "construct" — too short; matches "constructing" in corpus queries
+    #   like "what materials are used for constructing bows?"
+    # REMOVED standalone "translate" — use longer forms to avoid matching
+    #   "transliterate" and corpus queries like "what does RV 1.1.1 translate as?"
     construction_keywords = [
-        "how do i say", "translate", "in sanskrit", "sanskrit for",
-        "how to say", "say in sanskrit", "sanskrit word for",
-        "construct", "write in sanskrit"
+        "how do i say", "how to say",
+        "say in sanskrit", "write in sanskrit",
+        "translate to sanskrit", "translate into sanskrit",
+        "into sanskrit",          # catches "translate [phrase] into Sanskrit"
+        "in sanskrit", "sanskrit for", "sanskrit word for",
     ]
-    grammar_keywords = ["explain", "what is the rule", "how does", "declension", "conjugation"]
+    # ── Grammar keywords ───────────────────────────────────────────────────────
+    # REMOVED standalone "explain" — too broad; fires on "explain what the RV says"
+    # REMOVED "how does" — fires on "how does the corpus describe X" (research query)
+    # Grammar intent requires explicit grammar vocabulary.
+    grammar_keywords = [
+        "what is the rule", "declension", "conjugation",
+        "sandhi rule", "grammatical rule", "grammar rule",
+        "what does this word mean", "how is this word declined",
+    ]
 
-    is_construction = any(kw in question.lower() for kw in construction_keywords)
-    is_grammar = any(kw in question.lower() for kw in grammar_keywords)
+    q_lower = question.lower()
+    is_construction = any(kw in q_lower for kw in construction_keywords)
+    # Extra guard: "in sanskrit" only triggers construction when the query
+    # is actually asking FOR a Sanskrit form, not asking ABOUT the corpus
+    # (e.g. "what does the corpus say in Sanskrit" is a research query).
+    if is_construction and "in sanskrit" in q_lower:
+        corpus_signals = ["corpus", "text", "rigveda", "rv ", "ts ", "sb ",
+                          "aitareya", "shatapatha", "taittiriya", "avs",
+                          "what does", "what is mentioned", "describe"]
+        if any(sig in q_lower for sig in corpus_signals):
+            is_construction = False
+
+    is_grammar = any(kw in q_lower for kw in grammar_keywords)
 
     # A pinned verse always means "interpret THIS verse" — never an English→Sanskrit
     # construction. Force factual so the instruction text (e.g. "translate RV 10.60.2")
