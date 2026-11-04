@@ -714,7 +714,37 @@ Have natural conversation about Sanskrit:
             logger.error(f"Error in resource: {e}")
             import traceback
             traceback.print_exc()
+
+            if self._is_quota_or_billing_error(e):
+                st.error(
+                    "💳 The AI service's API account has run out of credits or hit its "
+                    "rate limit, so it can't respond right now. This is on my end, not "
+                    "yours — please try again later, or email "
+                    "**Shiv.InSilico@iCloud.com** if it persists."
+                )
+                return (
+                    "⚠️ Sorry — the AI service is temporarily unavailable because the "
+                    "API account is out of credits or rate-limited. Please try again "
+                    "later, or contact Shiv.InSilico@iCloud.com if this continues."
+                )
+
             return f"Sorry, I encountered an error: {e}"
+
+    @staticmethod
+    def _is_quota_or_billing_error(e: Exception) -> bool:
+        """Detect API quota-exhausted / billing / rate-limit errors across providers
+        (Gemini, Groq, Ollama) so we can show the user a friendly message instead of
+        a raw stack trace or a silent empty response."""
+        text = f"{type(e).__name__}: {e}".lower()
+        signals = [
+            "resource_exhausted", "resourceexhausted",
+            "insufficient_quota", "quota",
+            "rate_limit", "rate limit", "ratelimit",
+            "billing", "payment required",
+            "exceeded your current quota",
+            "429",
+        ]
+        return any(s in text for s in signals)
 
     def _make_export_data(self, question: str, answer: str):
         """Build (md_bytes, docx_bytes_or_None) for a single Q+A pair."""
@@ -1597,6 +1627,13 @@ Have natural conversation about Sanskrit:
             self.render_pronunciation_module()
         else:
             self.render_home()
+
+        st.markdown("---")
+        st.markdown(
+            '<div class="getstarted-note">Questions, feedback, or bug reports? '
+            'Email <a href="mailto:Shiv.InSilico@iCloud.com">Shiv.InSilico@iCloud.com</a></div>',
+            unsafe_allow_html=True
+        )
 
 
 def main():

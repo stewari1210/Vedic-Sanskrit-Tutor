@@ -592,8 +592,9 @@ def extract_and_store_facts(synthesis_response: str, question: str,
 
     try:
         from langchain_core.messages import HumanMessage
+        from src.settings import Settings
         response = llm.invoke([HumanMessage(content=prompt)])
-        text = response.content if hasattr(response, "content") else str(response)
+        text = Settings.extract_llm_text(response)
 
         # Strip markdown fences if present
         m = re.search(r"```(?:json)?\s*([\s\S]*?)```", text)

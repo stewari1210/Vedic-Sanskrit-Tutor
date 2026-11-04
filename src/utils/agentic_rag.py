@@ -33,6 +33,7 @@ from src.utils.citation_enhancer import (
 from src.utils.devanagari_lexical import query_terms
 import re
 import json
+import threading
 
 # Knowledge Graph — lazy import so KG failures never break RAG
 try:
@@ -298,7 +299,7 @@ def llm_expand_query(question: str) -> list:
     try:
         resp = Settings.invoke_llm(
             llm, [SystemMessage(content=_QUERY_EXPANSION_PROMPT.format(question=question))])
-        text = resp.content if hasattr(resp, "content") else str(resp)
+        text = Settings.extract_llm_text(resp)
         raw = [t.strip() for t in re.split(r"[,\n;]+", text) if t.strip()]
         from indic_transliteration import sanscript
         dev = []
@@ -638,7 +639,7 @@ Now provide the translation for "{english_phrase}":"""
         logger.info(f"[AGENT] LLM response type: {type(response)}")
         logger.info(f"[AGENT] LLM response attributes: {dir(response)[:10]}")  # First 10 attributes
 
-        answer_content = response.content if hasattr(response, 'content') else str(response)
+        answer_content = Settings.extract_llm_text(response)
         logger.info(f"[AGENT] LLM response length: {len(answer_content)} chars")
 
         if answer_content:
@@ -708,7 +709,7 @@ Provide a clear, educational answer with proper citations:"""
         messages = [SystemMessage(content=synthesis_prompt)]
         response = Settings.invoke_llm(llm, messages)
 
-        answer_content = response.content if hasattr(response, 'content') else str(response)
+        answer_content = Settings.extract_llm_text(response)
         logger.info(f"[AGENT] Grammar response length: {len(answer_content)} chars")
 
         if not answer_content or len(answer_content) < 10:
@@ -885,7 +886,7 @@ Provide a helpful response:"""
         logger.info(f"[AGENT] LLM response type: {type(response)}")
         logger.info(f"[AGENT] LLM response attributes: {dir(response)[:20]}")
         
-        answer_content = response.content if hasattr(response, 'content') else str(response)
+        answer_content = Settings.extract_llm_text(response)
         logger.info(f"[AGENT] Factual response length: {len(answer_content)} chars")
         logger.info(f"[AGENT] Had corpus content: {has_corpus}")
         
@@ -903,20 +904,26 @@ Provide a helpful response:"""
             "citations": create_enhanced_citations_list(corpus_info[:SYNTHESIS_DOC_BUDGET]) if has_corpus else []
         }
 
-        # ── Knowledge Graph extraction ────────────────────────────────────
+        # ── Knowledge Graph extraction (backgrounded) ─────────────────────
         # Extract relationship triples from the LLM's answer and store them.
         # This builds the KG organically — every query that reveals a fact
         # saves it for future queries to use as pre-synthesis context.
         # Skip KG extraction for pinned-verse interpretations: those answers are
         # interpretive (and may be deliberately tentative), so we don't want them
         # auto-seeding the graph as asserted facts.
+        # Runs in a background thread: it's a second LLM call + Qdrant writes
+        # (~25s) that only enriches future queries — the user's answer above is
+        # already final, so there's no need to make them wait on it.
         if KG_ENABLED and has_corpus and answer_content and not pinned_verse:
-            try:
-                n_new = extract_and_store_facts(answer_content, question, llm)
-                if n_new:
-                    logger.info(f"🕸️  KG grew by {n_new} facts this query")
-            except Exception as _kg_e:
-                logger.warning(f"🕸️  KG extraction failed (non-fatal): {_kg_e}")
+            def _extract_kg_facts_bg(_answer=answer_content, _question=question, _llm=llm):
+                try:
+                    n_new = extract_and_store_facts(_answer, _question, _llm)
+                    if n_new:
+                        logger.info(f"🕸️  KG grew by {n_new} facts this query (background)")
+                except Exception as _kg_e:
+                    logger.warning(f"🕸️  KG extraction failed (non-fatal): {_kg_e}")
+
+            threading.Thread(target=_extract_kg_facts_bg, daemon=True).start()
 
         logger.info("[AGENT] Factual synthesis complete")
 

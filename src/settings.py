@@ -378,3 +378,28 @@ class Settings:
 
         # Default: pass the messages list through (Ollama, Groq)
         return llm_obj.invoke(messages_or_str)
+
+    @staticmethod
+    def extract_llm_text(response) -> str:
+        """
+        Normalize an LLM response's text content to a plain string.
+
+        Newer Gemini models (e.g. gemini-3.x) can return `.content` as a list
+        of content-block dicts (e.g. [{'type': 'text', 'text': '...', 'extras':
+        {...}}]) instead of a plain string, which breaks code that assumes
+        `.content` is always `str` (len(), slicing, regex, etc.).
+        """
+        content = getattr(response, "content", None)
+        if content is None:
+            return str(response)
+        if isinstance(content, str):
+            return content
+        if isinstance(content, list):
+            texts = []
+            for block in content:
+                if isinstance(block, str):
+                    texts.append(block)
+                elif isinstance(block, dict) and block.get("type") == "text":
+                    texts.append(block.get("text", ""))
+            return "".join(texts)
+        return str(content)
