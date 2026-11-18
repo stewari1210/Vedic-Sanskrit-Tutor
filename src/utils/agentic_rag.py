@@ -789,7 +789,27 @@ Provide a clear, educational answer with proper citations:"""
         # only active when a verse was actually pinned. Normal queries skip this.
         pinned_verse = state.get("pinned_verse")
         pinned_block = ""
-        if pinned_verse:
+        is_multi_pin = bool(pinned_verse) and "multi_verses" in pinned_verse
+        if is_multi_pin:
+            # MULTI-VERSE list request: the user cited several verses and wants
+            # each one's stored text. Pin EVERY resolved verse exactly (no sūkta
+            # expansion), and name any citation that isn't in the corpus so the
+            # answer reports it as "not in index" rather than silently dropping it.
+            mv = pinned_verse.get("multi_verses") or []
+            missing_ids = pinned_verse.get("missing_ids") or []
+            if mv:
+                pinned_block += (
+                    "PINNED VERSES — the exact corpus text for each requested "
+                    "citation. Use ONLY these for the verse text; do NOT add, "
+                    "complete, or invent any verse text:\n")
+                for _v in mv:
+                    pinned_block += f"\n{_v['citation']}:\n{_v['text']}\n"
+            if missing_ids:
+                pinned_block += (
+                    "\nNOT IN INDEX — these requested citations are absent from "
+                    "the corpus. Report each as \"not in index\" and do NOT "
+                    "fabricate text for them: " + ", ".join(missing_ids) + "\n")
+        elif pinned_verse:
             # AUTHORITATIVE grounding for this hymn: anukramaṇī metadata (ṛṣi,
             # patron, theme) + curated KG facts for its named entities. These are
             # seed-verified (✓traditional), so they anchor name-vs-epithet calls.
@@ -827,6 +847,21 @@ Provide a clear, educational answer with proper citations:"""
         if pinned_block:
             support = (f"\nADDITIONAL CORPUS PASSAGES (supporting context only):\n{corpus_context}\n"
                        if has_corpus else "")
+        if pinned_block and is_multi_pin:
+            synthesis_prompt = f"""You are a Sanskrit scholar presenting the exact text and analysis of the specific Vedic verses the user requested.
+
+QUESTION: {question}
+{(chr(10) + kg_context) if kg_context else ""}
+{pinned_block}{support}
+INSTRUCTIONS:
+1. Address EVERY requested citation, in the order given, each under its own citation heading. Do not merge verses and do not add verses that were not requested.
+2. For each PINNED VERSE, reproduce its text EXACTLY as given above — never alter, complete, or invent verse text. For any citation listed under NOT IN INDEX, state plainly that it is not in the corpus and give no text for it.
+3. For each present verse provide: the Devanagari (as given), IAST transliteration, a word-by-word padapāṭha with sandhi resolution, grammatical analysis, and an English interpretation grounded in that morphology.
+4. Work from the Sanskrit itself and Vedic grammar (Macdonell, Monier-Williams); every claim must be justified from the words and grammar, never borrowed from an external translation.
+5. Clearly distinguish what the text ATTESTS from INFERENCE; where genuine ambiguity remains, give the grammatical evidence on each side rather than asserting one reading.
+
+Provide the exact text and a careful, text-grounded analysis for each requested verse:"""
+        elif pinned_block:
             synthesis_prompt = f"""You are a Sanskrit scholar interpreting a specific Vedic verse directly from its original text.
 
 QUESTION: {question}
@@ -995,7 +1030,12 @@ def _build_eval_context(state: AgentState) -> str:
     """Reconstruct the passages the synthesizer saw, for eval/refine grounding."""
     parts = []
     pv = state.get("pinned_verse")
-    if pv:
+    if pv and "multi_verses" in pv:
+        for _v in (pv.get("multi_verses") or []):
+            parts.append(f"PINNED VERSE {_v.get('citation', '')}:\n{_v.get('text', '')}")
+        if pv.get("missing_ids"):
+            parts.append("NOT IN INDEX: " + ", ".join(pv["missing_ids"]))
+    elif pv:
         parts.append(f"PINNED VERSE {pv.get('citation', '')}:\n{pv.get('text', '')}")
         if pv.get("sukta_text"):
             parts.append(f"FULL SŪKTA context:\n{pv['sukta_text']}")

@@ -601,11 +601,11 @@ Have natural conversation about Sanskrit:
                 # (remembered across follow-ups). Gated on a citation being present,
                 # so ordinary semantic-search queries are completely unaffected.
                 if pinned_verse is None and mode == "conversation":
-                    found = self._lookup_verse_text(query)
+                    found = self._lookup_verses_in_query(query)
                     if found:
                         pinned_verse = found
                         st.session_state.pinned_verse = found
-                        logger.info(f"[FRONTEND] Pinned verse {found['citation']} for grounding")
+                        logger.info(f"[FRONTEND] Pinned verse(s) {found.get('citation', '?')} for grounding")
                     else:
                         prev = st.session_state.get("pinned_verse")
                         if prev and self._is_verse_followup(query):
@@ -1285,6 +1285,72 @@ Have natural conversation about Sanskrit:
             # authoritative seed grounding (anukramaṇī + KG entity facts)
             "anukramani": anukramani,
             "kg_entities": kg_entities,
+        }
+
+    def _extract_verse_ids(self, query: str) -> list:
+        """Find every explicit verse citation in a query, in order, deduplicated.
+
+        Each returned span carries its own (optional) corpus prefix, so it is a
+        self-contained reference that `_lookup_verse_text` can resolve on its own
+        (e.g. "RV 7.018.23", "VS 1.1", "TS 1.1.1.1"). Only matches the dotted /
+        spaced numeric citation forms users list; natural-language single-verse
+        phrasings ("Mandala 7 Sukta 60") are left to `_lookup_verse_text(query)`.
+        """
+        import re as _re
+        scan = _re.compile(
+            r'(?:\b(?:rv|rgveda|rigveda|av[sś]?|avs|avś|vs|ts|mandala|maṇḍala|'
+            r'taittir\w*|vajasan\w*|atharva\w*)\s*)?'
+            r'\d{1,2}(?:[.\s]\d{1,3}){1,3}',
+            _re.IGNORECASE)
+        ids, seen = [], set()
+        for m in scan.finditer(query):
+            span = m.group(0).strip()
+            key = _re.sub(r'\s+', ' ', span.lower())
+            if key not in seen:
+                seen.add(key)
+                ids.append(span)
+        return ids
+
+    def _lookup_verses_in_query(self, query: str):
+        """Resolve verse citation(s) in a query.
+
+        Returns one of:
+          • None — no citation found (caller falls back to follow-up logic).
+          • a single-verse pin dict (with full-sūkta context) when the query
+            cites ONE verse — preserves the interpretation behavior.
+          • a multi-verse pin dict ``{"multi_verses": [...], "missing_ids": [...],
+            "citation": "..."}`` when TWO OR MORE verses are cited. Each resolved
+            verse is the EXACT verse only (no sūkta expansion); citations that
+            aren't in the corpus are collected in ``missing_ids`` so the answer
+            can report them as "not in index" instead of silently dropping them.
+        """
+        ids = self._extract_verse_ids(query)
+        # 0 or 1 citation → existing single-verse path on the full query
+        # (keeps natural-language forms and full-sūkta interpretation context).
+        if len(ids) <= 1:
+            return self._lookup_verse_text(query)
+
+        resolved, missing = [], []
+        for vid in ids:
+            d = self._lookup_verse_text(vid)
+            if d:
+                # Exact-verse-only for list requests: drop the sūkta context.
+                resolved.append({
+                    "citation": d["citation"],
+                    "text": d["text"],
+                    "anukramani": d.get("anukramani"),
+                    "kg_entities": d.get("kg_entities"),
+                })
+            else:
+                missing.append(vid.strip())
+
+        if not resolved and not missing:
+            return None
+        citation = ", ".join(r["citation"] for r in resolved) or "requested verses"
+        return {
+            "multi_verses": resolved,
+            "missing_ids": missing,
+            "citation": citation,
         }
 
     @staticmethod
