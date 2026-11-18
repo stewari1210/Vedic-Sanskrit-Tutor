@@ -854,13 +854,13 @@ QUESTION: {question}
 {(chr(10) + kg_context) if kg_context else ""}
 {pinned_block}{support}
 INSTRUCTIONS:
-1. Address EVERY requested citation, in the order given, each under its own citation heading. Do not merge verses and do not add verses that were not requested.
-2. For each PINNED VERSE, reproduce its text EXACTLY as given above — never alter, complete, or invent verse text. For any citation listed under NOT IN INDEX, state plainly that it is not in the corpus and give no text for it.
-3. For each present verse provide: the Devanagari (as given), IAST transliteration, a word-by-word padapāṭha with sandhi resolution, grammatical analysis, and an English interpretation grounded in that morphology.
-4. Work from the Sanskrit itself and Vedic grammar (Macdonell, Monier-Williams); every claim must be justified from the words and grammar, never borrowed from an external translation.
-5. Clearly distinguish what the text ATTESTS from INFERENCE; where genuine ambiguity remains, give the grammatical evidence on each side rather than asserting one reading.
+1. Answer the QUESTION directly. Treat the PINNED VERSES as the exact, authoritative corpus text for those citations: quote their wording verbatim and NEVER alter, complete, or invent verse text. For any citation listed under NOT IN INDEX, state plainly it is not in the corpus and give no text for it.
+2. OUTPUT FORMAT — if the question asks for a specific format (a CSV block, a table, an edge list, JSON), produce EXACTLY that. For CSV, emit ONE fenced ```csv code block whose first line is the header row, wrap any field containing a comma in double quotes, and keep one record per line; then add any additional prose the question asks for AFTER the block. If no format is requested, handle each citation under its own heading with Devanāgarī (as given), IAST, a word-by-word padapāṭha with sandhi resolution, grammar, and a morphology-grounded interpretation.
+3. Cover every requested citation. Do not pad the answer with verses that were not requested unless the question calls for them.
+4. For every linguistic, grammatical, or genealogical claim, work from the Sanskrit itself and Vedic grammar (Macdonell, Monier-Williams); justify each claim from the words, never from a borrowed translation.
+5. Clearly distinguish what the text ATTESTS from INFERENCE; where genuine ambiguity remains, give the evidence on each side rather than asserting one reading. Use the SUPPORTING CORPUS PASSAGES only as corroboration, never as a source of verse text for a pinned citation.
 
-Provide the exact text and a careful, text-grounded analysis for each requested verse:"""
+Provide the answer in exactly the form the question requests:"""
         elif pinned_block:
             synthesis_prompt = f"""You are a Sanskrit scholar interpreting a specific Vedic verse directly from its original text.
 
@@ -895,6 +895,7 @@ INSTRUCTIONS:
 7. If the KNOWLEDGE GRAPH section above contains relevant facts, USE them to make connections the corpus passages alone may not make explicit (e.g. inherited dynasty membership, kinship chains)
 8. GROUNDING — base every claim about what the CORPUS says strictly on the passages above. NEVER invent verse text, citations, events, or numbers. If the passages do not cover the question, say so plainly and note the gap rather than filling it in.
 9. HONESTY & CALIBRATION — clearly distinguish (a) what the passages ATTEST, (b) your own INFERENCE, and (c) wider tradition/scholarship. You MAY add relevant, clearly-attributed context beyond the passages ("in the wider tradition…", "scholars read this as…"), but never present it as a corpus quote. Flag genuine ambiguities or scholarly disputes (e.g. proper-noun vs epithet, individual vs clan, contested lineage) instead of asserting one reading as settled.{diachronic_block}
+10. OUTPUT FORMAT — if the question requests a specific format (a CSV block, a table, an edge list, JSON), produce exactly that. For CSV, emit ONE fenced ```csv code block whose first line is the header row, wrap any field containing a comma in double quotes, and keep one record per line; then add any prose the question also asks for AFTER the block.
 
 Provide a detailed, well-grounded answer using proper verse references:"""
         else:

@@ -778,30 +778,69 @@ Have natural conversation about Sanskrit:
 
         return md_bytes, docx_bytes
 
+    @staticmethod
+    def _extract_csv_blocks(answer: str) -> list:
+        """Pull the contents of every fenced ```csv code block from an answer."""
+        import re as _re
+        blocks = _re.findall(r"```(?:csv|CSV)[^\n]*\n(.*?)```", answer or "", _re.DOTALL)
+        return [b.strip("\n") for b in blocks if b.strip()]
+
     def _render_answer_export(self, question: str, answer: str, key_suffix: str):
-        """Render per-answer MD (and optional DOCX) download buttons."""
+        """Render per-answer download buttons (MD, optional DOCX, optional CSV).
+
+        The CSV button appears only when the answer actually contains a fenced
+        ```csv block (i.e. the model was asked for CSV output). A best-effort
+        parsed preview is shown in an expander when the block is tabular.
+        """
         md_bytes, docx_bytes = self._make_export_data(question, answer)
         ts = datetime.now().strftime('%Y%m%d_%H%M%S')
-        btn_cols = st.columns([6, 1, 1] if docx_bytes else [6, 1])
-        with btn_cols[1]:
-            st.download_button(
-                label="⬇️ .md",
-                data=md_bytes,
-                file_name=f"vedic_{ts}.md",
-                mime="text/markdown",
-                key=f"export_md_{key_suffix}",
-                use_container_width=True,
-            )
+
+        csv_blocks = self._extract_csv_blocks(answer)
+        csv_bytes = ("\n\n".join(csv_blocks)).encode("utf-8") if csv_blocks else None
+
+        # Build the button set dynamically so layout adapts to what's available.
+        buttons = [("⬇️ .md", md_bytes, f"vedic_{ts}.md", "text/markdown",
+                    f"export_md_{key_suffix}")]
         if docx_bytes:
-            with btn_cols[2]:
+            buttons.append((
+                "⬇️ .docx", docx_bytes, f"vedic_{ts}.docx",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                f"export_docx_{key_suffix}"))
+        if csv_bytes:
+            buttons.append(("⬇️ .csv", csv_bytes, f"vedic_{ts}.csv",
+                            "text/csv", f"export_csv_{key_suffix}"))
+
+        btn_cols = st.columns([6] + [1] * len(buttons))
+        for i, (label, data, fname, mime, key) in enumerate(buttons, start=1):
+            with btn_cols[i]:
                 st.download_button(
-                    label="⬇️ .docx",
-                    data=docx_bytes,
-                    file_name=f"vedic_{ts}.docx",
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    key=f"export_docx_{key_suffix}",
-                    use_container_width=True,
+                    label=label, data=data, file_name=fname, mime=mime,
+                    key=key, use_container_width=True,
                 )
+
+        # Best-effort parsed preview (sniff , | or tab). Never fatal.
+        if csv_blocks:
+            try:
+                import csv as _csv
+                import io as _io
+                sample = csv_blocks[0]
+                try:
+                    dialect = _csv.Sniffer().sniff(sample[:2048], delimiters=",|\t;")
+                    delim = dialect.delimiter
+                except Exception:
+                    delim = "|" if sample.count("|") > sample.count(",") else ","
+                rows = [r for r in _csv.reader(_io.StringIO(sample), delimiter=delim)]
+                rows = [[c.strip() for c in r] for r in rows if any(c.strip() for c in r)]
+                if len(rows) >= 2:
+                    with st.expander("📊 CSV as table"):
+                        try:
+                            import pandas as _pd
+                            st.dataframe(_pd.DataFrame(rows[1:], columns=rows[0]),
+                                         use_container_width=True)
+                        except Exception:
+                            st.table(rows)
+            except Exception:
+                pass
 
     def render_devanagari(self, text: str, large: bool = False):
         """Render text with Devanagari font."""
@@ -1155,6 +1194,12 @@ Have natural conversation about Sanskrit:
         ("AVŚ", r'\b(av[sś]?|atharva\w*)\b', "avs/avs.md", 3),
         ("VS",  r'\b(vs|vajasaneyi\w*)\b',   "yv/yv.md",  2),
         ("TS",  r'\b(ts|taittir\w*)\b',      "ts/ts.md",  4),
+        # Brāhmaṇas: ॥ AB P.A.S ॥ (3), ॥ PB K.A.V ॥ (3), ॥ SB K.A.B.V ॥ (4).
+        # Śatapatha is split one file per kāṇḍa → relpath carries a {k} slot
+        # filled with the first citation number (Book 12 has no file → None).
+        ("AB",  r'\b(ab|aitareya\w*)\b',     "ab/ab.md",  3),
+        ("PB",  r'\b(pb|pancavim\w*|pañcavim\w*)\b', "pb/pb.md", 3),
+        ("SB",  r'\b(sb|shatapatha\w*|satapatha\w*)\b', "sb/sb_{k:02d}.md", 4),
     ]
     _NONRV_MAX_CTX = 30   # cap section context (VS/TS sections can be large)
 
@@ -1176,7 +1221,13 @@ Have natural conversation about Sanskrit:
             nums = _re.findall(r'\d+', verse_ref)
             if not (levels - 1 <= len(nums) <= levels):
                 return None
-            f = Path(LOCAL_FOLDER) / relpath
+            # Śatapatha (and any split corpus) selects its file by the first
+            # citation number; single-file corpora ignore the {k} slot.
+            try:
+                rp = relpath.format(k=int(nums[0])) if "{" in relpath else relpath
+            except (ValueError, IndexError):
+                return None
+            f = Path(LOCAL_FOLDER) / rp
             if not f.exists():
                 return None
             lines = f.read_text(encoding="utf-8").splitlines()
@@ -1298,17 +1349,41 @@ Have natural conversation about Sanskrit:
         """
         import re as _re
         scan = _re.compile(
-            r'(?:\b(?:rv|rgveda|rigveda|av[sś]?|avs|avś|vs|ts|mandala|maṇḍala|'
-            r'taittir\w*|vajasan\w*|atharva\w*)\s*)?'
-            r'\d{1,2}(?:[.\s]\d{1,3}){1,3}',
+            r'(?P<prefix>\b(?:rv|rgveda|rigveda|av[sś]?|avs|avś|vs|ts|sb|ab|pb|'
+            r'mandala|maṇḍala|taittir\w*|vajasan\w*|atharva\w*|aitareya\w*|'
+            r'shatapatha\w*|satapatha\w*|śatapatha\w*|pancavim\w*|pañcavim\w*)\s*)?'
+            r'(?P<core>\d{1,2}(?:[.\s]\d{1,3}){1,3})'
+            r'(?P<range>\s*[-–—]\s*\d{1,3})?',
             _re.IGNORECASE)
         ids, seen = [], set()
-        for m in scan.finditer(query):
-            span = m.group(0).strip()
+
+        def _add(span):
+            span = span.strip()
             key = _re.sub(r'\s+', ' ', span.lower())
             if key not in seen:
                 seen.add(key)
                 ids.append(span)
+
+        for m in scan.finditer(query):
+            prefix = (m.group("prefix") or "").strip()
+            core = m.group("core").strip()
+            parts = _re.split(r'[.\s]+', core)
+            rng = m.group("range")
+            pre = (prefix + " ") if prefix else ""
+            if rng:
+                # Expand a trailing numeric range on the final component, e.g.
+                # "RV 7.018.22–25" → .22 .23 .24 .25, "4.042.08–09" → .08 .09.
+                try:
+                    start = int(parts[-1])
+                    end = int(_re.sub(r'\D', '', rng))
+                except ValueError:
+                    start = end = None
+                if start is not None and end is not None and 0 < end - start <= 50:
+                    head = ".".join(parts[:-1])
+                    for v in range(start, end + 1):
+                        _add(f"{pre}{head}.{v}")
+                    continue
+            _add(f"{pre}{core}")
         return ids
 
     def _lookup_verses_in_query(self, query: str):
