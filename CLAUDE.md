@@ -93,6 +93,9 @@ Not indexed: Kāṭhaka Saṃhitā, Kapiṣṭhala-Kaṭha Saṃhitā, Jaiminīy
 
 ## Rules for changes
 
+- `ios/` is a separate, private, nested git repo (gitignored here); never add iOS files
+  or the iOS-only docs (`ios_port_plan.md`, `ios_data_licensing.md`, `kg_heldout_leaks.md`,
+  now under `ios/docs/`) to this public repo.
 - **Answers must come from the Sanskrit corpus, never from borrowed English translations.**
   Griffith/Eggeling/Caland are an internal cross-check layer only. Interpretation
   claims must be justified from the words and grammar.
