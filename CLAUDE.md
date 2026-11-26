@@ -89,7 +89,8 @@ and native citations for long Tranche 1+ prose); payload fields: `veda`, `chrono
 `॥ GB B.P.K ॥` · `॥ BĀU A.B.K ॥` · `॥ ChU P.K.V ॥` · `॥ Nir A.K ॥`
 (In `local_store/rNN.md` the RV danda markers are `॥ M.SSS.VV ॥` without the `RV`; the prefix is in the `## RV M.SSS` header.)
 
-Not indexed: Kāṭhaka Saṃhitā, Kapiṣṭhala-Kaṭha Saṃhitā, Jaiminīya Brāhmaṇa, Jaiminīya Upaniṣad Brāhmaṇa, Taittirīya Brāhmaṇa, Taittirīya Āraṇyaka, Baudhāyana Śrauta Sūtra; SB Book 12 (GRETIL 404).
+Not indexed: Kāṭhaka Saṃhitā, Kapiṣṭhala-Kaṭha Saṃhitā, Jaiminīya Brāhmaṇa, Baudhāyana Śrauta Sūtra (awaiting TITUS); SB Book 12 (GRETIL 404).
+Tranche 2 (TB, TA 1–9, JUB) is indexed in Qdrant; the iOS bundle still has only RV, AVŚ, TS, VS, AB, PB, SB.
 
 ## Rules for changes
 
