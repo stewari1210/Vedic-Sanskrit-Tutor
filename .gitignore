@@ -53,3 +53,17 @@ backups/
 RETRIEVAL_DIAGNOSIS.md
 TRANSLATION_DIAGNOSIS.md
 TRANSLATION_FIX_LOG.md
+
+# personal scratch folder (owner-managed)
+.tmp.driveupload/
+
+# iOS app: separate PRIVATE nested git repo (its own .gitignore covers
+# Bundle/, SwiftPM build output, Xcode user state, screenshots, etc.).
+# Never add iOS files to this public repo.
+ios/
+
+# iOS-private docs: these live in the private ios/ repo instead (see
+# ios/docs/ and CLAUDE.md).
+docs/ios_port_plan.md
+docs/ios_data_licensing.md
+docs/kg_heldout_leaks.md

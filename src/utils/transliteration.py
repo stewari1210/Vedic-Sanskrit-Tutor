@@ -146,7 +146,9 @@ class TransliterationHelper:
             variants.add(query.capitalize())
         
         # Remove empty strings and return as list
-        return sorted([v for v in variants if v.strip()], key=len, reverse=True)
+        # Longest first; ties broken lexicographically (code points). 11.8 cleanup #4: the old sort left equal-length variants in set-iteration
+        # (hash-seed) order, so retrieval for Sanskrit-script queries differed between Python processes.
+        return sorted([v for v in variants if v.strip()], key=lambda v: (-len(v), v))
     
     @staticmethod
     def remove_diacritics(text: str) -> str:

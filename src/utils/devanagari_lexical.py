@@ -266,29 +266,44 @@ def _popular_to_iast_variants(token: str) -> List[str]:
     if len(t) < 4:
         return [t]
 
-    variants = {t}   # always include the verbatim form
+    variants = [t]   # always include the verbatim form; ORDERED (11.8 cleanup #4: a set made the order hash-seed dependent)
+    def _add(x):
+        if x not in variants:
+            variants.append(x)
 
     # Strategy A: sh → ś,  ksh → kṣ  (most common popular convention)
     va = t
     va = va.replace('ksh', 'kṣ')
     va = re.sub(r'sh', 'ś', va)
-    variants.add(va)
+    _add(va)
 
     # Strategy B: also replace ch → c (palatal stop, not aspirate छ)
     # e.g. "harishchandra" → va="hariśchandra" → vb="hariścandra"  ← correct IAST
     vb = va.replace('ch', 'c')
-    variants.add(vb)
+    _add(vb)
 
     # Strategy C: ri → ṛ (vocalic r, very common in popular spellings)
     vc = vb.replace('ri', 'ṛ')
-    variants.add(vc)
+    _add(vc)
 
     # Strategy D: sh → ṣ (retroflex sibilant — alternate for ṣ in names like
     # Viṣṇu written "Vishnu")
     vd = t.replace('sh', 'ṣ')
-    variants.add(vd)
+    _add(vd)
 
-    return list(variants)
+    return variants
+
+
+_FORMS_BLOB = None
+
+
+def _corpus_forms_blob():
+    """All corpus surface forms (from the corpus lexicon), newline-joined, for substring validation. None if the lexicon is unavailable."""
+    global _FORMS_BLOB
+    if _FORMS_BLOB is None:
+        lex = _load_lexicon()
+        _FORMS_BLOB = "\n".join(f for forms in lex["primary"].values() for f in forms) if lex else ""
+    return _FORMS_BLOB or None
 
 
 def _auto_transliterate_token(token: str) -> List[str]:
@@ -300,10 +315,13 @@ def _auto_transliterate_token(token: str) -> List[str]:
       1. Skip obvious English words.
       2. Generate candidate IAST normalizations (popular romanization rules).
       3. Run indic_transliteration IAST → Devanagari on each candidate.
-      4. Return unique, non-trivial Devanagari strings.
+      4. Keep only candidates that occur as a substring of at least one corpus
+         surface form (11.8 cleanup, finding #2: unvalidated output turned English
+         words into Devanagari noise, e.g. dwellings → द्wएल्लिन्ग्स्). With no
+         corpus lexicon available nothing can be validated and all candidates are
+         kept, as before.
 
-    Caller is responsible for corpus validation (checking which forms
-    actually occur as substrings in the indexed text).
+    Output order is deterministic (candidate order).
     """
     t_lower = token.lower().strip()
     if t_lower in _ENGLISH_STOP or len(t_lower) < 4:
@@ -314,18 +332,20 @@ def _auto_transliterate_token(token: str) -> List[str]:
     except ImportError:
         return []
 
-    candidates: set = set()
+    blob = _corpus_forms_blob()
+    candidates: List[str] = []
     for iast_form in _popular_to_iast_variants(t_lower):
         try:
             dev = sanscript.transliterate(iast_form, sanscript.IAST,
                                           sanscript.DEVANAGARI)
             # Must be non-trivial Devanagari (at least 2 chars, ≥1 Devanagari code point)
             if dev and len(dev) >= 2 and any('ऀ' <= c <= 'ॿ' for c in dev):
-                candidates.add(dev)
+                if (blob is None or dev in blob) and dev not in candidates:
+                    candidates.append(dev)
         except Exception:
             pass
 
-    return list(candidates)
+    return candidates
 
 # Topical concept map: English research themes -> Devanagari corpus terms.
 # Counts verified against the indexed RV corpus (2026-06-12). These rescue

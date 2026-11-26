@@ -57,13 +57,14 @@ try:
     print_resource_allocation()
 except ImportError:
     # Fallback to defaults if config_parallel not available
+    from src.config import get_config_value as _gcv
     PARALLEL_ENABLED = False
-    OLLAMA_QA_NUM_THREAD = 4
-    OLLAMA_QA_NUM_GPU = 1
-    OLLAMA_QA_NUM_CTX = 8192
-    OLLAMA_EVAL_NUM_THREAD = 4
-    OLLAMA_EVAL_NUM_GPU = 1
-    OLLAMA_EVAL_NUM_CTX = 8192
+    OLLAMA_QA_NUM_THREAD = _gcv("OLLAMA_QA_NUM_THREAD", 4, int)
+    OLLAMA_QA_NUM_GPU = None  # Omit so Ollama auto-offloads all layers to GPU (num_gpu=1 means 1 layer only!)
+    OLLAMA_QA_NUM_CTX = _gcv("OLLAMA_QA_NUM_CTX", 32768, int)
+    OLLAMA_EVAL_NUM_THREAD = _gcv("OLLAMA_EVAL_NUM_THREAD", 4, int)
+    OLLAMA_EVAL_NUM_GPU = None
+    OLLAMA_EVAL_NUM_CTX = _gcv("OLLAMA_EVAL_NUM_CTX", 32768, int)
     OLLAMA_NUM_PARALLEL = 1
     EMBEDDING_BATCH_SIZE = 16
     EMBEDDING_NUM_WORKERS = 1
@@ -241,18 +242,22 @@ class Settings:
         llm_provider = str(get_config_value("LLM_PROVIDER", "groq")).lower() if get_config_value("LLM_PROVIDER") else "groq"
         
         if llm_provider == "ollama":
+            _num_ctx = get_config_value("OLLAMA_QA_NUM_CTX", 32768, int)
             logger.info(f"Using Ollama LLM for QA: {get_config_value('OLLAMA_MODEL', 'llama3.1:8b')} at {get_config_value('OLLAMA_BASE_URL', 'http://localhost:11434')}")
-            logger.info(f"  • Parallelization: {get_config_value('OLLAMA_QA_NUM_THREAD', 4, int)} threads, GPU enabled (Metal), context={get_config_value('OLLAMA_QA_NUM_CTX', 8192, int)}")
-            cls._llm = ChatOllama(
+            logger.info(f"  • Parallelization: {get_config_value('OLLAMA_QA_NUM_THREAD', 4, int)} threads, GPU auto-offload, context={_num_ctx}")
+            _ollama_kwargs = dict(
                 base_url=get_config_value("OLLAMA_BASE_URL", "http://localhost:11434"),
                 model=get_config_value("OLLAMA_MODEL", "llama3.1:8b"),
                 temperature=get_config_value("TEMPERATURE", 0.0, float),
                 reasoning=False,  # direct answer; a reasoning model (Qwen3.6) would
                                   # otherwise fill the budget thinking → empty content
-                num_ctx=get_config_value("OLLAMA_QA_NUM_CTX", 8192, int),  # Context window size
+                num_ctx=_num_ctx,  # Context window size
                 num_thread=get_config_value("OLLAMA_QA_NUM_THREAD", 4, int),  # CPU threads for parallel processing
-                num_gpu=get_config_value("OLLAMA_QA_NUM_GPU", 1, int),  # Enable GPU (Mac: 1=enabled)
             )
+            _num_gpu = get_config_value("OLLAMA_QA_NUM_GPU", None, int)
+            if _num_gpu is not None:
+                _ollama_kwargs["num_gpu"] = _num_gpu
+            cls._llm = ChatOllama(**_ollama_kwargs)
         elif llm_provider == "gemini":
             # Use Google Gemini as the primary QA model when requested
             if not get_config_value("GEMINI_API_KEY"):
@@ -305,17 +310,21 @@ class Settings:
         eval_llm_provider = str(get_config_value("EVAL_LLM_PROVIDER") or get_config_value("LLM_PROVIDER", "groq")).lower()
         
         if eval_llm_provider == "ollama":
+            _eval_ctx = get_config_value("OLLAMA_EVAL_NUM_CTX", 32768, int)
             logger.info(f"Using Ollama LLM for Evaluation: {get_config_value('OLLAMA_EVAL_MODEL', 'llama3.1:8b')} at {get_config_value('OLLAMA_BASE_URL', 'http://localhost:11434')}")
-            logger.info(f"  • Parallelization: {get_config_value('OLLAMA_EVAL_NUM_THREAD', 4, int)} threads, GPU enabled (Metal), context={get_config_value('OLLAMA_EVAL_NUM_CTX', 8192, int)}")
-            cls._eval_llm = ChatOllama(
+            logger.info(f"  • Parallelization: {get_config_value('OLLAMA_EVAL_NUM_THREAD', 4, int)} threads, GPU auto-offload, context={_eval_ctx}")
+            _eval_kwargs = dict(
                 base_url=get_config_value("OLLAMA_BASE_URL", "http://localhost:11434"),
                 model=get_config_value("OLLAMA_EVAL_MODEL", "llama3.1:8b"),
                 temperature=0.3,  # Lower temperature for evaluation
                 reasoning=False,  # evaluator must emit a verdict, not hidden thinking
-                num_ctx=get_config_value("OLLAMA_EVAL_NUM_CTX", 8192, int),
+                num_ctx=_eval_ctx,
                 num_thread=get_config_value("OLLAMA_EVAL_NUM_THREAD", 4, int),
-                num_gpu=get_config_value("OLLAMA_EVAL_NUM_GPU", 1, int),
             )
+            _eval_gpu = get_config_value("OLLAMA_EVAL_NUM_GPU", None, int)
+            if _eval_gpu is not None:
+                _eval_kwargs["num_gpu"] = _eval_gpu
+            cls._eval_llm = ChatOllama(**_eval_kwargs)
         elif eval_llm_provider == "gemini":
             # Use a DEDICATED evaluator model (e.g. gemini-2.5-pro) — falling back
             # to EVAL_MODEL then the answering GEMINI_MODEL. Previously this reused

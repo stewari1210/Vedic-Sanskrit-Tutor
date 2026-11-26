@@ -33,6 +33,14 @@ except ImportError:
     PARALLEL_ENABLED = False
 
 
+def _no_translation_data() -> bool:
+    """MOBILE_PARITY=1: ignore everything derived from the Sharma/Griffith translations
+    (proper_noun_variants.json variants, disambiguation, confederation expansion, x2.0 primary-source boost).
+    Opt-in; default behaviour unchanged. See src/utils/token_budget.py."""
+    from src.utils.token_budget import mobile_parity_enabled
+    return mobile_parity_enabled()
+
+
 def _contains_devanagari(text: str) -> bool:
     """
     Detect if text contains Devanagari script (used in Sanskrit).
@@ -238,6 +246,8 @@ class HybridRetriever(BaseRetriever):
         Total: 43,706 proper noun references across 4 translations
         """
         variants = [word]  # Always include original
+        if _no_translation_data():
+            return variants
 
         # Get comprehensive variants from database (includes all 4 translations)
         db_variants = get_proper_noun_variants(word)
@@ -951,7 +961,7 @@ class HybridRetriever(BaseRetriever):
         # Extract proper nouns to determine primary source
         proper_nouns = self._extract_proper_nouns(query)
         
-        if proper_nouns:
+        if proper_nouns and not _no_translation_data():
             from src.utils.proper_noun_variants import get_proper_noun_context
             
             # Check each proper noun for source priority
@@ -1190,7 +1200,10 @@ class HybridRetriever(BaseRetriever):
             # NOTE: We keep BOTH original and disambiguated for proper variant lookup
             proper_nouns_disambiguated = []
             for noun in proper_nouns:
-                disambiguated_form, role = disambiguate_proper_noun(noun, query)
+                if _no_translation_data():
+                    disambiguated_form, role = noun, ""
+                else:
+                    disambiguated_form, role = disambiguate_proper_noun(noun, query)
                 # Only log if disambiguation changed the form
                 if disambiguated_form != noun:
                     logger.info(f"HybridRetriever: Disambiguated '{noun}' → '{disambiguated_form}' (role: {role}) based on context: '{query}'")
@@ -1273,7 +1286,7 @@ class HybridRetriever(BaseRetriever):
                 # CONFEDERATION EXPANSION: If constituent tribes detected, add confederation names
                 confederation_expansions = set()
                 for noun in nouns_for_expansion:
-                    confed = get_confederation_for_tribe(noun)
+                    confed = None if _no_translation_data() else get_confederation_for_tribe(noun)
                     if confed:
                         confederation_expansions.add(confed)
                         logger.info(f"HybridRetriever: Detected constituent tribe '{noun}' → adding confederation '{confed}'")
@@ -1391,6 +1404,27 @@ class HybridRetriever(BaseRetriever):
         return out
 
 
+try:
+    from langchain_community.retrievers import BM25Retriever as _BM25Retriever
+except ImportError:                                   # same fallback as create_retriever: no BM25 -> semantic only
+    _BM25Retriever = None
+
+if _BM25Retriever is not None:
+    class PositiveBM25Retriever(_BM25Retriever):
+        """BM25Okapi (rank_bm25) top-k restricted to documents that actually score > 0; ties by corpus order.
+
+        11.8 cleanup, finding #3: the stock retriever returns np.argsort(scores)[::-1][:k], so when fewer than k documents match
+        it pads the list with arbitrary zero-score documents (ordering over ties is unspecified) and those entered the rank merge.
+        """
+        def _get_relevant_documents(self, query, *, run_manager=None):
+            import numpy as np
+            sc = self.vectorizer.get_scores(self.preprocess_func(query))
+            order = [i for i in np.argsort(-sc, kind="stable") if sc[i] > 0][: self.k]
+            return [self.docs[i] for i in order]
+else:
+    PositiveBM25Retriever = None
+
+
 def create_retriever(vec_db, documents, top_n=5):
     """Create a hybrid retriever combining semantic (Qdrant) and keyword (BM25) search.
 
@@ -1418,7 +1452,13 @@ def create_retriever(vec_db, documents, top_n=5):
         def _bm25_preprocess(text: str) -> list[str]:
             return strip_vedic_accents(text).split()
 
-        bm25_retriever = BM25Retriever.from_documents(
+        # Prefer PositiveBM25Retriever (11.8 cleanup, finding #3: restricts top-k to
+        # documents that actually score > 0, so near-empty matches aren't padded with
+        # arbitrary zero-score documents in unspecified tie order) while keeping the
+        # accent-stripping preprocess_func (needed so unaccented queries match
+        # accented Tranche 1/2 corpora such as MS, AVP).
+        _bm25_cls = PositiveBM25Retriever if PositiveBM25Retriever is not None else BM25Retriever
+        bm25_retriever = _bm25_cls.from_documents(
             documents=documents, preprocess_func=_bm25_preprocess
         )
         bm25_retriever.k = effective_k

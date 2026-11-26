@@ -15,9 +15,9 @@ Ignore the untracked nested `Vedic-Sanskrit-Tutor/` copy (stale/partial), plus
 - **Read [memory.md](./memory.md) before any non-trivial change** (private, gitignored —
   contains durable decisions, rationale, gotchas, bug history, owner preferences, and open threads).
   Never copy private details from `memory.md` or `PROJECT_STATUS.md` into public docs or commits.
-- **iOS port docs:** [docs/ios_port_plan.md](./docs/ios_port_plan.md) (architecture,
-  benchmarks, locked decisions) and [docs/ios_data_licensing.md](./docs/ios_data_licensing.md)
-  (pre-distribution licensing checklist).
+- **iOS port docs:** architecture, benchmarks, locked decisions, and the
+  pre-distribution licensing checklist live in `ios/docs/` inside the private,
+  separate `ios/` git repo (nested, gitignored here) — not in this public repo.
 
 ## Security — Non-Negotiable
 

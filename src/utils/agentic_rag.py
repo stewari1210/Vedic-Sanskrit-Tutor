@@ -578,7 +578,8 @@ def execute_tools_node(state: AgentState):
             # verses an English query can't. Factual research queries only (skip
             # pinned-verse, which already has its exact text). Synthesis still
             # runs on state["question"], so grounding is unaffected.
-            if query_type == "factual" and not state.get("pinned_verse"):
+            from src.utils.token_budget import mobile_parity_enabled
+            if query_type == "factual" and not state.get("pinned_verse") and not mobile_parity_enabled():
                 dev_terms = llm_expand_query(question)
                 if dev_terms:
                     query = f"{question} " + " ".join(dev_terms)
@@ -753,6 +754,18 @@ Provide a clear, educational answer with proper citations:"""
     else:  # factual query
         # Factual query - use corpus search and RAG
         corpus_info = state.get("corpus_examples", [])
+
+        # MOBILE_PARITY=1 (opt-in): token-budgeted context, same rule as the phone. Probe the REAL prompt with the
+        # top-k ranked docs (probe returns before any LLM call) and keep the largest k that fits the budget.
+        from src.utils import token_budget as _tb
+        if _tb.mobile_parity_enabled() and not state.get("_budget_probe") and corpus_info:
+            def _probe_tokens(k):
+                probe = synthesize_answer_node({**state, "corpus_examples": corpus_info[:k], "_budget_probe": True})
+                return _tb.count_tokens(probe["answer"]["prompt"])
+            _k = _tb.select_doc_count(len(corpus_info), _probe_tokens)
+            logger.info(f"[PARITY] token budget {_tb.token_budget()}: using {_k}/{len(corpus_info)} retrieved docs")
+            corpus_info = corpus_info[:_k]
+            state = {**state, "corpus_examples": corpus_info}
 
         corpus_context = ""
         source_texts = "the Vedic corpus"
@@ -956,6 +969,13 @@ Please inform the user that this specific topic is not found in the available co
 
 Provide a helpful response:"""
 
+        if state.get("_budget_probe"):
+            return {"answer": {"prompt": synthesis_prompt, "citations": []}}
+
+        _prompt_tokens = None
+        if _tb.prompt_token_log_enabled():
+            _prompt_tokens = _tb.log_prompt_tokens(synthesis_prompt, label=question[:60])
+
         messages = [SystemMessage(content=synthesis_prompt)]
         response = Settings.invoke_llm(llm, messages)
 
@@ -980,6 +1000,8 @@ Provide a helpful response:"""
             "answer": answer_content,
             "citations": create_enhanced_citations_list(corpus_info[:SYNTHESIS_DOC_BUDGET]) if has_corpus else []
         }
+        if _prompt_tokens is not None:
+            answer["prompt_tokens"] = _prompt_tokens      # PROMPT_TOKEN_LOG=1 only
 
         # ── Knowledge Graph extraction (backgrounded) ─────────────────────
         # Extract relationship triples from the LLM's answer and store them.

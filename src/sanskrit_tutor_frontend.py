@@ -455,15 +455,16 @@ class SanskritTutorApp:
 
                 return False
 
-            with st.spinner("📚 Loading Vedic texts corpus..."):
-                vec_db, docs = create_qdrant_vector_store(force_recreate=False)
-                # Store vector DB for agentic RAG access
-                st.session_state.vec_db = vec_db
-                st.session_state.docs = docs
+            if st.session_state.get("vec_db") is None or st.session_state.get("docs") is None:
+                with st.spinner("📚 Loading Vedic texts corpus..."):
+                    vec_db, docs = create_qdrant_vector_store(force_recreate=False)
+                    # Store vector DB for agentic RAG access
+                    st.session_state.vec_db = vec_db
+                    st.session_state.docs = docs
 
-                # CRITICAL: Set shared vector store for agentic RAG tools
-                set_shared_vector_store(vec_db, docs)
-                logger.info("[FRONTEND] Shared vector store configured for agentic RAG")
+                    # CRITICAL: Set shared vector store for agentic RAG tools
+                    set_shared_vector_store(vec_db, docs)
+                    logger.info("[FRONTEND] Shared vector store configured for agentic RAG")
 
             with st.spinner("🤖 Initializing AI resource..."):
                 if llm_provider == "gemini":
@@ -943,13 +944,21 @@ Have natural conversation about Sanskrit:
             else:
                 model_name = GEMINI_MODEL
 
-            # AUTO-INITIALIZE on first page load (one attempt; the button
-            # below remains as a manual retry if it fails)
+            # AUTO-INITIALIZE on first page load, or auto-switch whenever the user
+            # changes the provider or model in the sidebar (so selection always
+            # matches the active LLM without needing an extra click).
+            _selection_changed = (
+                st.session_state.initialized
+                and (
+                    st.session_state.get("llm_provider") != llm_provider
+                    or st.session_state.get("model_name") != model_name
+                )
+            )
             if (not st.session_state.initialized
-                    and not st.session_state.get("auto_init_attempted")):
+                    and not st.session_state.get("auto_init_attempted")) or _selection_changed:
                 st.session_state.auto_init_attempted = True
                 if self.setup_tutor(llm_provider, model_name):
-                    st.success("✓ Resource ready!")
+                    st.success(f"✓ Switched to {model_name}" if _selection_changed else "✓ Resource ready!")
                     st.rerun()
 
             if st.button("🚀 Initialize Resource", key="init_button"):
