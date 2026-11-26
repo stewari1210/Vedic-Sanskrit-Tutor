@@ -1,0 +1,1475 @@
+{
+ "_meta": {
+  "built_by": "tag_kg_held_out.py",
+  "decision": "owner 2026-11-21: tag; loaders filter; no Qdrant deletes",
+  "source": "effective KG as served by vedic_kg._load() (Qdrant if reachable, else the local mirror)",
+  "excluded_units_loaded": [
+   "RV 1.131",
+   "RV 1.174",
+   "RV 4.38",
+   "RV 5.27",
+   "RV 6.20",
+   "RV 7.96",
+   "RV 8.19",
+   "RV 10.33",
+   "RV 10.75",
+   "AVS 5.4",
+   "AVS 19.39",
+   "PB 13.3",
+   "SB 1.8.1",
+   "SB 11.5.1",
+   "AB 8.21"
+  ],
+  "total_relations": 4106,
+  "tagged_relations": 101,
+  "tagged_entities": 18,
+  "by_provenance_all": {
+   "inferred": 4070,
+   "authoritative": 24,
+   "itihasa": 12
+  },
+  "by_provenance_tagged": {
+   "inferred": 97,
+   "authoritative": 4
+  },
+  "mirror_total": 4106,
+  "mirror_tagged": 101,
+  "nothing_deleted": "no relation was removed locally or in Qdrant"
+ },
+ "relations": [
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "allied_with",
+   "object": "Vasiṣṭhas",
+   "citations": [
+    "RV 7.033.03",
+    "RV 7.033.01-03",
+    "RV 7.18",
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "is_disciple_of",
+   "object": "Vasiṣṭha",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "fought",
+   "object": "Bhūmi",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "is_disciple_of",
+   "object": "Vasisthas",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "fought",
+   "object": "Earth",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "wide dominance",
+   "citations": [
+    "AB 7.34.9",
+    "AB 8.21.11",
+    "AB 7.34.9, AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "performed_ritual",
+   "object": "Ashvamedha",
+   "citations": [
+    "AB 8.21.11",
+    "RV 3.053.11",
+    "RV 3.053.11, AB 8.21.11",
+    "RV 3.053.09",
+    "RV 3.053.09-11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "royal power",
+   "citations": [
+    "AB 7.34.9",
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "conquered the whole earth",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "great royal power",
+   "citations": [
+    "AB 7.34.9",
+    "AB 8.21.11",
+    "AB 7.34.9, AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_father",
+   "object": "Pijavana",
+   "citations": [
+    "AB 8.21.11",
+    "RV 7.18",
+    "RV 7.018.22",
+    "RV 7.018.25",
+    "AB 8.21.11, RV 7.018.22, RV 7.018.25, RV 7.18",
+    "AB 8.21.11, RV 7.018.22, RV 7.018.25",
+    "RV 7.18.22",
+    "RV 7.018.23",
+    "RV 7.018.22-25"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "performed_ritual",
+   "object": "Aśvamedha",
+   "citations": [
+    "AB 8.21.11",
+    "RV 3.053.11",
+    "RV 3.053.09"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "king",
+   "citations": [
+    "RV 7.033.01-03",
+    "RV 7.18",
+    "RV 7.033.01-03, RV 7.18, AB 7.34.9, AB 8.21.11",
+    "RV 7.033.01",
+    "RV 7.033.02",
+    "RV 7.033.03",
+    "AB 7.34.9",
+    "AB 8.21.11"
+   ],
+   "provenance": "authoritative",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "member_of_dynasty",
+   "object": "Tritsu-Bharata dynasty",
+   "citations": [
+    "RV 7.18.13, AB 8.21.11",
+    "RV 7.18.13",
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "conqueror",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "epithet",
+   "object": "Maharaja",
+   "citations": [
+    "AB 7.34.9",
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "conquered whole earth",
+   "citations": [
+    "AB 8.21.11",
+    "AB 7.34.9"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "same_as",
+   "object": "Sudas Paijavana",
+   "citations": [
+    "AB 8.21.11, RV 7.18",
+    "RV 7.18"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "is_disciple_of",
+   "object": "Vasishtha",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "epithet",
+   "object": "Paijavana",
+   "citations": [
+    "AB 8.21.11",
+    "AB 7.34.9"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "same_as",
+   "object": "Paijavana",
+   "citations": [
+    "RV 7.018.22",
+    "AB 8.21.11",
+    "RV 7.018.25"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "conquered the entire earth",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "member_of_dynasty",
+   "object": "Bharata",
+   "citations": [
+    "RV 7.018.13",
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "performed_ritual",
+   "object": "Aindra Mahabhisheka",
+   "citations": [
+    "AB 8.21.11",
+    "AB 7.34.9"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "is_king_of",
+   "object": "Bharatas",
+   "citations": [
+    "RV 7.18.13",
+    "AB 8.21.11",
+    "RV 7.18.13, AB 8.21.11",
+    "RV 3.053.11",
+    "RV 3.053.11-12",
+    "RV 7.018.13"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "member_of_dynasty",
+   "object": "Tritsu",
+   "citations": [
+    "RV 7.18",
+    "RV 7.18, RV 7.018.07",
+    "RV 7.018.07",
+    "RV 7.18.13",
+    "AB 8.21.11"
+   ],
+   "provenance": "authoritative",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "achieved royal power",
+   "citations": [
+    "AB 8.21.11",
+    "AB 7.34.9"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "received_boon",
+   "object": "royal power",
+   "citations": [
+    "AB 8.21.11",
+    "AB 7.34.9",
+    "AB 8.21.11, AB 7.34.9"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "member_of_dynasty",
+   "object": "Tritsu-Bharata",
+   "citations": [
+    "RV 7.18.13, AB 8.21.11",
+    "RV 7.18.13",
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "patronymic",
+   "object": "Sudas Paijavana",
+   "citations": [
+    "AB 8.21.11",
+    "AB 7.34.9",
+    "RV 7.18",
+    "RV 7.018.22",
+    "RV 7.018.25"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "achieved wide dominance",
+   "citations": [
+    "AB 8.21.11",
+    "AB 7.34.9"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "patronymic",
+   "object": "Paijavana",
+   "citations": [
+    "RV 7.18",
+    "AB 8.21.11",
+    "RV 7.018.22",
+    "RV 7.018.25",
+    "AB 8.21.11, RV 7.018.22, RV 7.018.25, RV 7.18",
+    "AB 8.21.11, RV 7.18",
+    "AB 8.21.11, RV 7.018.22, RV 7.018.25",
+    "RV 7.018.23",
+    "RV 7.018.22-25"
+   ],
+   "provenance": "authoritative",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "performed_ritual",
+   "object": "Mahābhiṣeka",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "conqueror of the entire earth",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "performed_ritual",
+   "object": "Mahabhisheka",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "member_of_dynasty",
+   "object": "Trtsu-Bharata",
+   "citations": [
+    "RV 7.18.13",
+    "AB 8.21.11",
+    "RV 7.018.05",
+    "RV 7.018"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "conqueror of the whole earth",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "received_boon",
+   "object": "wide dominance",
+   "citations": [
+    "AB 8.21.11",
+    "AB 7.34.9",
+    "AB 8.21.11, AB 7.34.9"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "epithet",
+   "object": "Tritsu-Bharata king",
+   "citations": [
+    "RV 7.18.13",
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "performed_ritual",
+   "object": "Aindra Mahābhiṣeka",
+   "citations": [
+    "AB 8.21.11",
+    "AB 8.21.11, AB 7.34.9",
+    "AB 7.34.9"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "member_of_dynasty",
+   "object": "Trtsu",
+   "citations": [
+    "RV 7.18",
+    "RV 7.18.13",
+    "AB 8.21.11",
+    "RV 7.018.07",
+    "RV 7.018.13"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "has_attribute",
+   "object": "Maharaja",
+   "citations": [
+    "AB 7.34.9",
+    "AB 7.34.9, AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas",
+   "display_name": "Sudas",
+   "relation": "patronymic",
+   "object": "Paijava",
+   "citations": [
+    "AB 8.21.11",
+    "RV 7.18"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "trasadasyu",
+   "display_name": "Trasadasyu",
+   "relation": "fought",
+   "object": "Dasyus",
+   "citations": [
+    "RV 4.038.01"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 4.38.1"
+   ]
+  },
+  {
+   "entity": "trasadasyu",
+   "display_name": "Trasadasyu",
+   "relation": "member_of_dynasty",
+   "object": "Ikshvaku",
+   "citations": [
+    "PB 13.3.12"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "PB 13.3.12"
+   ]
+  },
+  {
+   "entity": "trasadasyu",
+   "display_name": "Trasadasyu",
+   "relation": "member_of_dynasty",
+   "object": "Kuru",
+   "citations": [
+    "RV 10.033.04",
+    "RV 10.33.04"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 10.33.4"
+   ]
+  },
+  {
+   "entity": "trasadasyu",
+   "display_name": "Trasadasyu",
+   "relation": "performed_ritual",
+   "object": "Agni",
+   "citations": [
+    "RV 5.027.03"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 5.27.3"
+   ]
+  },
+  {
+   "entity": "trasadasyu",
+   "display_name": "Trasadasyu",
+   "relation": "has_father",
+   "object": "Purukutsa",
+   "citations": [
+    "RV 4.042.09",
+    "AVŚ 20.37.3",
+    "PB 25.16.3",
+    "AVS 20.37.3",
+    "RV 7.019.03",
+    "RV 7.19.03",
+    "RV 4.42.09",
+    "RV 8.019.36"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 8.19.36"
+   ]
+  },
+  {
+   "entity": "trasadasyu",
+   "display_name": "Trasadasyu",
+   "relation": "epithet",
+   "object": "Satpati",
+   "citations": [
+    "RV 8.019.36"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 8.19.36"
+   ]
+  },
+  {
+   "entity": "trasadasyu",
+   "display_name": "Trasadasyu",
+   "relation": "patronymic",
+   "object": "Paurukutsya",
+   "citations": [
+    "RV 8.019.36"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 8.19.36"
+   ]
+  },
+  {
+   "entity": "trasadasyu",
+   "display_name": "Trasadasyu",
+   "relation": "allied_with",
+   "object": "Tryaruna",
+   "citations": [
+    "RV 5.027.03"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 5.27.3"
+   ]
+  },
+  {
+   "entity": "trasadasyu",
+   "display_name": "Trasadasyu",
+   "relation": "associated_with_place",
+   "object": "Agni Vaiśvānara",
+   "citations": [
+    "RV 5.027.03"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 5.27.3"
+   ]
+  },
+  {
+   "entity": "trasadasyu",
+   "display_name": "Trasadasyu",
+   "relation": "member_of_dynasty",
+   "object": "Kuru dynasty",
+   "citations": [
+    "RV 10.033.04"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 10.33.4"
+   ]
+  },
+  {
+   "entity": "dasyus",
+   "display_name": "Dasyus",
+   "relation": "fought",
+   "object": "Trasadasyu",
+   "citations": [
+    "RV 4.038.01"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 4.38.1"
+   ]
+  },
+  {
+   "entity": "vasisthas",
+   "display_name": "Vasiṣṭhas",
+   "relation": "is_purohita_of",
+   "object": "Sudas",
+   "citations": [
+    "RV 7.033.01-03",
+    "RV 7.18.13",
+    "RV 7.18",
+    "RV 7.033.03",
+    "RV 7.018.19",
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasisthas",
+   "display_name": "Vasiṣṭhas",
+   "relation": "performed_ritual",
+   "object": "Aindra Mahābhiṣeka",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasisthas",
+   "display_name": "Vasiṣṭhas",
+   "relation": "is_guru_of",
+   "object": "Sudas",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "tryaruna",
+   "display_name": "Tryaruna",
+   "relation": "allied_with",
+   "object": "Trasadasyu",
+   "citations": [
+    "RV 5.027.03"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 5.27.3"
+   ]
+  },
+  {
+   "entity": "tryaruna",
+   "display_name": "Tryaruna",
+   "relation": "is_purohita_of",
+   "object": "Trasadasyu",
+   "citations": [
+    "RV 5.027.03"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 5.27.3"
+   ]
+  },
+  {
+   "entity": "tryaruna",
+   "display_name": "Tryaruna",
+   "relation": "patronymic",
+   "object": "Traivrshna",
+   "citations": [
+    "RV 5.027.01"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 5.27.1"
+   ]
+  },
+  {
+   "entity": "tryaruna",
+   "display_name": "Tryaruna",
+   "relation": "patronymic",
+   "object": "Traivrishna",
+   "citations": [
+    "RV 5.027.01"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 5.27.1"
+   ]
+  },
+  {
+   "entity": "tryaruna",
+   "display_name": "Tryaruna",
+   "relation": "member_of_dynasty",
+   "object": "Ikshvaku",
+   "citations": [
+    "PB 13.3.12"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "PB 13.3.12"
+   ]
+  },
+  {
+   "entity": "tryaruna",
+   "display_name": "Tryaruna",
+   "relation": "patronymic",
+   "object": "Traivrsna",
+   "citations": [
+    "RV 5.027.01-03"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 5.27.1"
+   ]
+  },
+  {
+   "entity": "tryaruna",
+   "display_name": "Tryaruna",
+   "relation": "performed_ritual",
+   "object": "Agni",
+   "citations": [
+    "RV 5.027.03"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 5.27.3"
+   ]
+  },
+  {
+   "entity": "vasistha",
+   "display_name": "Vasistha",
+   "relation": "is_guru_of",
+   "object": "Sudas",
+   "citations": [
+    "AB 8.21.11",
+    "RV 7.18.13",
+    "RV 7.18",
+    "RV 7.033.01",
+    "RV 7.033.02",
+    "RV 7.033.03"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasistha",
+   "display_name": "Vasistha",
+   "relation": "performed_ritual",
+   "object": "Sudās",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasistha",
+   "display_name": "Vasistha",
+   "relation": "performed_ritual",
+   "object": "Mahābhiṣeka",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasistha",
+   "display_name": "Vasistha",
+   "relation": "is_purohita_of",
+   "object": "Sudas",
+   "citations": [
+    "RV 7.18.13",
+    "RV 7.18",
+    "RV 7.033.01-03",
+    "AB 8.21.11",
+    "RV 7.033.03",
+    "RV 7.033.01-03, RV 7.033.03, RV 7.083.04",
+    "RV 7.083.04",
+    "RV 7.033.01",
+    "RV 7.033.02"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasistha",
+   "display_name": "Vasistha",
+   "relation": "performed_ritual",
+   "object": "Ashvamedha",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasistha",
+   "display_name": "Vasistha",
+   "relation": "performed_ritual",
+   "object": "Aindra Mahābhiṣeka",
+   "citations": [
+    "AB 8.21.11",
+    "AB 8.21.11, AB 7.34.9",
+    "AB 7.34.9"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasistha",
+   "display_name": "Vasistha",
+   "relation": "performed_ritual",
+   "object": "Aindra Mahabhisheka",
+   "citations": [
+    "AB 8.21.11",
+    "AB 7.34.9"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasistha",
+   "display_name": "Vasistha",
+   "relation": "performed_ritual",
+   "object": "Indra-consecration",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasistha",
+   "display_name": "Vasistha",
+   "relation": "performed_ritual",
+   "object": "Mahabhisheka",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "earth",
+   "display_name": "Earth",
+   "relation": "fought",
+   "object": "Sudas",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "bhumi",
+   "display_name": "Bhūmi",
+   "relation": "fought",
+   "object": "Sudas",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas_paijavana",
+   "display_name": "Sudas Paijavana",
+   "relation": "has_father",
+   "object": "Pijavana",
+   "citations": [
+    "AB 8.21.11, RV 7.18"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas_paijavana",
+   "display_name": "Sudas Paijavana",
+   "relation": "performed_ritual",
+   "object": "Mahābhiṣeka",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas_paijavana",
+   "display_name": "Sudas Paijavana",
+   "relation": "same_as",
+   "object": "Sudas",
+   "citations": [
+    "AB 8.21.11, RV 7.18"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas_paijavana",
+   "display_name": "Sudas Paijavana",
+   "relation": "performed_ritual",
+   "object": "Ashvamedha",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "sudas_paijavana",
+   "display_name": "Sudas Paijavana",
+   "relation": "member_of_dynasty",
+   "object": "Tritsu",
+   "citations": [
+    "RV 7.18, AB 8.21.11, RV 7.18.13"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vashishtha",
+   "display_name": "Vashishtha",
+   "relation": "is_purohita_of",
+   "object": "Sudas",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vashishtha",
+   "display_name": "Vashishtha",
+   "relation": "performed_ritual",
+   "object": "Aindra Mahabhisheka",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vashishtha",
+   "display_name": "Vashishtha",
+   "relation": "performed_ritual",
+   "object": "mahabhisheka",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasishtha",
+   "display_name": "Vasishtha",
+   "relation": "performed_ritual",
+   "object": "Aindra Mahabhisheka",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasishtha",
+   "display_name": "Vasishtha",
+   "relation": "is_guru_of",
+   "object": "Sudas",
+   "citations": [
+    "AB 8.21.11",
+    "AB 7.34.9"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasishtha",
+   "display_name": "Vasishtha",
+   "relation": "performed_ritual",
+   "object": "Mahābhiṣeka",
+   "citations": [
+    "AB 8.21.11"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "vasishtha",
+   "display_name": "Vasishtha",
+   "relation": "is_purohita_of",
+   "object": "Sudas",
+   "citations": [
+    "RV 7.18.13",
+    "RV 7.18",
+    "RV 7.033.01-03",
+    "AB 8.21.11",
+    "RV 7.033.02"
+   ],
+   "provenance": "authoritative",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "pijavana",
+   "display_name": "Pijavana",
+   "relation": "has_son",
+   "object": "Sudas Paijavana",
+   "citations": [
+    "AB 8.21.11, RV 7.18"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "pijavana",
+   "display_name": "Pijavana",
+   "relation": "has_son",
+   "object": "Sudas",
+   "citations": [
+    "AB 8.21.11",
+    "RV 7.018.22",
+    "RV 7.018.25"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "go",
+   "display_name": "Go",
+   "relation": "has_attribute",
+   "object": "catuṣpadī",
+   "citations": [
+    "SB 1.8.1.24"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "SB 1.8.1.24"
+   ]
+  },
+  {
+   "entity": "kustha",
+   "display_name": "Kustha",
+   "relation": "epithet",
+   "object": "Takmanashana",
+   "citations": [
+    "AVŚ 5.4.1"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AVS 5.4.1"
+   ]
+  },
+  {
+   "entity": "paijavana",
+   "display_name": "Paijavana",
+   "relation": "patronymic",
+   "object": "Pijavana",
+   "citations": [
+    "AB 8.21.11",
+    "RV 7.018.22",
+    "RV 7.018.25"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AB 8.21.11"
+   ]
+  },
+  {
+   "entity": "kurusravana",
+   "display_name": "Kurusravana",
+   "relation": "patronymic",
+   "object": "Trasadasyu",
+   "citations": [
+    "RV 10.033.04"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 10.33.4"
+   ]
+  },
+  {
+   "entity": "kurusravana",
+   "display_name": "Kurusravana",
+   "relation": "is_king_of",
+   "object": "Kuru",
+   "citations": [
+    "RV 10.033.04"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 10.33.4"
+   ]
+  },
+  {
+   "entity": "kurusravana",
+   "display_name": "Kurusravana",
+   "relation": "member_of_dynasty",
+   "object": "Kuru",
+   "citations": [
+    "RV 10.33.4"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "RV 10.33.4"
+   ]
+  },
+  {
+   "entity": "kushtha",
+   "display_name": "Kushtha",
+   "relation": "has_attribute",
+   "object": "destroyer of Takman",
+   "citations": [
+    "AVŚ 5.4.1"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AVS 5.4.1"
+   ]
+  },
+  {
+   "entity": "kushtha",
+   "display_name": "Kushtha",
+   "relation": "epithet",
+   "object": "destroyer of Takman",
+   "citations": [
+    "AVŚ 5.4.1",
+    "AVŚ 5.4.2"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AVS 5.4.1",
+    "AVS 5.4.2"
+   ]
+  },
+  {
+   "entity": "kushtha",
+   "display_name": "Kushtha",
+   "relation": "has_attribute",
+   "object": "most potent of herbs",
+   "citations": [
+    "AVŚ 5.4.1"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AVS 5.4.1"
+   ]
+  },
+  {
+   "entity": "kushtha",
+   "display_name": "Kushtha",
+   "relation": "has_attribute",
+   "object": "associated with divine power",
+   "citations": [
+    "AVŚ 5.4.2-5"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AVS 5.4.2"
+   ]
+  },
+  {
+   "entity": "kushtha",
+   "display_name": "Kushtha",
+   "relation": "originates_from",
+   "object": "Himavat",
+   "citations": [
+    "AVŚ 5.4.2-5",
+    "AVŚ 5.4.2"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "AVS 5.4.2"
+   ]
+  },
+  {
+   "entity": "vrsa_vaijana",
+   "display_name": "Vrsa Vaijana",
+   "relation": "is_purohita_of",
+   "object": "Tryaruna",
+   "citations": [
+    "PB 13.3.12"
+   ],
+   "provenance": "inferred",
+   "held_out_units_hit": [
+    "PB 13.3.12"
+   ]
+  }
+ ]
+}

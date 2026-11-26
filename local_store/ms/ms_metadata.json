@@ -1,0 +1,18 @@
+{
+  "title": "Maitrāyaṇī Saṃhitā",
+  "author": [
+    "Vedic Tradition",
+    "Makoto Fushimi (Osaka, 2015); TITUS version by Jost Gippert (2016-05-05); GRETIL version 2016-12-01"
+  ],
+  "edition": "Leopold von Schroeder, Maitrāyaṇī Saṃhitā (Leipzig 1881–1886; repr. Wiesbaden 1970–1972)",
+  "creator": "GRETIL (Göttingen Register of Electronic Texts in Indian Languages)",
+  "source_url": "https://gretil.sub.uni-goettingen.de/gretil/1_sanskr/1_veda/1_sam/maitrs_pu.htm",
+  "source_id": "maitrayani_samhita",
+  "licence": "TITUS / GRETIL (scholarly, non-commercial use only)",
+  "filename": "ms",
+  "preprocessing": "sanskrit",
+  "source_type": "vedic_text",
+  "veda": "maitrayani_samhita",
+  "chronology_layer": 3,
+  "chronology_name": "yv_samhita"
+}

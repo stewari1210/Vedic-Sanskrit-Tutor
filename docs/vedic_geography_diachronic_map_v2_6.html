@@ -1,0 +1,2293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vedic Geography: Diachronic Map of the Pūrus, Bharatas &amp; Dāsas</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter & Cormorant Garamond for scholarly typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet.js CSS & JS via CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+          },
+          colors: {
+            parchment: {
+              50: '#FAF8F5',
+              100: '#F4F0E8',
+              200: '#E8E0D2',
+              300: '#D6CBB8',
+            },
+            puru: '#2563EB',
+            bharata: '#DC2626',
+            kuru: '#7C3AED',
+            dasa: '#B45309',
+            geo: '#64748B',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #FAF8F5;
+      color: #1E293B;
+      overflow-x: hidden;
+    }
+
+    /* Custom Leaflet container styling */
+    #map {
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background-color: #E8E3D9;
+    }
+
+    /* Custom SVG Teardrop Pin Container */
+    .vedic-pin-wrapper {
+      background: transparent !important;
+      border: none !important;
+    }
+
+    .vedic-pin-svg {
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+      transform-origin: bottom center;
+      filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.32));
+    }
+
+    .vedic-pin-wrapper:hover .vedic-pin-svg,
+    .vedic-pin-active .vedic-pin-svg {
+      transform: scale(1.22) translateY(-2px);
+      filter: drop-shadow(0 8px 14px rgba(15, 23, 42, 0.45));
+    }
+
+    @keyframes pulseRing {
+      0% {
+        transform: scale(0.85);
+        opacity: 0.85;
+      }
+      100% {
+        transform: scale(2.1);
+        opacity: 0;
+      }
+    }
+
+    .pin-pulse-ring {
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      width: 24px;
+      height: 24px;
+      margin-left: -12px;
+      border-radius: 9999px;
+      animation: pulseRing 1.8s infinite ease-out;
+      pointer-events: none;
+    }
+
+    /* Animated dashed migration polylines */
+    @keyframes dashFlow {
+      to {
+        stroke-dashoffset: -32;
+      }
+    }
+
+    .stated-vector-line { stroke-dasharray: none; }
+    .migration-vector-line {
+      animation: dashFlow 1.4s linear infinite;
+    }
+
+    .migration-vector-line-slow {
+      animation: dashFlow 2.2s linear infinite;
+    }
+
+    /* Custom Leaflet Popup Styling */
+    .leaflet-popup-content-wrapper {
+      border-radius: 14px !important;
+      padding: 0 !important;
+      box-shadow: 0 14px 28px -6px rgba(15, 23, 42, 0.22), 0 4px 10px -2px rgba(15, 23, 42, 0.08) !important;
+      border: 1px solid #E2DDD5 !important;
+      background: #FFFFFF !important;
+      overflow: hidden;
+    }
+
+    .leaflet-popup-content {
+      margin: 0 !important;
+      width: 295px !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+
+    .leaflet-popup-tip {
+      background: #FFFFFF !important;
+      border: 1px solid #E2DDD5 !important;
+    }
+
+    .leaflet-container a.leaflet-popup-close-button {
+      top: 10px !important;
+      right: 10px !important;
+      color: #64748B !important;
+      font-size: 18px !important;
+      width: 24px !important;
+      height: 24px !important;
+      border-radius: 9999px;
+      background: rgba(248, 250, 252, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .leaflet-container a.leaflet-popup-close-button:hover {
+      color: #0F172A !important;
+      background: #F1F5F9;
+    }
+
+    /* Macro-region floating label on map */
+    .macro-region-label {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      pointer-events: none;
+    }
+
+    /* Directional arrowhead icon */
+    .vector-arrow-icon {
+      background: transparent !important;
+      border: none !important;
+      pointer-events: none;
+    }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F4F0E8;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+  </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden select-none sm:select-auto">
+
+  <!-- TOP SCHOLARLY HEADER BAR -->
+  <header class="bg-white border-b border-parchment-200 shadow-sm z-30 shrink-0">
+    <div class="max-w-full px-3 sm:px-6 py-2.5 sm:py-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5">
+      <!-- Title & Subtitle -->
+      <div class="flex items-start sm:items-center justify-between gap-3">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-amber-100/80 text-amber-900 border border-amber-200">
+              Vedic Sanskrit Resource · Historical Atlas
+            </span>
+            <span id="visible-count-badge" class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-600">
+              29 Sites Visible
+            </span>
+          </div>
+          <h1 class="font-serif text-xl sm:text-2xl lg:text-[26px] font-bold text-slate-900 leading-tight mt-0.5">
+            Vedic Geography: Diachronic Map of the Pūrus, Bharatas &amp; Dāsas
+          </h1>
+          <p class="text-xs sm:text-[13px] text-slate-500 font-medium">
+            Verse-anchored tribal geography with evidence grades · Rigveda to Brāhmaṇas · peripheral-groups layer · optional ancient-DNA layer (v2.6)
+          </p>
+        </div>
+
+        <!-- Mobile Dossier Toggle Button -->
+        <button id="mobile-drawer-btn" onclick="toggleMobileDrawer(true)" class="lg:hidden inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold shadow-sm hover:bg-slate-800 active:scale-95 transition shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+          <span>Dossier</span>
+        </button>
+      </div>
+
+      <!-- Header Actions: Legend + Comparison Modal Button -->
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+        <!-- Color-Coded Faction Legend -->
+        <div class="flex flex-wrap items-center gap-2 sm:gap-2.5 bg-parchment-50 border border-parchment-200 rounded-xl px-3 py-1.5">
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
+            <span class="w-3 h-3 rounded-full bg-[#2563EB] ring-2 ring-white shadow-sm inline-block"></span>
+            <span>Pūrus</span>
+          </div>
+          <span class="text-slate-300">|</span>
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
+            <span class="w-3 h-3 rounded-full bg-[#DC2626] ring-2 ring-white shadow-sm inline-block"></span>
+            <span>Bharatas</span>
+          </div>
+          <span class="text-slate-300">|</span>
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
+            <span class="w-3 h-3 rounded-full bg-[#7C3AED] ring-2 ring-white shadow-sm inline-block"></span>
+            <span>Kuru-Pañcāla</span>
+          </div>
+          <span class="text-slate-300">|</span>
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
+            <span class="w-3 h-3 rounded-full bg-[#B45309] ring-2 ring-white shadow-sm inline-block"></span>
+            <span>Dāsas</span>
+          </div>
+          <span class="text-slate-300">|</span>
+          <div class="flex items-center gap-1.5 text-[11px] font-medium text-slate-500" title="Pin outline = evidence grade. Solid = A, dashed = B, dotted + faded = C. Ochre dot = Dāsa attestation at the site. Grey = toponym only.">
+            <span class="w-3 h-3 rounded-full bg-[#64748B] ring-2 ring-white shadow-sm inline-block"></span>
+            <span>Toponym</span>
+            <span class="ml-1 font-mono">A ▬ B ┅ C ┈</span>
+          </div>
+          <span class="text-slate-300">|</span>
+          <div class="flex items-center gap-1.5 text-[11px] font-medium text-slate-500" title="Diamond = ancient-DNA sample on the R-FT361710 line (optional layer, off by default). Solid outline = D1, dashed = D2.">
+            <span class="w-2.5 h-2.5 rotate-45 bg-[#0F766E] ring-2 ring-white shadow-sm inline-block"></span>
+            <span>DNA (FT361710)</span>
+          </div>
+          <span class="text-slate-300">|</span>
+          <div class="flex items-center gap-1.5 text-[11px] font-medium text-slate-500" title="Rounded square = a people the cited text sets against, or at a distance from, the speaker (the RAG calls them non-Vedic; the texts rarely do). Same A / B / C outline code as the pins.">
+            <span class="w-2.5 h-2.5 rounded-[2px] bg-[#44403C] ring-2 ring-white shadow-sm inline-block"></span>
+            <span>Peripheral groups</span>
+          </div>
+        </div>
+
+        <!-- Early vs. Later Vedic Comparison Modal Trigger -->
+        <button onclick="toggleComparisonModal(true)" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-900 hover:bg-amber-800 text-amber-50 text-xs font-bold shadow-sm transition active:scale-95">
+          <svg class="w-4 h-4 text-amber-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          <span>Early vs. Later Vedic Comparison</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE: INTERACTIVE LEAFLET MAP + FLOATING LEFT CONTROLS + RIGHT DOSSIER SIDEBAR -->
+  <main class="flex-1 flex relative overflow-hidden">
+
+    <!-- MAP CONTAINER -->
+    <div class="flex-1 relative h-full">
+      <div id="map"></div>
+
+      <!-- ZOOM BUTTONS -->
+      <div id="zoom-ctl" class="absolute top-3 right-3 sm:top-4 sm:right-4 z-[430] flex flex-col overflow-hidden rounded-xl border border-parchment-300 bg-white shadow-xl select-none">
+        <button type="button" id="zoom-in-btn" onclick="zoomMap(1)" aria-label="Zoom in" title="Zoom in" class="w-10 h-10 text-xl leading-none font-bold text-slate-800 hover:bg-parchment-100 active:bg-parchment-200 transition">+</button>
+        <div class="h-px bg-parchment-200"></div>
+        <button type="button" id="zoom-out-btn" onclick="zoomMap(-1)" aria-label="Zoom out" title="Zoom out" class="w-10 h-10 text-xl leading-none font-bold text-slate-800 hover:bg-parchment-100 active:bg-parchment-200 transition">&minus;</button>
+      </div>
+
+      <!-- LEFT FLOATING CONTROL CARD -->
+      <div id="floating-control-card" class="absolute top-3 left-3 sm:top-4 sm:left-4 z-[420] w-[305px] sm:w-[340px] max-w-[calc(100vw-24px)] bg-white/95 backdrop-blur-md border border-parchment-200 rounded-2xl shadow-xl overflow-hidden transition-all">
+        <!-- Card Header with Collapse Toggle -->
+        <div class="px-3.5 py-2.5 bg-parchment-100/90 border-b border-parchment-200 flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Layers, Factions &amp; Vectors</span>
+          </div>
+          <button id="toggle-controls-btn" onclick="toggleControlCard()" class="p-1 rounded-lg hover:bg-parchment-200 text-slate-600 transition" title="Collapse/Expand Controls" aria-label="Collapse or Expand Controls">
+            <svg id="control-chevron" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Collapsible Controls Body -->
+        <div id="floating-control-body" class="p-3 space-y-3 max-h-[calc(100vh-215px)] overflow-y-auto">
+          <!-- 1. Scripture Layer Filter Pills -->
+          <div>
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              Scripture Layer Filter
+            </div>
+            <div class="flex flex-wrap gap-1" role="group" aria-label="Scripture Layer Filter">
+              <button data-layer="ALL" onclick="setLayerFilter('ALL')" class="layer-pill px-2.5 py-1 rounded-lg text-[11px] font-bold transition bg-slate-900 text-white shadow-2xs">
+                All
+              </button>
+              <button data-layer="L1" onclick="setLayerFilter('L1')" class="layer-pill px-2.5 py-1 rounded-lg text-[11px] font-semibold transition bg-parchment-50 text-slate-700 border border-parchment-300 hover:bg-parchment-100">
+                L1 (Early RV 2–7)
+              </button>
+              <button data-layer="L2" onclick="setLayerFilter('L2')" class="layer-pill px-2.5 py-1 rounded-lg text-[11px] font-semibold transition bg-parchment-50 text-slate-700 border border-parchment-300 hover:bg-parchment-100">
+                L2 (Late RV 1,8–10)
+              </button>
+              <button data-layer="L3" onclick="setLayerFilter('L3')" class="layer-pill px-2.5 py-1 rounded-lg text-[11px] font-semibold transition bg-parchment-50 text-slate-700 border border-parchment-300 hover:bg-parchment-100">
+                L3 (AV / YV)
+              </button>
+              <button data-layer="L4" onclick="setLayerFilter('L4')" class="layer-pill px-2.5 py-1 rounded-lg text-[11px] font-semibold transition bg-parchment-50 text-slate-700 border border-parchment-300 hover:bg-parchment-100">
+                L4 (Brāhmaṇas)
+              </button>
+              <button data-layer="L5" onclick="setLayerFilter('L5')" class="layer-pill px-2.5 py-1 rounded-lg text-[11px] font-semibold transition bg-parchment-50 text-slate-700 border border-parchment-300 hover:bg-parchment-100">
+                L5 (Sūtra/Vedāṅga)
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Faction Pin Toggles -->
+          <div class="pt-2 border-t border-parchment-200">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              Faction Pin Toggles
+            </div>
+            <div class="grid grid-cols-3 gap-1.5 text-[11px]">
+              <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-blue-50/70 border border-blue-200/80 cursor-pointer font-semibold text-slate-800 select-none">
+                <input type="checkbox" id="chk-puru" checked onchange="applyFilters()" class="rounded w-3.5 h-3.5 accent-[#2563EB]" />
+                <span class="w-2 h-2 rounded-full bg-[#2563EB] shrink-0"></span>
+                <span class="truncate">Pūrus</span>
+              </label>
+              <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-red-50/70 border border-red-200/80 cursor-pointer font-semibold text-slate-800 select-none">
+                <input type="checkbox" id="chk-bharata" checked onchange="applyFilters()" class="rounded w-3.5 h-3.5 accent-[#DC2626]" />
+                <span class="w-2 h-2 rounded-full bg-[#DC2626] shrink-0"></span>
+                <span class="truncate">Bharatas</span>
+              </label>
+              <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-purple-50/70 border border-purple-200/80 cursor-pointer font-semibold text-slate-800 select-none">
+                <input type="checkbox" id="chk-kuru" checked onchange="applyFilters()" class="rounded w-3.5 h-3.5 accent-[#7C3AED]" />
+                <span class="w-2 h-2 rounded-full bg-[#7C3AED] shrink-0"></span>
+                <span class="truncate">Kuru-P.</span>
+              </label>
+              <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-amber-50/80 border border-amber-300/80 cursor-pointer font-semibold text-slate-800 select-none">
+                <input type="checkbox" id="chk-dasa" checked onchange="applyFilters()" class="rounded w-3.5 h-3.5 accent-[#B45309]" />
+                <span class="w-2 h-2 rounded-full bg-[#B45309] shrink-0"></span>
+                <span class="truncate">Dāsas</span>
+              </label>
+              <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer font-semibold text-slate-800 select-none col-span-2">
+                <input type="checkbox" id="chk-geo" checked onchange="applyFilters()" class="rounded w-3.5 h-3.5 accent-[#64748B]" />
+                <span class="w-2 h-2 rounded-full bg-[#64748B] shrink-0"></span>
+                <span class="truncate">Toponym-only markers (rivers, soma-places, kuṣṭha, Sadānīrā)</span>
+              </label>
+              <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-stone-100/80 border border-stone-300/80 cursor-pointer font-semibold text-slate-800 select-none col-span-2">
+                <input type="checkbox" id="chk-peri" checked onchange="applyFilters()" class="rounded w-3.5 h-3.5 accent-[#44403C]" />
+                <span class="w-2 h-2 rounded-[2px] bg-[#44403C] shrink-0"></span>
+                <span class="truncate">Peripheral / “non-Vedic” groups (8 sites)</span>
+              </label>
+              <details class="col-span-2 rounded-lg border border-stone-300 bg-stone-100/70 p-2 text-[10px] leading-snug text-stone-900">
+                <summary class="cursor-pointer font-bold">Peripheral groups listed, not plotted</summary>
+                <ul class="list-disc pl-4 mt-1.5 space-y-1">
+                  <li><b>Paṇis and Bṛbu</b> · RV 6.45.31–33, 10.108 · RV 6.45.31 sets Bṛbu above the Paṇis and mentions the Gaṅgā only in a comparison. RV 10.108 (Saramā and the Paṇis) puts the Paṇis across the Rasā in a mythic setting. No place can be fixed. Some scholars treat hymn 6.45 as a composite with late additions (secondary source).</li>
+                  <li><b>Vṛcīvants</b> · RV 6.27.5–7 · three thousand mailed men fall on the Yavyāvatī, after a clash at the Hariyūpīyā, to Abhyāvartin Cāyamāna and Śrñjaya Daivavāta. Not plotted: both rivers are unidentified, and the proposals (the Zhob in north Baluchistan, the Dṛṣadvatī, others) lie several hundred km apart.</li>
+                  <li><b>Śambara, Varcin, Pipru, Cumuri, Dhuni, Namuci</b> · already listed under site 16 (Dāsas).</li>
+                  <li><b>Gandhāris</b> · AVŚ 5.22.14 · named in the same verse as Magadha and Aṅga. The verse gives only the name, and the RAG supplied no pin.</li>
+                  <li><b>Andhras, Puṇḍras, Śabaras, Pulindas, Mūtibas</b> · AB 7.18 (read in Haug’s translation through secondary sources) · cursed sons of Viśvāmitra who rejected Śunaḥśepa’s precedence, called the outermost dasyus. Five peoples and no places in the text. Later identifications run from the Kṛṣṇā–Godāvarī (Andhra) and north Bengal (Puṇḍra) to the Vindhyas (Pulinda, Śabara), and the Mūtibas are uncertain (secondary: B. C. Law, Tribes in Ancient India). One pin would imply a place the text does not give. The RAG gives two reference schemes for this passage (7.18 and 7.34); only 7.18 was checked.</li>
+                  <li><b>Niṣādas</b> · VS 16.27, TS 4.5.4.1, MS 2.9.5 (RAG; not checked) · forest hunters in Rudra’s litany; no toponym. The Vindhyan placement is the RAG’s modern guess.</li>
+                  <li><b>Vrātyas</b> · AVŚ 15, PB 17 (RAG; not checked) · no place named. The RAG pinned them at the Vinaśana (PB 25.10.2), but that passage concerns where the Sarasvatī disappears; the Vrātya link is the RAG’s inference.</li>
+                  <li><b>Śiśnadevas · Auṇavābha and Ahīśuva · Pārāvatas</b> · RV 7.21.5, 10.99.3 · 8.77.2–3 · 8.34.18, 6.61.3 (RAG; not checked) · an exclusion formula, two warlords and a mountain people with no place attached in the RAG’s account.</li>
+                  <li>“Non-Vedic” is the RAG’s framing. In the verses checked, the peoples are set against, or at a distance from, the speaker; none is called non-Vedic in so many words.</li>
+                </ul>
+              </details>
+              <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-teal-50/80 border border-teal-300/80 cursor-pointer font-semibold text-slate-800 select-none col-span-2">
+                <input type="checkbox" id="chk-dna" onchange="applyFilters()" class="rounded w-3.5 h-3.5 accent-[#0F766E]" />
+                <span class="w-2 h-2 rotate-45 bg-[#0F766E] shrink-0"></span>
+                <span class="truncate">Ancient DNA · R-FT361710 line (3 sites)</span>
+              </label>
+              <details class="col-span-2 rounded-lg border border-teal-200 bg-teal-50/60 p-2 text-[10px] leading-snug text-teal-950">
+                <summary class="cursor-pointer font-bold">Same-line samples not placed on the map</summary>
+                <ul class="list-disc pl-4 mt-1.5 space-y-1">
+                  <li><b>I33352 · I33353 · I33362</b> · Andronovo–Alakul steppe label (Akbari 2026) · ~1600 BCE · mtDNA K2a5 (I33353) and T2e2 (I33362) · BAM reads are consistent with FT361710 at one damage-prone site only. Burial sites are not in hand. Candidate regions in a pasted note (E/central Kazakhstan, Minusinsk, the Trans-Urals) rest on autosomal neighbours and lab-ID adjacency and lie about 2,000 km apart, so they are listed and not plotted. (I10140, Aktogai, is on the map as site 22.)</li>
+                  <li>A pin without a known location would claim precision the data does not have. Switch to the map’s own rule: no coordinates, no marker.</li>
+                  <li>Y-line is not a tribe. None of these samples is evidence for any group named in the Saṃhitās.</li>
+                </ul>
+              </details>
+            </div>
+          </div>
+
+          <!-- 2b. Evidence & hydronym layer -->
+          <div class="pt-2 border-t border-parchment-200 space-y-1.5">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Evidence &amp; Rivers</div>
+            <label class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-parchment-50 cursor-pointer text-[11px]">
+              <input type="checkbox" id="chk-anchored" onchange="applyFilters()" class="mt-0.5 rounded w-3.5 h-3.5 accent-slate-800 shrink-0" />
+              <div class="leading-tight">
+                <span class="font-bold text-slate-800 block">Verse-anchored only</span>
+                <span class="text-[10px] text-slate-500">Hide grade-C sites (no toponym in the cited verses)</span>
+              </div>
+            </label>
+            <label class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-parchment-50 cursor-pointer text-[11px]">
+              <input type="checkbox" id="chk-rivers" checked onchange="toggleRivers()" class="mt-0.5 rounded w-3.5 h-3.5 accent-slate-800 shrink-0" />
+              <div class="leading-tight">
+                <span class="font-bold text-slate-800 block">Rivers named in the Nadīstuti</span>
+                <span class="text-[10px] text-slate-500">Modern centre-lines (Natural Earth); Sarasvatī is schematic. Hover for verse.</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- 3. Campaign & Migration Vectors (all are hypotheses) -->
+          <div class="pt-2 border-t border-parchment-200">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                Vectors <span class="normal-case font-semibold text-rose-600">(1–4 are hypotheses; only 5 is stated in a text)</span>
+              </span>
+              <label class="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 cursor-pointer">
+                <input type="checkbox" id="chk-macro-zones" checked onchange="toggleMacroZones()" class="rounded w-3 h-3 accent-slate-700" />
+                <span>Macro-Zones</span>
+              </label>
+            </div>
+
+            <div class="space-y-1.5 text-[11px]">
+              <label class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-parchment-50 border border-transparent hover:border-parchment-200 cursor-pointer transition">
+                <input type="checkbox" id="chk-vec-1" checked onchange="updateVectorVisibility()" class="mt-0.5 rounded w-3.5 h-3.5 accent-[#DC2626] shrink-0" />
+                <div class="leading-tight">
+                  <span id="vec1-title" class="font-bold text-[#B91C1C] block">← Bharata river chain (H1: east → west)</span>
+                  <span class="text-[10px] text-slate-500">Sarasvatī → Vipāś–Śutudrī (RV 3.33) → Paruṣṇī (RV 7.18)</span>
+                </div>
+              </label>
+
+              <label class="flex items-center gap-2 px-1.5 text-[10px] text-slate-600 cursor-pointer">
+                <input type="checkbox" id="chk-flip" onchange="toggleFlip()" class="rounded w-3 h-3 accent-[#DC2626] shrink-0" />
+                <span>Flip to the published west → east reading (H2)</span>
+              </label>
+
+              <details class="mx-1.5 rounded-lg border border-rose-200 bg-rose-50/70 p-2 text-[10px] leading-snug text-rose-950">
+                <summary class="cursor-pointer font-bold">Premises behind the east → west default (H1)</summary>
+                <ol class="list-decimal pl-4 mt-1.5 space-y-1">
+                  <li><b>P1</b> Viśvāmitra is Sudās’s earlier priest, Vasiṣṭha the later (RV 3.53.9, 7.18.21; Witzel and Talageri agree; the EJVS Ravi study reverses it).</li>
+                  <li><b>P2</b> The Vipāś–Śutudrī crossing (RV 3.33) belongs to that Viśvāmitra phase. Sudās is not named in 3.33; the link is via 3.53.9 and the shared cattle (gavya) motive.</li>
+                  <li><b>P3</b> The Paruṣṇī battle belongs to the Vasiṣṭha phase (RV 7.18.21). No verse pairs Viśvāmitra with the Paruṣṇī, Yamunā or Dāśarājña.</li>
+                  <li><b>Geography</b> Beas–Sutlej lies east of the Ravi. P1–P3 + geography ⇒ westward. If P1 fails, the flip (H2) applies.</li>
+                </ol>
+              </details>
+
+              <label class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-parchment-50 border border-transparent hover:border-parchment-200 cursor-pointer transition">
+                <input type="checkbox" id="chk-vec-2" checked onchange="updateVectorVisibility()" class="mt-0.5 rounded w-3.5 h-3.5 accent-[#991B1B] shrink-0" />
+                <div class="leading-tight">
+                  <span class="font-bold text-[#991B1B] block">→ Bharata return to Kurukṣetra</span>
+                  <span class="text-[10px] text-slate-500">Paruṣṇī → Kurukṣetra (AB 8.21 — route not narrated)</span>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-parchment-50 border border-transparent hover:border-parchment-200 cursor-pointer transition">
+                <input type="checkbox" id="chk-vec-3" checked onchange="updateVectorVisibility()" class="mt-0.5 rounded w-3.5 h-3.5 accent-[#2563EB] shrink-0" />
+                <div class="leading-tight">
+                  <span class="font-bold text-[#1D4ED8] block">→ Pūru west → east (hypothesis)</span>
+                  <span class="text-[10px] text-slate-500">Suvāstu ⋯ Paruṣṇī → Sarasvatī → Kurukṣetra. Dotted leg = weakest link.</span>
+                </div>
+              </label>
+
+              <details class="mx-1.5 rounded-lg border border-blue-200 bg-blue-50/70 p-2 text-[10px] leading-snug text-blue-950">
+                <summary class="cursor-pointer font-bold">Premises behind the Pūru west → east line</summary>
+                <ol class="list-decimal pl-4 mt-1.5 space-y-1">
+                  <li><b>P1</b> Pūrus stand at the Paruṣṇī (RV 7.18.13) and dwell on the Sarasvatī (RV 7.96.2). Both verses are Layer 1, so the layers do not say which came first.</li>
+                  <li><b>P2</b> The Pūru line continues into the Kurus: Kuruśravaṇa is called Trāsadasyava, “descendant of Trasadasyu” (RV 10.33.4, Layer 2). Whether kuruśravaṇa is a king’s name is debated.</li>
+                  <li><b>P3</b> Kurukṣetra is the Kuru centre in Layer 4 (site 13; Brāhmaṇa cites unchecked).</li>
+                  <li><b>P4</b> Dotted leg: the Suvāstu (Swat) is a soma-place in a hymn that names Trasadasyu (RV 8.19.36–37, Layer 2). It marks a rite, not a residence, and it is a <em>later</em> layer than the Paruṣṇī and Sarasvatī pins.</li>
+                  <li><b>What the pins show</b> The Pūru-linked pins shift east from L1 to L4 only if P2 holds. The far-west pin (P4) is not the earliest. No verse narrates a Pūru move; west → east is also the usual scholarly model.</li>
+                </ol>
+              </details>
+
+              <label class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-parchment-50 border border-transparent hover:border-parchment-200 cursor-pointer transition">
+                <input type="checkbox" id="chk-vec-4" checked onchange="updateVectorVisibility()" class="mt-0.5 rounded w-3.5 h-3.5 accent-[#7C3AED] shrink-0" />
+                <div class="leading-tight">
+                  <span class="font-bold text-[#6D28D9] block">→ Kuru-Pañcāla expansion</span>
+                  <span class="text-[10px] text-slate-500">Kurukṣetra → Doab → Prācī (grade-C endpoints)</span>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-parchment-50 border border-transparent hover:border-parchment-200 cursor-pointer transition">
+                <input type="checkbox" id="chk-vec-5" checked onchange="updateVectorVisibility()" class="mt-0.5 rounded w-3.5 h-3.5 accent-[#334155] shrink-0" />
+                <div class="leading-tight">
+                  <span class="font-bold text-[#334155] block">→ Videgha Māthava (stated in the text)</span>
+                  <span class="text-[10px] text-slate-500">Sarasvatī → Sadānīrā, ŚB 1.4.1.14–17. Solid line: the only move a Vedic text narrates.</span>
+                </div>
+              </label>
+
+              <details class="mx-1.5 rounded-lg border border-slate-300 bg-slate-50 p-2 text-[10px] leading-snug text-slate-900">
+                <summary class="cursor-pointer font-bold">Ikṣvāku / Aikṣvāka in the Vedic texts (listed, not plotted)</summary>
+                <ul class="list-disc pl-4 mt-1.5 space-y-1">
+                  <li><b>Ikṣvāku</b> · RV 10.60.4 (L2) · prospers “under the rule” (upa vrate) of King Asamāti, lord (satpati) of Bhajeratha. A person, not a dynasty. Asamāti tramples the Paṇis (10.60.6). Bhajeratha ≈ the later Ikṣvāku king Bhagīratha is a name-match hypothesis (same root √bhaj).</li>
+                  <li><b>“The ancient Ikṣvāku”</b> · AVŚ 19.39.9 (L3) · knew the kuṣṭha plant (see site 31). Now a figure of the past.</li>
+                  <li><b>Purukutsa, aikṣvāko rājā</b> · ŚB 13.5.4.5 (L4) · performed an aśvamedha. In the Rigveda he is a Pūru king (Trasadasyu’s father). Here Daurgaha is the sacrificial horse, not his father; “son of Durgaha” is Sāyaṇa’s reading.</li>
+                  <li><b>Hariścandra Vaidhasa Aikṣvāka</b> · AB 7.13.1 (L4) · “a king without a son” (rājā aputraḥ, not “a king’s son” as the RAG split it); the Śunaḥśepa story. No place named.</li>
+                  <li><b>Tryaruṇa Traidhātva Aikṣvāka</b> · PB 13.3.12 (L4) · his chariot kills a Brahmin boy; his priest Vṛśa Vaijāna revives him with a sāman. RV 5.27 has a Tryaruṇa Traivṛṣṇa beside Trasadasyu: same king, different patronymic?</li>
+                  <li><b>Bhagīratha Aikṣvāka</b> · JUB 4.6.1 · not in your index; details unverified (read Oertel’s edition).</li>
+                  <li>No Vedic passage checked so far names a place for an Aikṣvāka or calls a Kosala king Aikṣvāka. Ikṣvāku = Kosala/Ayodhyā is epic and Purāṇic. The stages: a name (RV) → an ancestor (AV) → a clan label applied to kings from other lines (Brāhmaṇas) → the solar dynasty (Purāṇas).</li>
+                </ul>
+              </details>
+            </div>
+          </div>
+
+          <!-- 4. Basemap Switcher -->
+          <div class="pt-2 border-t border-parchment-200 flex items-center justify-between gap-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Basemap</span>
+            <div class="flex items-center bg-parchment-100 rounded-lg border border-parchment-300 p-0.5 text-[11px]">
+              <button id="basemap-topo" onclick="setBasemap('topo')" class="basemap-btn px-2.5 py-1 rounded-md font-bold bg-slate-900 text-white transition">
+                Terrain
+              </button>
+              <button id="basemap-light" onclick="setBasemap('light')" class="basemap-btn px-2.5 py-1 rounded-md font-medium text-slate-600 hover:text-slate-900 transition">
+                Light
+              </button>
+              <button id="basemap-satellite" onclick="setBasemap('satellite')" class="basemap-btn px-2.5 py-1 rounded-md font-medium text-slate-600 hover:text-slate-900 transition">
+                Satellite
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM CHRONOLOGICAL STEPPER BAR -->
+      <div class="absolute bottom-4 left-3 sm:left-4 z-[410] bg-white/95 backdrop-blur-md border border-parchment-200 rounded-2xl shadow-xl px-2.5 sm:px-3.5 py-2 flex flex-wrap sm:flex-nowrap items-center gap-2 max-w-[calc(100vw-24px)]">
+        <button onclick="stepChronology(-1)" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-parchment-100 hover:bg-parchment-200 text-slate-800 text-xs font-bold transition active:scale-95 shrink-0" title="Previous Site">
+          <span>← Prev</span>
+        </button>
+
+        <div class="min-w-[175px] sm:min-w-[235px] max-w-[265px]">
+          <label for="stepper-site-select" class="sr-only">Select Chronological Site</label>
+          <select id="stepper-site-select" onchange="selectSite(Number(this.value), true)" class="w-full px-2.5 py-1.5 rounded-xl bg-parchment-50 border border-parchment-300 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 truncate">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <button onclick="stepChronology(1)" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition active:scale-95 shrink-0" title="Next Site">
+          <span>Next →</span>
+        </button>
+
+        <button onclick="resetMapView()" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-parchment-50 border border-parchment-300 text-slate-700 text-xs font-semibold transition active:scale-95 shrink-0" title="Reset Map View to [30.6, 75.5]">
+          <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+          <span>Reset View</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT SLIDING/DOCKED DOSSIER INSPECTOR PANEL -->
+    <aside id="inspector-sidebar" class="fixed inset-y-0 right-0 z-[500] w-full sm:w-[410px] lg:static lg:w-[420px] xl:w-[445px] bg-white border-l border-parchment-200 shadow-2xl lg:shadow-none flex flex-col transform translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out">
+
+      <!-- Sidebar Top Header -->
+      <div class="px-4 py-3 bg-parchment-50 border-b border-parchment-200 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amber-600"></span>
+          <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">
+            Textual &amp; Geographic Dossier
+          </span>
+        </div>
+
+        <button onclick="toggleMobileDrawer(false)" class="lg:hidden p-2 rounded-xl bg-white border border-parchment-200 text-slate-600 hover:text-slate-900" aria-label="Close Inspector">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- SITE DOSSIER INSPECTOR CONTENT -->
+      <div id="panel-dossier" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+        <!-- Populated dynamically by selectSite(id) -->
+      </div>
+
+      <!-- Sidebar Footer: Quick Site Jump List -->
+      <div class="p-3 bg-parchment-50 border-t border-parchment-200 shrink-0">
+        <label for="quick-site-select" class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+          Inspect Any Location (1–32)
+        </label>
+        <select id="quick-site-select" onchange="selectSite(Number(this.value), true)" class="w-full px-3 py-2 rounded-xl bg-white border border-parchment-300 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900">
+          <!-- Populated dynamically -->
+        </select>
+      </div>
+    </aside>
+  </main>
+
+  <!-- EARLY VS. LATER VEDIC COMPARISON MODAL -->
+  <div id="comparison-modal" onclick="if(event.target === this) toggleComparisonModal(false)" class="fixed inset-0 z-[700] hidden items-center justify-center bg-slate-950/60 backdrop-blur-xs p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="comparison-modal-title">
+    <div class="bg-white border border-parchment-200 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-5 py-4 bg-parchment-50 border-b border-parchment-200 flex items-center justify-between gap-3">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-200">
+            Corpus Diachronic Synthesis
+          </span>
+          <h2 id="comparison-modal-title" class="font-serif text-2xl font-bold text-slate-900 mt-0.5">
+            Early vs. Later Vedic Geography
+          </h2>
+        </div>
+        <button onclick="toggleComparisonModal(false)" class="p-2 rounded-xl bg-white border border-parchment-200 text-slate-600 hover:text-slate-900 transition" aria-label="Close Comparison Modal">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 overflow-y-auto space-y-5 text-xs sm:text-[13px]">
+        <p class="text-slate-600 leading-relaxed">
+          Comparing the early Rigvedic family books (Mandalas 2–7) with the later layers (Late Rigveda, Atharvaveda, Yajurveda Saṃhitās, Brāhmaṇas). The early layer already attests a <strong>river chain</strong> in the Sudās cycle — Paruṣṇī (RV 7.18.8), Vipāś and Śutudrī (RV 3.33), Yamunā (RV 7.18.19) — but <strong>no cited verse states the direction of travel</strong>, so the map treats every campaign or migration arrow as a hypothesis.
+        </p>
+
+        <div class="border border-parchment-200 rounded-2xl overflow-hidden shadow-2xs">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-parchment-100 border-b border-parchment-200 text-slate-900">
+                <th class="p-3 font-bold w-1/4">Dimension</th>
+                <th class="p-3 font-bold text-blue-900 w-[37.5%]">Early Vedic (Layer 1: RV 2–7)</th>
+                <th class="p-3 font-bold text-purple-900 w-[37.5%]">Later Vedic (Layers 2–5)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-parchment-200 text-slate-700">
+              <tr>
+                <td class="p-3 font-bold bg-parchment-50/70 align-top">Where the groups are placed</td>
+                <td class="p-3 align-top leading-relaxed"><strong>Bharatas</strong> on the Sarasvatī–Dṛṣadvatī–Āpayā [RV 3.23.2–4]; <strong>Pūrus</strong> on the Sarasvatī [RV 7.96.2]; Sudās at the Paruṣṇī [RV 7.18.8].</td>
+                <td class="p-3 align-top leading-relaxed"><strong>Madhyadeśa</strong> (Kurukṣetra, Doab) as the Kuru-Pañcāla centre — toponym verses still to be pinned (see site 13–14 notes).</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold bg-parchment-50/70 align-top">Key Rivers Attested</td>
+                <td class="p-3 align-top leading-relaxed">Paruṣṇī [RV 7.18.8], Vipāś &amp; Śutudrī [RV 3.33.1], Yamunā [RV 7.18.19], Sindhu [RV 4.30.12], Sarasvatī/Dṛṣadvatī/Āpayā [RV 3.23.4].</td>
+                <td class="p-3 align-top leading-relaxed">Nadīstuti list Gaṅgā → Suṣomā incl. Vitastā, Asiknī [RV 10.75.5–6]; soma-places Suṣomā, Śaryāṇāvat [RV 8.7.29].</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold bg-parchment-50/70 align-top">Campaign &amp; Migration Vectors</td>
+                <td class="p-3 align-top leading-relaxed">Bharata crossing of Vipāś–Śutudrī [RV 3.33.11–12]; Dāśarājña at the Paruṣṇī [RV 7.18, 7.83]. <em>Direction unattested</em>; both E→W and W→E readings are published. Pūrus: Paruṣṇī [RV 7.18.13] and Sarasvatī [RV 7.96.2], both Layer 1.</td>
+                <td class="p-3 align-top leading-relaxed">Brāhmaṇa memory of Sudās's Aindra Mahābhiṣeka [AB 8.21.11, as cited by the RAG]; Prācī is a <em>direction</em> in the AB quarter scheme [AB 8.14]. Pūru line → Kuru name: Kuruśravaṇa Trāsadasyava [RV 10.33.4, L2]; the Pūru west → east line is a hypothesis.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold bg-parchment-50/70 align-top">Political Geography</td>
+                <td class="p-3 align-top leading-relaxed">Bharata–Pūru hostility attested [RV 7.8.4]; Pūru role at the Dāśarājña is a contested reading of RV 7.18.13.</td>
+                <td class="p-3 align-top leading-relaxed">Kuru-Pañcāla polity. A Pūru–Bharata "merger" is a scholarly inference; the v1 support (RV 1.44.3 <em>purupriya</em> = "beloved of many") does not show it.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold bg-parchment-50/70 align-top">Settlement &amp; Ritual Core</td>
+                <td class="p-3 align-top leading-relaxed">River-bank sacrifice (Agni set on the three rivers, RV 3.23.4); parvata and river imagery.</td>
+                <td class="p-3 align-top leading-relaxed">Fixed altars and Agnicayana (ŚB 6.1 ff. — ritual cosmogony; names no place).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-3 h-3 rounded-full bg-[#B45309] inline-block"></span>
+            <h3 class="font-serif text-xl font-bold text-slate-900">Dāsas: what the verses give, early vs later</h3>
+          </div>
+          <div class="border border-parchment-200 rounded-2xl overflow-hidden shadow-2xs">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-[#FDF3E3] border-b border-parchment-200 text-slate-900">
+                  <th class="p-3 font-bold w-1/5">Layer</th>
+                  <th class="p-3 font-bold">Named figures &amp; terrain</th>
+                  <th class="p-3 font-bold">Geography the verses actually give</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-parchment-200 text-slate-700">
+                <tr>
+                  <td class="p-3 font-bold bg-parchment-50/70 align-top">L1 · RV 2–7</td>
+                  <td class="p-3 align-top leading-relaxed">Śambara [RV 2.12.11, 4.30.14, 6.26.5, 6.31.4, 7.18.20]; Varcin [4.30.15]; Śuṣṇa's forts [4.30.13]; "thirty thousand Dāsas" for Dabhīti [4.30.21]. <strong>Dāsa and Ārya foes are already paired</strong> [RV 7.83.1].</td>
+                  <td class="p-3 align-top leading-relaxed">Śambara in / "from the lofty mountain" (<em>parvata</em>); hundred stone forts razed for Divodāsa [RV 4.30.20]. No named river, valley or mountain.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold bg-parchment-50/70 align-top">L2 · RV 1, 8–10</td>
+                  <td class="p-3 align-top leading-relaxed">Generic "Dāsa and Ārya" foes of Agni [RV 10.69.6].</td>
+                  <td class="p-3 align-top leading-relaxed">samajryā / parvatyā (plain / mountain) describe the <em>treasures</em> won, not where the Dāsas lived.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold bg-parchment-50/70 align-top">L3 · AVŚ / YV</td>
+                  <td class="p-3 align-top leading-relaxed">Cumuri, Dhuni, Namuci [AVŚ 20.37.4–5, as cited by the RAG].</td>
+                  <td class="p-3 align-top leading-relaxed">AVŚ book 20 repeats Rigvedic hymns, so this is not independent Layer-3 evidence; cite the RV source.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold bg-parchment-50/70 align-top">L4 · Brāhmaṇas</td>
+                  <td class="p-3 align-top leading-relaxed">Combat language reused liturgically [AB 5.8, as cited by the RAG; not checked].</td>
+                  <td class="p-3 align-top leading-relaxed">No place data. The shift is semantic/ritual, not a map movement.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-2 text-[11px] text-slate-500 leading-relaxed">
+            Net result for the map: one Dāsa marker (Śambara's mountains, schematic), one Dāsa dot on the Paruṣṇī sites (RV 7.83.1), and a roster of named figures in the Śambara dossier. Anything more specific (Kabul–Swat, a Doab shift) is interpretation, not verse.
+          </p>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-5 py-3 bg-parchment-50 border-t border-parchment-200 flex justify-end">
+        <button onclick="toggleComparisonModal(false)" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition">
+          Close Comparison
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. DATASET — 19 VERSE SITES + 3 ANCIENT-DNA SITES (v2.2) + 8 PERIPHERAL-GROUP SITES (v2.3), EACH WITH AN EVIDENCE GRADE AND PER-VERSE CHECK STATUS
+    //    Peripheral group = a people the cited text sets against, or at a distance from, the speaker's own community.
+    //    “Non-Vedic” is the texts’ framing as the RAG reports it, not a finding of this map.
+    //    Evidence grade (what the *pin* claims, not how good the text is):
+    //      A = a cited verse names the place AND the group together
+    //      B = the place is named in a verse; the group link is an interpretation
+    //      C = no toponym in the cited verses; position is schematic / inferred
+    //    Citation status: ok = verse text checked · sec = secondary source only · rag = as cited by the RAG, unchecked
+    // =========================================================================
+    const GROUP_META = {
+      puru:    { label: 'Pūrus',         color: '#2563EB' },
+      bharata: { label: 'Bharatas',      color: '#DC2626' },
+      kuru:    { label: 'Kuru-Pañcāla',  color: '#7C3AED' },
+      dasa:    { label: 'Dāsas',         color: '#B45309' },
+      geo:     { label: 'Toponym only',  color: '#64748B' },
+      dna:     { label: 'Ancient DNA · R-FT361710', color: '#0F766E' },
+      peri:    { label: 'Peripheral · “non-Vedic”', color: '#44403C' }
+    };
+    const EVIDENCE_META = {
+      A: 'A · Verse names the place and the group together',
+      B: 'B · Place named in a verse; group link is an interpretation',
+      C: 'C · No toponym in the cited verses: schematic / inferred',
+      D1: 'D1 · Called R-FT361710 in the AADR v66 annotation (not re-read at SNP level here)',
+      D2: 'D2 · Provisional: v66 resolves only to R-M417; the FT361710 placement comes from other sources'
+    };
+    const CITE_STATUS = {
+      ok:  { icon: '✓', tip: 'Verse text checked against a published edition / translation' },
+      sec: { icon: '≈', tip: 'Confirmed only via a secondary source' },
+      rag: { icon: '◦', tip: 'As cited by your RAG; not independently checked' }
+    };
+    const LAYER_FULL = {
+      L1: 'Layer 1: Early Rigveda (Mandalas 2–7)',
+      L2: 'Layer 2: Late Rigveda (Mandalas 1, 8–10)',
+      L3: 'Layer 3: Atharvaveda & Yajurveda Saṃhitās',
+      L4: 'Layer 4: Brāhmaṇas, Āraṇyakas & Early Upaniṣads',
+      L5: 'Layer 5: Sūtra / Vedāṅga (BŚS; Nirukta commentary)',
+      D:  'Ancient DNA: calibrated radiocarbon date, not a textual layer'
+    };
+
+    const VEDIC_SITES = [
+      {
+        id: 1, layer: 'L1', group: 'puru', groupLabel: 'Pūrus (Dāśarājña coalition — as usually read)', evidence: 'B',
+        title: 'Paruṣṇī (Ravi) — Pūru side of the Dāśarājña',
+        modernName: 'Ravi River, Punjab (position along the river is schematic)',
+        lat: 31.704, lng: 74.441,
+        movementContext: 'Pūru contingent at the Paruṣṇī · which bank is NOT stated in any cited verse',
+        cites: [['RV 7.018.08','ok'], ['RV 7.083.07','ok'], ['RV 7.018.13','rag'], ['RV 7.008.04','rag'], ['RV 7.018.05','rag'], ['RV 7.019.03','ok']],
+        summary: 'The Paruṣṇī is named in RV 7.18.8; the "ten kings" who pressed Sudās are named in RV 7.83.7–8. Pūru involvement rests on how RV 7.18.13 and 7.8.4 are read.',
+        analysis: 'RV 7.18.8 names the Paruṣṇī and RV 7.83.7–8 describes the ten kings who could not prevail over Sudās (dāśarājñe). The Pūrus are set against the Bharata Agni in RV 7.8.4 and are usually placed in the defeated coalition because of RV 7.18.13. That reading is contested: the EJVS study "Die Zehnkönigsschlacht am Ravifluß" argues the Pūrus may have fought on Sudās\'s side and fallen out only over the spoils. RV 7.19.3 complicates a flat Pūru-hostility reading: it names Sudās, Trasadasyu, the Pūru and Vītahavya together as men Indra helped (kṣetrasātā, “in winning land”). No cited verse says which bank either party held, so the pin sits on the river centre-line.',
+        audit: ['v1 pin was ~33 km from the Ravi, on its east side (Amritsar doab); "north/west bank" is not in any verse. Snapped to the Ravi (Natural Earth 1:10m centre-line).',
+                'v1 called the Pūru "king + ten-tribe confederacy" and "Pūru-led". The verses give "ten kings"; Pūru leadership is not stated.'],
+        dasa: 'RV 7.083.01 (L1): Indra–Varuṇa smite "Dāsa and Ārya" foes while aiding Sudās — the Dāsa/Ārya pairing is already early.',
+        geographyTags: ['Paruṣṇī (Ravi)', 'Dāśarājña', 'Contested Pūru role']
+      },
+      {
+        id: 2, layer: 'L1', group: 'puru', groupLabel: 'Pūrus (regional inference)', evidence: 'C',
+        title: 'Sapta Sindhu plains (regional inference)',
+        modernName: 'Central Punjab river plains (schematic region)',
+        lat: 31.20, lng: 73.10, radiusKm: 130,
+        movementContext: 'Inferred early Pūru habitat · no Pūru-specific toponym verse',
+        cites: [],
+        summary: 'Region placed here from the RAG\'s overview ("Pūrus in the Sapta Sindhu"); no verse in the sample documents ties the Pūrus to this area.',
+        analysis: 'The v1 citations (RV 4.30.11–12, RV 5.32.1–2) concern Indra releasing rivers from the mountain — mythic hydrology, not Pūru habitat. The only verse in the sample documents that places Pūrus on a named river other than the Paruṣṇī is RV 7.96.2 (Sarasvatī). Kept as a schematic region so the early-Punjab claim stays visible but unmistakably unanchored.',
+        audit: ['v1 cited RV 4.030.11–12 and RV 5.032.01–02, neither of which mentions Pūrus or locates them. Citations removed.',
+                'Next RAG query to run: a verse where "pūru" and "sindhu"/"sapta sindhu" co-occur.'],
+        geographyTags: ['Sapta Sindhu', 'Schematic region']
+      },
+      {
+        id: 3, layer: 'L1', group: 'geo', groupLabel: 'Hydronym (no tribe asserted)', evidence: 'A',
+        title: 'Sindhu (Upper Indus)',
+        modernName: 'Indus River, Attock–Mianwali reach',
+        lat: 32.95, lng: 71.55,
+        movementContext: 'River named in L1 and addressed as the mightiest river in the L2 Nadīstuti',
+        cites: [['RV 4.030.12','ok'], ['RV 10.075.06','ok']],
+        summary: 'RV 4.30.12: Indra "spread out" the Sindhu; RV 10.75 (Nadīstuti, e.g. v. 6) addresses the Sindhu among the great rivers.',
+        analysis: 'This is a pure hydronym marker: the verses name the river but attach no tribe to it, so it is drawn in neutral grey instead of the Pūru colour.',
+        audit: ['v1 coloured this Pūru and cited AVŚ 10.2.10 as "Atharvavedic memory of the Sindhu". AVŚ 10.2 is the "who fashioned the parts of man?" hymn and sindhusṛtyāya there most plausibly concerns the body\'s channels; your own Bharatas.docx reads AVŚ 10.2.8–10 as Pūru/puruṣa wordplay. The two RAG answers contradict each other. Removed.',
+                'In RV 4.30.12 the word vitasthānām is a participle ("arrested/spread"), not the river Vitastā (see site 4).'],
+        geographyTags: ['Sindhu (Indus)', 'Nadīstuti']
+      },
+      {
+        id: 4, layer: 'L2', group: 'geo', groupLabel: 'Hydronym (no tribe asserted)', evidence: 'A',
+        title: 'Vitastā (Jhelum)',
+        modernName: 'Jhelum River, western Punjab',
+        lat: 32.92, lng: 73.72,
+        movementContext: 'First attestation in your corpus: the Nadīstuti list (Layer 2)',
+        cites: [['RV 10.075.05','ok']],
+        summary: 'RV 10.75.5 lists the Vitastā between the Marudvṛdhā and the Ārjīkīyā.',
+        analysis: 'Hydronym marker only. The Vitastā is a Late-Rigveda attestation in this dataset, not an Early one.',
+        audit: ['v1 labelled this L1 and cited RV 4.30.11–12 and RV 5.32.1–2. Neither names the Vitastā (RV 4.30.12 has the participle vitasthānām; 5.32 is the Indra–Vṛtra myth). Re-layered to L2, citation replaced by RV 10.75.5.'],
+        geographyTags: ['Vitastā (Jhelum)', 'Nadīstuti']
+      },
+      {
+        id: 5, layer: 'L1', group: 'puru', groupLabel: 'Pūrus (Sarasvatī)', evidence: 'A',
+        title: 'Sarasvatī — the Pūrus "dwell" on her banks',
+        modernName: 'Upper Ghaggar–Sarasvatī reach (Punjab / Haryana, schematic)',
+        lat: 30.15, lng: 76.25,
+        movementContext: 'Pūrus on the Sarasvatī in Layer 1 — the same layer as the Paruṣṇī battle',
+        cites: [['RV 7.096.02','ok'], ['RV 7.019.03','rag']],
+        summary: 'RV 7.96.2 (Vasiṣṭha): "when the Pūrus dwell on your two banks / streams, O beautiful Sarasvatī…" — the explicit Pūru–Sarasvatī verse.',
+        analysis: 'RV 7.96.2 names both the Pūrus and the Sarasvatī in one verse (Layer 1). Jamison & Brereton caution against drawing a Pūru crossing or conquest out of the dual ubhe andhasī. Because this is Layer 1, the verses do not show the Pūrus arriving on the Sarasvatī later than they stood on the Paruṣṇī.',
+        audit: ['v1 cited only "RV Mandalas 6–7", which is not a verse; RV 7.019.03 (Trasadasyu) names no river. Replaced with RV 7.96.2, which the RAG output missed.',
+                'Position along the river is schematic (v1 coordinate kept).'],
+        geographyTags: ['Sarasvatī', 'Pūrus', 'adhikṣiyanti']
+      },
+      {
+        id: 6, layer: 'L2', group: 'geo', groupLabel: 'Toponym (no tribe asserted)', evidence: 'A',
+        title: 'Suṣomā (Soan?) — northern soma-place',
+        modernName: 'Soan River valley, Pothohar Plateau (conventional identification)',
+        lat: 33.52, lng: 73.05,
+        movementContext: 'Named in a Maruts hymn (L2) and in the Nadīstuti (L2)',
+        cites: [['RV 8.007.29','rag'], ['RV 10.075.05','ok']],
+        summary: 'Suṣomā appears among soma-places in RV 8.7.29 (with Śaryāṇāvat, Ārjīka, Pastyāvat) and in the Nadīstuti RV 10.75.5.',
+        analysis: 'Toponym marker only. Identification with the Soan is conventional; some authorities equate Suṣomā with the Indus.',
+        audit: ['v1 coloured this Pūru. RV 8.7.29 is a Maruts hymn and names no tribe. Recoloured neutral.'],
+        geographyTags: ['Suṣomā', 'Soma horizon']
+      },
+      {
+        id: 7, layer: 'L1', group: 'bharata', groupLabel: 'Bharatas (Sarasvatī–Dṛṣadvatī–Āpayā)', evidence: 'A',
+        title: 'Bharata homeland: Sarasvatī–Dṛṣadvatī–Āpayā',
+        modernName: 'Sarasvatī–Dṛṣadvatī–Āpayā basin (Haryana)',
+        lat: 29.85, lng: 76.45,
+        movementContext: 'Where the Bharata fire is set (Devaśravas & Devavāta, Mandala 3)',
+        cites: [['RV 3.023.02','ok'], ['RV 3.023.04','ok'], ['RV 7.018.22','ok'], ['RV 7.008.04','rag']],
+        summary: 'RV 3.23.2 names the two Bharatas Devaśravas and Devavāta who churn Agni; RV 3.23.4 sets that fire "on the Dṛṣadvatī, Āpayā and Sarasvatī".',
+        analysis: 'This is the strongest Bharata anchor in the corpus: group and rivers are named in neighbouring verses of one hymn composed by the Bharatas themselves. RV 7.18.22 calls Sudās the grandson of Devavat; if that is the Devavāta of 3.23.2 (a common but unproven identification), the Bharatas were already on these rivers two generations before the Paruṣṇī battle, which fits an eastern starting point. Whether this region is the start of a westward campaign is still an inference, not a statement of the hymn.',
+        chain: [
+          ['RV 3.23.2, 3.23.4: Bharatas Devaśravas and Devavāta; Agni set on the Dṛṣadvatī, Āpayā and Sarasvatī.', 'A'],
+          ['RV 7.18.22: Sudās is naptā devavataḥ (grandson of Devavat).', 'A'],
+          ['Identification Devavāta = Devavat: widely assumed, not shown by the verses.', 'P'],
+          ['If it holds, Bharata presence on the Sarasvatī precedes the Paruṣṇī battle by about two generations.', 'C']
+        ],
+        audit: ['v1 cited only RV 3.23.4 for "fire of the Bharatas"; the Bharata brothers are named in RV 3.23.2.',
+                'v1 stated "From this eastern core Sudās marched westward" as fact; no verse says so.'],
+        geographyTags: ['Sarasvatī–Dṛṣadvatī–Āpayā', 'Devaśravas · Devavāta']
+      },
+      {
+        id: 8, layer: 'L1', group: 'bharata', groupLabel: 'Bharatas (Viśvāmitra phase: river crossing)', evidence: 'A',
+        title: 'Vipāś–Śutudrī confluence — Viśvāmitra leads the Bharatas across, seeking cattle',
+        modernName: 'Beas–Sutlej confluence (modern channels; Vedic courses debated)',
+        lat: 31.18, lng: 75.01,
+        movementContext: 'Viśvāmitra phase of the Bharata–Sudās campaign · crossing motivated by cattle (gavya) · bank not stated in any verse',
+        cites: [['RV 3.033.01','ok'], ['RV 3.033.03','ok'], ['RV 3.033.11','ok'], ['RV 3.033.12','ok'], ['RV 3.053.09','ok'], ['RV 3.053.11','ok'], ['RV 3.053.12','ok'], ['RV 4.030.11','ok']],
+        summary: "RV 3.33: Viśvāmitra addresses the Vipāś and Śutudrī; the Bharatas, “seeking cattle” (gavyán 3.33.11, gavyávaḥ 3.33.12), cross. RV 3.53.9 adds that Viśvāmitra “conducted Sudās”.",
+        analysis: "Place, group, priest and motive are all in the verses: the two rivers (3.33.1, 3.33.3), the Bharatas who cross (3.33.11–12), the cattle-seeking motive (the same gavya- vocabulary recurs in the Paruṣṇī hymn: 7.18.7, 7.18.14), and Viśvāmitra as priest. Sudās is not named in RV 3.33; he is tied to Viśvāmitra and to a river crossing in RV 3.53.9 and to a horse-release campaign in 3.53.11 (east, west, north), so the Sudās link is an inference through the shared priest, not a co-occurrence (a RAG query finds no verse with Sudās and the Vipāś or Śutudrī). The direction of the crossing is also not stated. A westward reading follows only from the sequence in the chain below plus modern geography (the Beas–Sutlej confluence lies east of the Ravi). The RV 4.30.11 attestation of the Vipāś (Uṣas’s shattered cart) shows the river was known in Maṇḍala 4 as well, with no tribe attached.",
+        chain: [
+          ['RV 3.33.1, 3.33.3, 3.33.11–12: Vipāś and Śutudrī named; Bharatas cross “seeking cattle”.', 'A'],
+          ['RV 3.53.9, 3.53.12: Viśvāmitra “conducted Sudās”; his prayer protects the Bharata people. So the Bharatas of 3.33 and Sudās share Viśvāmitra.', 'B'],
+          ['RV 3.53.11: Sudās’s horse is released to win prāk, apāk, udak (east, west, north). The Viśvāmitra phase is a campaign, not one crossing.', 'B'],
+          ['RV 7.18.21: Vasiṣṭha (with Parāśara, Śatayātu) serves Sudās in the Paruṣṇī hymn. No verse names Viśvāmitra with the Paruṣṇī, Yamunā or Dāśarājña, or Vasiṣṭha with Viśvāmitra (RAG co-occurrence query), so these are two separate priestly phases.', 'B'],
+          ['Premise P1: the Viśvāmitra phase precedes the Vasiṣṭha phase (Witzel and Talageri agree; the EJVS Ravi study argues Viśvāmitra came after).', 'P'],
+          ['Geography: Beas–Sutlej confluence is east of the Ravi. If P1 holds, the campaign runs Vipāś–Śutudrī → Paruṣṇī, i.e. westward.', 'C']
+        ],
+        audit: ['v1 pin (31.52°N, 75.65°E) was ~24 km from the Beas, in the Doaba between rivers, and cited RV 4.30.11–12. Replaced with the confluence named in RV 3.33 and cited 3.33.11–12.',
+                'v1 asserted the crossing was “BEFORE the Dāśarājña” and westward. Both now appear as hypothesis H1 with the premises listed in the chain, rather than as verse statements.',
+                'The RV 4.30.11 Vipāś verse (tribe-free) was missing from v1 and v2.0.'],
+        geographyTags: ['Vipāś (Beas)', 'Śutudrī (Sutlej)', 'Viśvāmitra', 'gavya (cattle)']
+      },
+      {
+        id: 9, layer: 'L1', group: 'bharata', groupLabel: 'Tṛtsu-Bharatas (Dāśarājña)', evidence: 'A',
+        title: 'Paruṣṇī (Ravi) — Sudās and the Tṛtsus',
+        modernName: 'Ravi River, Punjab (position along the river is schematic)',
+        lat: 31.969, lng: 74.802,
+        movementContext: 'Sudās Paijavana, Vasiṣṭha and the Tṛtsus at the Paruṣṇī',
+        cites: [['RV 7.018.08','ok'], ['RV 7.018.09','ok'], ['RV 7.018.05','ok'], ['RV 7.018.21','ok'], ['RV 7.083.04','ok'], ['RV 7.083.08','ok'], ['RV 7.008.04','rag']],
+        summary: 'RV 7.18.8 (Paruṣṇī) and RV 7.83.4–8 (Indra–Varuṇa aid Sudās and the white-robed Tṛtsus against the ten kings).',
+        analysis: 'River, king, tribe and the ten-king battle are all named across RV 7.18 and 7.83. Vasiṣṭha, Parāśara and Śatayātu appear as Sudās’s priests in 7.18.21; Viśvāmitra appears in no Paruṣṇī verse. RV 7.18.5 also has Indra making the swollen waters easy to ford (supārā) for Sudās, the same fording motif as RV 3.33.9. “South/east bank” is not in the verses; this pin and site 1 sit on the same river, ~40 km apart along it, to show the two parties.',
+        chain: [
+          ['RV 7.18.8–9: the Paruṣṇī is the scene of the battle; Sudās and Indra overcome the enemies.', 'A'],
+          ['RV 7.18.21: Vasiṣṭha, Parāśara and Śatayātu as Sudās’s priests, so this is the Vasiṣṭha phase.', 'A'],
+          ['RV 7.18.5: Indra makes the waters fordable for Sudās. Compare RV 3.33.9 (petition, Viśvāmitra phase): the fording motif is shared.', 'B']
+        ],
+        audit: ['v1 pin (31.48°N, 75.05°E) was 16 km from the Beas and 57 km from the Ravi — i.e. on the wrong river. Snapped to the Ravi.',
+                'v1: "decisively breaking Pūru hegemony in the Punjab plains" — hegemony is not stated in the verses.'],
+        dasa: 'RV 7.083.01 (L1): Indra–Varuṇa smite "Dāsa and Ārya" foes while aiding Sudās.',
+        geographyTags: ['Paruṣṇī (Ravi)', 'Sudās Paijavana', 'Tṛtsus']
+      },
+      {
+        id: 10, layer: 'L4', group: 'bharata', groupLabel: 'Bharatas (retrospective, Brāhmaṇa)', evidence: 'C',
+        title: 'Aindra Mahābhiṣeka of Sudās Paijavana (place unattested)',
+        modernName: 'Kurukṣetra–Sarasvatī core (inferred; pin offset a little for legibility)',
+        lat: 29.97, lng: 76.84, dLat: 0.10, dLng: -0.12, radiusKm: 45,
+        movementContext: 'Brāhmaṇa-era memory of a Layer-1 king · no place named in the RAG summary',
+        cites: [['AB 8.021.11','rag'], ['AB 7.034.09','rag']],
+        summary: 'The Aitareya Brāhmaṇa remembers Sudās Paijavana as consecrated with Indra\'s Great Anointing.',
+        analysis: 'Layer here means "text that preserves the memory" (L4), not the date of the event (L1). Neither the sample documents nor the RAG summary give a place for the consecration; Kurukṣetra is an inference, and Vector 2 ("return from the Paruṣṇī") is not narrated in either cited passage as summarised.',
+        audit: ['v1 placed this 6 km from site 13 so the two pins overlapped; offset for legibility.',
+                'v1 Vector 2 joined an L1 battle site to an L4 consecration site with an arrow, implying a continuous march across ~centuries of text history.'],
+        geographyTags: ['Aindra Mahābhiṣeka', 'Retrospective memory']
+      },
+      {
+        id: 11, layer: 'L2', group: 'geo', groupLabel: 'Toponym (location debated)', evidence: 'C',
+        title: 'Śaryāṇāvat (lake / region; location debated)',
+        modernName: 'Traditionally near Kurukṣetra; the RV company (Suṣomā, Ārjīka) suggests the north-west',
+        lat: 30.12, lng: 76.95, radiusKm: 70,
+        movementContext: 'Named only in a list of soma-places (RV 8.7.29)',
+        cites: [['RV 8.007.29','rag']],
+        summary: 'Śaryāṇāvat occurs with Suṣomā, Ārjīka and Pastyāvat in RV 8.7.29; its position is open.',
+        analysis: 'Toponym marker, hatched as uncertain. Later tradition puts Śaryāṇāvat in the Kurukṣetra area; the Rigvedic list-mates are north-western names.',
+        audit: ['v1 built a "Pūru–Bharata reconciliation zone" here on RV 1.44.3, reading purupriya as "dear to the Pūrus". RV 1.44.3 (Praskaṇva Kāṇva) says agnim purupriyam — Agni "beloved of many" (puru- = many). It is not an ethnonym. Reconciliation claim removed.',
+                'The Pūru–Bharata merger into the Kuru is a scholarly inference; none of the verses checked here states it.'],
+        geographyTags: ['Śaryāṇāvat', 'Soma horizon']
+      },
+      {
+        id: 12, layer: 'L1', group: 'bharata', groupLabel: 'Tṛtsus & Bheda (Yamunā)', evidence: 'A',
+        title: 'Yamunā — the Tṛtsus and the defeat of Bheda',
+        modernName: 'Yamuna River, Yamunanagar reach (reach along the river is schematic)',
+        lat: 30.07, lng: 77.339,
+        movementContext: 'Eastern end of the Sudās river chain · direction of travel unstated',
+        cites: [['RV 7.018.19','ok'], ['RV 7.033.03','sec']],
+        summary: 'RV 7.18.19: the Yamunā [people] and the Tṛtsus magnify Indra when Bheda is killed; Aja, Śigru and Yakṣu bring horse-heads.',
+        analysis: 'The Yamunā is attested in Layer 1, inside the Sudās cycle — not only in later layers as the v1 model implied. Together with the Paruṣṇī (7.18.8) and the Vipāś–Śutudrī (3.33) it gives a river chain Paruṣṇī → Vipāś → Śutudrī → Yamunā, west to east, whose order of travel the verses do not state.',
+        audit: ['Replaces v1 site 12 ("Upper Yamunā–Sarasvatī Transition Corridor"). Its cites AVŚ 20.37.3 and TS 2.5.12.4 contain no place name; AVŚ book 20 is almost entirely a Rigveda repetition, so it is not independent Layer-3 evidence, and "advances across the Yamunā into the Doab" is not in either RAG document.'],
+        geographyTags: ['Yamunā', 'Bheda', 'Tṛtsus']
+      },
+      {
+        id: 13, layer: 'L4', group: 'kuru', groupLabel: 'Kuru-Pañcāla (Kurukṣetra)', evidence: 'B',
+        title: 'Kurukṣetra — sacrificial heartland',
+        modernName: 'Kurukshetra plain (between Sarasvatī and Yamunā)',
+        lat: 29.92, lng: 76.88,
+        movementContext: 'Brāhmaṇa-period Kuru centre',
+        cites: [['SB 5.002.05.01','rag'], ['SB 5.002.05.02','rag']],
+        summary: 'Ritual heartland of the Kuru kingdom between the Sarasvatī and Yamunā.',
+        analysis: 'Kurukṣetra is a genuine Brāhmaṇa toponym, but the verses cited by the RAG were not independently checked here. Whether "Pūru" and "Bharata" "no longer exist as rival tribes" is an argument from silence, not something the passages state.',
+        audit: ['v1 also cited SB 6.1.1.3–6 and said it shows the Pūru/Bharata merger; SB 6.1.1 is the Prajāpati/Agnicayana creation passage and names no tribe or place. Removed.',
+                'Next RAG query to run: attestations of kurukṣetra / kuru-pañcālāḥ with verse numbers.'],
+        toVerify: ['Exact SB 5.2.5.1–2 wording (Kurukṣetra toponym) in your corpus.'],
+        geographyTags: ['Kurukṣetra', 'Kuru-Pañcāla']
+      },
+      {
+        id: 14, layer: 'L4', group: 'kuru', groupLabel: 'Kuru-Pañcāla (epic / archaeological tradition)', evidence: 'C',
+        title: 'Hastināpura — not a Vedic-verse site',
+        modernName: 'Hastinapur, Meerut District (Ganga–Yamuna Doab)',
+        lat: 29.16, lng: 78.00, radiusKm: 40,
+        movementContext: 'Epic / Purāṇic Kuru capital; kept as a reference marker only',
+        cites: [],
+        summary: 'Marker for the Kuru seat of the epic tradition and the PGW horizon; no Vedic verse cited here names it.',
+        analysis: 'The v1 cite, SB 6.1.1.5, belongs to the Agnicayana cosmogony and names no place. A Brāhmaṇa-attested Kuru seat is a better anchor if one can be found in your corpus.',
+        audit: ['v1 cited SB 6.1.1.5 for "settled agrarian statehood" in the Doab — the passage does not mention the Doab or any town.'],
+        toVerify: ['Ask the RAG for Āsandīvat (a Kuru seat I believe occurs in the Aśvamedha gāthās) and for Kāmpīla; not checked here.'],
+        geographyTags: ['Doab', 'Reference marker']
+      },
+      {
+        id: 15, layer: 'L4', group: 'kuru', groupLabel: 'Kuru-Pañcāla (direction scheme)', evidence: 'C',
+        title: 'Prācī — "the East" (a direction, not a site)',
+        modernName: 'Eastern Gangetic plain (schematic zone)',
+        lat: 27.50, lng: 80.50, radiusKm: 200,
+        movementContext: 'Aitareya Brāhmaṇa quarter-scheme · schematic',
+        cites: [['AB 8.014.01','rag']],
+        summary: 'AB 8.14 distributes the consecration titles over the quarters; Prācī is the eastern quarter.',
+        analysis: 'A quarter (diś) is a direction relative to a centre, so it cannot be a point. Drawn as a large dashed zone. As I recall, the same chapter places the Kuru-Pañcālas in the middle quarter — a candidate for a proper site once verified.',
+        audit: ['v1 placed a single pin in Awadh as the "furthest eastward imperial consecration horizon". The verse supplies a direction, not a coordinate.'],
+        toVerify: ['AB 8.14: which polities are assigned to which quarter, and the "middle" quarter.'],
+        geographyTags: ['Prācī', 'Quarter scheme']
+      },
+      {
+        id: 16, layer: 'L1', group: 'dasa', groupLabel: 'Dāsas (Śambara — "of the mountain")', evidence: 'C',
+        title: 'Śambara — the Dāsa of the mountains (parvata)',
+        modernName: 'Himalayan / Siwalik foothill belt north of the Punjab (schematic; no mountain is named)',
+        lat: 32.00, lng: 76.30, radiusKm: 150,
+        movementContext: 'Dāsa stronghold "among / from the mountain"; foe of Divodāsa, the Bharata king, in Layer 1',
+        cites: [['RV 2.012.11','ok'], ['RV 4.030.14','ok'], ['RV 6.026.05','ok'], ['RV 6.031.04','ok'], ['RV 6.047.02','ok'], ['RV 6.047.21','ok'], ['RV 7.018.20','ok'], ['RV 7.018.25','ok']],
+        summary: 'Śambara is the best-attested geographic Dāsa in Layer 1: he dwells among mountains (2.12.11), is struck down "from the lofty mountain" (4.30.14; 7.18.20), and loses his forts to Divodāsa (6.26.5; 6.47.2).',
+        analysis: 'The verses give a terrain — parvata — but no named mountain, valley or river, so the marker is a schematic region, not a site. Divodāsa is the Bharata king whose line leads to Sudās (RV 7.18.25 calls him Sudās\'s father in Griffith\'s rendering), which is why the Dāsa conflict is a Bharata-side event here. Other Dāsa/Dasyu figures (below) have no place at all, so they are listed rather than plotted — this keeps the map to one Dāsa colour.',
+        roster: [
+          ['Śambara (Kaulitara)', 'mountain Dāsa/Dasyu; 99–100 forts razed for Divodāsa', 'RV 2.012.11, 4.030.14, 6.026.05, 6.031.04, 6.047.02, 6.047.21–22, 7.018.20'],
+          ['Varcin', 'Dāsa; "a hundred thousand and five" slain', 'RV 4.030.15, 6.047.21'],
+          ['Śuṣṇa (+ Kuyava)', 'Dāsa foe; forts crushed', 'RV 4.030.13 (forts, checked); RV 7.019.02 (names Śuṣṇa and Kuyava; checked against a published translation in v2.2)'],
+          ['Dāsa hosts "for Dabhīti"', 'thirty thousand put to sleep by Indra', 'RV 4.030.21'],
+          ['Pipru', 'with Śambara and Vyaṃsa', 'RV 1.101.02'],
+          ['Cumuri · Dhuni · Namuci', 'Dasyu figures', 'Cumuri and Dhuni: RV 7.019.04 (checked in v2.2; AVŚ 20.37.4–5 repeats it). Namuci: not located in the cited verses — RAG-cited only']
+        ],
+        chain: [
+          ['RV 7.18.20: Indra hurled Śambara down “from the high mountain” (bṛhataḥ … parvata); RV 2.12.11, 4.30.14: he dwells among / falls from the mountain.', 'A'],
+          ['RV 6.26.5, 6.47.2: Divodāsa takes Śambara’s forts, so the conflict sits in the Bharata sphere (RV 7.18.25 names Divodāsa as Sudās’s forebear).', 'B'],
+          ['Bharata sphere = Sarasvatī and Sapta Sindhu rivers (site 7). Mountains adjoining it = Himalayan / Siwalik foothills.', 'C'],
+          ['To pin the Dāsas further west (Kabul, Swat), a chain through Kubhā / Suvāstu-type hydronyms is needed; none is established here.', 'P']
+        ],
+        audit: ['Dasas.docx places the Dāsas in the “Kabul Valley, Swat, Punjab and Sarasvatī basin” and lists RV 7.95 (Sarasvatī “from mountains to the sea”) as Dāsa geography. RV 7.95 names no Dāsa. The Kabul/Swat placement may be a valid inference, but no chain of verses was given, so it is not plotted; the chain above is the template for adding it.',
+                'Dasas.docx reads RV 10.69.6 as "dual geography of the Dāsas". In the verse samajryā/parvatyā qualify vasūni (treasures); Dāsa and Ārya are the foes in the next clause.',
+                'Dasas.docx treats the Dāsa/Ārya pairing as a Late-RV development; RV 7.83.1 (Layer 1) already pairs dāsā and āryāṇi.',
+                'Dasas.docx omits Śambara, the one Dāsa with a verse-level terrain.'],
+        geographyTags: ['Parvata', 'Śambara', 'Divodāsa']
+      },
+      {
+        id: 17, layer: 'L2', group: 'puru', groupLabel: 'Pūrus (hymn-level context, Suvāstu)', evidence: 'B',
+        title: 'Suvāstu (Swat) — soma-place in a hymn of the Pūru king Trasadasyu',
+        modernName: 'Swat River valley, Khyber Pakhtunkhwa (conventional identification of the Suvāstu)',
+        lat: 34.65, lng: 72.25, radiusKm: 60,
+        movementContext: 'Rigvedic hydronym in the far north-west · the tribe link is through the hymn, not the verse',
+        cites: [['RV 8.019.37','rag'], ['RV 8.019.36','rag']],
+        summary: 'RV 8.19.37 invites the god to the pressed soma “over the Suvāstu”. In the RAG’s account the same hymn (8.19.36) names Trasadasyu, the Pūru king.',
+        analysis: 'The verse names the river but no tribe. The Pūru tie rests on hymn context: the neighbouring verse names Trasadasyu, whom the RAG and other hymns treat as a Pūru king. A soma-pressing “on the Suvāstu” locates a rite, not a residence, so this pins Pūru-associated patronage to the Swat valley in Layer 2, not a Pūru settlement. Equating Suvāstu with the Swat is the conventional reading (Macdonell and Keith).',
+        chain: [
+          ['RV 8.19.37: Suvāstu named as the place of the soma.', 'A'],
+          ['RV 8.19.36 (same hymn): Trasadasyu named.', 'B'],
+          ['Trasadasyu = Pūru king (RAG knowledge graph; check against RV 4.42.8–9 and 7.19.3 in the corpus).', 'P'],
+          ['Suvāstu = Swat (conventional identification).', 'C'],
+          ['Result: Pūru-associated patronage reaches the Swat valley in Layer 2.', 'B']
+        ],
+        audit: ['New in v2.1. Replaces the “no verse places Pūrus in the north-west” gap noted for site 2 with a hymn-level chain.',
+                'The RAG returned RV 8.19.37 as “external attributed knowledge” and not from its retrieved passages, so the verse text was not drawn from your corpus index.'],
+        toVerify: ['Retrieve RV 8.19.32–37 from the corpus and confirm Trasadasyu and the Pūru label.'],
+        geographyTags: ['Suvāstu (Swat)', 'Trasadasyu', 'Soma-place']
+      },
+      {
+        id: 18, layer: 'L1', group: 'geo', groupLabel: 'Hydronym (no tribe asserted)', evidence: 'A',
+        title: 'Kubhā (Kabul River) — named with Krumu and Rasā',
+        modernName: 'Kabul River, around Nowshera (conventional identification; mouth at the Indus near Attock)',
+        lat: 34.0, lng: 72.0, radiusKm: 45,
+        movementContext: 'North-western tributary named in the Maruts hymn RV 5.53.9 and in the Nadīstuti',
+        cites: [['RV 5.053.09','rag'], ['RV 10.075.06','rag']],
+        summary: 'RV 5.53.9 names Rasā, Kubhā and Krumu; RV 10.75.6 has the Indus flowing together with Kubhā, Gomatī, Krumu and Mehatnū.',
+        analysis: 'These verses give the Kabul river a place in the Rigvedic horizon but name no tribe. RV 5.53.2 in the same hymn has the word sudāse, which could be the king Sudās or the common noun “to the good giver”; it is not used as evidence here.',
+        chain: [
+          ['RV 5.53.9, 10.75.6: Kubhā named as a tributary of the Sindhu.', 'A'],
+          ['Kubhā = Kabul River (conventional, from the Greek Kophen).', 'C']
+        ],
+        audit: ['New in v2.1. Rigveda 5.53.9 belongs to a Maruts hymn in Book 5, which Witzel and Talageri place apart from the other family books.',
+                'The RAG supplied these verses from outside its retrieved passages (“external attributed knowledge”).'],
+        geographyTags: ['Kubhā (Kabul)', 'Nadīstuti']
+      },
+      {
+        id: 19, layer: 'L1', group: 'geo', groupLabel: 'Hydronym (no tribe asserted)', evidence: 'A',
+        title: 'Krumu and Gomatī (Kurram and Gomal) — Indus tributaries',
+        modernName: 'Kurram River (near Bannu) and Gomal River (near Tank), western bank of the Indus; conventional identifications',
+        lat: 32.6, lng: 70.5, radiusKm: 80,
+        movementContext: 'Western tributaries in RV 5.53.9 (Krumu) and RV 10.75.6 (Krumu, Gomatī)',
+        cites: [['RV 5.053.09','rag'], ['RV 10.075.06','rag']],
+        summary: 'Krumu occurs with Kubhā and Rasā in RV 5.53.9; Krumu and Gomatī both occur in the Nadīstuti verse RV 10.75.6.',
+        analysis: 'Hydronym markers only. They matter because they let the map reach the Kurram–Gomal belt through verse names and not through modern place names; any later tribe placement here needs its own chain.',
+        chain: [
+          ['RV 5.53.9, 10.75.6: Krumu and Gomatī named among the Sindhu’s tributaries.', 'A'],
+          ['Krumu = Kurram, Gomatī = Gomal (conventional identifications).', 'C']
+        ],
+        audit: ['New in v2.1. Identification of Gomatī with the Gomal is standard but the Vedic Gomatī was sometimes read as a stream east of the Indus; marker kept schematic (80 km ring).'],
+        geographyTags: ['Krumu (Kurram)', 'Gomatī (Gomal)', 'Nadīstuti']
+      }
+      ,{
+        id: 20, layer: 'D', group: 'dna', groupLabel: 'Ancient DNA · the R-FT361710 line (Swat)', evidence: 'D2',
+        title: 'Swat Valley — I12457, a provisional FT361710 candidate (1048–920 calBCE)',
+        modernName: 'Swat Valley at Mingora, Khyber Pakhtunkhwa (Loebanr III and Saidu Sharif both lie at or beside Mingora). Your lineage notes name Loebanr; the TheYtree screen names Saidu Sharif for I12457.',
+        lat: 34.78, lng: 72.36, radiusKm: 12,
+        movementContext: 'Earliest sample of this line inside the subcontinent in the set · placement provisional',
+        cites: [['Narasimhan et al. 2019 (Science 365)','sec'], ['AADR v66 annotation','sec'], ['TheYtree × haploGUY screen (project note)','sec']],
+        summary: 'I12457 is the Swat sample your lineage page places on FT361710. The AADR v66 call for it stops at R-M417, so on the data in hand it is a candidate, not a confirmed member of the line.',
+        analysis: 'The 1240K capture panel has no sites below Z94 on this branch, so capture data alone cannot place anyone on FT361710. The screen against TheYtree finds I12457 derived at Z94 and ancestral for Z2124 and Y5, but Y5 lies deep inside L657, so the Y3 side is not excluded, and Y40, Y3 and Y2 are all marked dubious. The date falls in the late Rigvedic to Atharvavedic horizon and the valley is the one the RAG ties to the Suvāstu (site 17). That overlap is chronological and geographic only: no verse and no sample links this man to a tribe named in the Saṃhitās. Other Swat men on the same screen are not pinned: I6891 (Saidu Sharif, 387–208 BCE) is Y40 by elimination only, I2955 is Z93 only, and I12450 (Butkara) was removed because v66 calls him Y3 > Y2.',
+        chain: [
+          ['I12457, Swat, 1048–920 calBCE: AADR v66 Y call R-M417.', 'A'],
+          ['TheYtree screen: Z94 derived; Z2124 and Y5 ancestral; Y3 not excluded.', 'A'],
+          ['FT361710 placement comes from other sources (not re-checked); no capture site can confirm it.', 'P'],
+          ['Pin = the Mingora area of the Swat valley; the exact burial site is not settled between your two notes.', 'C']
+        ],
+        samples: [
+          ['I12457', 'Swat Valley, Loebanr (or Saidu Sharif)', '1048–920 calBCE', 'v66: R-M417 · other sources: FT361710', 'Z94 derived; Y3 side not excluded']
+        ],
+        audit: ['New in v2.2. Marker is a diamond and the DNA toggle is off by default, so the verse map stays verse-only until you switch it on.',
+                'Two notes disagree on the site of I12457 (Loebanr vs Saidu Sharif); the pin sits at Mingora, which covers both.',
+                'No ancient sample is plotted for the other FT361710 nodes (Y40, FT129490, FT130884); only the FT361710 line is shown, as requested.'],
+        toVerify: ['Open the AADR v66 annotation for I12457: site name, date, and the Y-haplogroup call with its method.',
+                   'Find the source that places I12457 on FT361710; no ancient read at an FT361710 SNP is recorded in your screen.'],
+        geographyTags: ['Swat', 'Gandhāra Grave culture', 'FT361710 (provisional)']
+      }
+      ,{
+        id: 21, layer: 'D', group: 'dna', groupLabel: 'Ancient DNA · the R-FT361710 line (Roopkund)', evidence: 'D1',
+        title: 'Roopkund Lake — I6946, called R-FT361710 in AADR v66 (772–893 calCE)',
+        modernName: 'Roopkund (Skeleton) Lake, Chamoli district, Uttarakhand; a high Himalayan lake at about 5,000 m',
+        lat: 30.2625, lng: 79.7311,
+        movementContext: 'Latest sample on the line inside the subcontinent in the set · about 1,800 years after the Swat sample',
+        cites: [['AADR v66 annotation','sec'], ['Illustrative DNA call (project note)','sec'], ['TheYtree × haploGUY screen (project note)','sec']],
+        summary: 'I6946 is called R-FT361710 in AADR v66, matching Illustrative DNA’s earlier call. It dates to 772–893 calCE, long after the Brāhmaṇa layer, so it marks a point in this line’s own history and is not Vedic evidence.',
+        analysis: 'The earlier haploGUY-based screen showed only M417-level derived calls for I6946 and nothing against FT361710; v66 now names FT361710 outright. Roopkund’s skeletons come from several genetically distinct groups, so the lake shows where he died, not where his family lived. The pin is about 850 km east-south-east of the Swat pin, but no arrow joins them: two samples 1,800 years apart give no route.',
+        chain: [
+          ['I6946, Roopkund, 772–893 calCE: AADR v66 Y call R-FT361710.', 'A'],
+          ['The TheYtree screen found nothing that contradicts it (M417-level derived calls only).', 'B'],
+          ['Pin = the lake where the remains were found; this need not be where the lineage lived.', 'C']
+        ],
+        samples: [
+          ['I6946', 'Roopkund Lake, Uttarakhand', '772–893 calCE', 'v66: R-FT361710', 'Agrees with Illustrative DNA']
+        ],
+        audit: ['New in v2.2. I6942, also from Roopkund, is not plotted: haploGUY had it as R-Y928 (L657) but v66 calls it R-M417, so no confirmed Roopkund L657 man exists.'],
+        toVerify: ['Reconcile two notes: the 1240K panel has no sites below Z94 on this branch, yet v66 gives I6946 (and I10140) an FT361710 call. Check the AADR data-type column and how the Y call was made (shotgun reads or a Y-capture panel).'],
+        geographyTags: ['Roopkund', 'Uttarakhand', 'FT361710']
+      }
+      ,{
+        id: 22, layer: 'D', group: 'dna', groupLabel: 'Ancient DNA · the R-FT361710 line (Aktogai, steppe)', evidence: 'D1', offFrame: true,
+        title: 'Aktogai, eastern Kazakhstan — I10140, called R-FT361710 in AADR v66',
+        modernName: 'Aktogai cemetery (area 7) near Aktogay, Ayagoz District, Abai Region (formerly East Kazakhstan). The supplement gives no coordinates; the pin uses a site-level value from a commercial page, about 27 km east of Aktogay town.',
+        lat: 46.9659, lng: 80.0347, radiusKm: 40,
+        movementContext: 'Steppe-side sample of the line · about 1,500 km north-north-east of the Swat pin · date is not directly measured',
+        cites: [['Narasimhan et al. 2019, Suppl. S2.2.3.17','ok'], ['AADR v66 annotation (your lineage page)','sec'], ['dnagenics sample page: coordinates, mtDNA','sec']],
+        summary: 'I10140 is the Aktogai man your lineage page lists as R-FT361710 in AADR v66. Its date is the weak point: the supplement gives only a context date of 1400–1200 BCE for this burial, while four other Aktogai individuals have direct dates of about 1690–1510 calBCE.',
+        analysis: 'The Narasimhan supplement (S2.2.3.17) describes Aktogai area-7 as four stone enclosures with cist graves, and lists I10140 in kurgan 3, burial 1 (south), with a context date of 1400–1200 BCE and no direct date. The 1750–1500 BCE range on your lineage page matches the group-level label used by aggregators. The cemetery was mixed: a commercial page lists another Aktogai man, I4265, as R-S23592, which is on Z2124, the sibling branch of Y40 under Z94. Placing I10140 here is a pin for a sample of this line on the steppe side, not a claim about where the line came from or went.',
+        chain: [
+          ['I10140, Aktogai area-7, kurgan 3 burial 1 (south): AADR v66 Y call R-FT361710 (your lineage page).', 'A'],
+          ['Supplement S2.2.3.17: context date 1400–1200 BCE, no direct date; the other four men have direct dates of 1691–1509 calBCE.', 'A'],
+          ['The date range shown (1750–1500 BCE) is the group-level label; the burial itself could be younger.', 'P'],
+          ['Pin = a site-level coordinate from a commercial page, not from the supplement; ring = 40 km.', 'C']
+        ],
+        samples: [
+          ['I10140', 'Aktogai area-7, kurgan 3, burial 1 (south), Kazakhstan', '1750–1500 BCE (v66 group range) · context date 1400–1200 BCE', 'v66: R-FT361710', 'mtDNA U4a1 per a commercial page; no direct radiocarbon date']
+        ],
+        audit: ['New in v2.2. This marker sits far outside the Vedic frame, so the default view and the layer filters ignore it when fitting the map; pick it from the dropdown to fly there.',
+                'A pasted lookup note names Urzhar District; Aktogay town is in Ayagoz District, and Urzhar village lies about 120 km further east. Its lineage path also puts FT197453 between Z94 and Y40, which conflicts with your TheYtree note (FT197453 under Y3 > Y2), so that path is not used.',
+                'The commercial page for the same sample shows only R-Z93, so the FT361710 call rests on your own v66 read.'],
+        toVerify: ['Read the AADR v66 .anno row for I10140: Lat./Long., date and Y call.',
+                   'Decide which date to show: the AADR range (1750–1500 BCE) or the supplement’s context date (1400–1200 BCE).'],
+        geographyTags: ['Aktogai', 'Kazakhstan MLBA', 'FT361710']
+      }
+      /* ===== v2.3: PERIPHERAL / “NON-VEDIC” GROUPS (from the RAG run of 15 Nov 2026) ===== */
+      ,{
+        id: 23, layer: 'L1', group: 'peri', groupLabel: "Kīkaṭas · Pramaganda (RV 3.53.14)", evidence: 'B',
+        title: "Kīkaṭas and Pramaganda: placed in Gayā / south Bihar by the standard identification",
+        modernName: "Gayā district and south Bihar (Kīkaṭa = Magadha in the standard identification). The verse itself names no place; the ring is schematic.",
+        lat: 24.55, lng: 84.80, radiusKm: 110,
+        movementContext: "Viśvāmitra asks Indra for the wealth of Pramaganda · cattle that give no milk for the soma · place NOT stated in the verse; Bihar comes from later tradition",
+        cites: [['RV 3.053.14','ok'], ['RV 3.053.09','ok'], ['RV 3.053.11','ok'], ['RV 3.053.12','ok'], ['Nirukta 6.32','sec'], ['Vāyu Purāṇa 108.73','sec'], ['Bhāgavata Purāṇa 1.3.24','sec'], ['Sāyaṇa, RV commentary intro (JRAS note)','sec']],
+        summary: "RV 3.53.14 asks what Indra’s cattle are doing among the Kīkaṭas, who give no milk for mixing with the soma (nāśiram) and do not heat the gharma pot, and asks for the wealth of Pramaganda and for the naicāśākha to be delivered up. The verse names no river, mountain or region. The standard identification of the Kīkaṭas with Magadha, with Gayā inside their country, comes from later texts.",
+        analysis: "Tier 1, the hymn: RV 3.53 is a Viśvāmitra hymn. Verse 9 has him conduct Sudās, verse 11 has Sudās’s horse released to win land east, west and north, and verse 12 has his prayer protect the Bharata people. Verse 14 itself names no place, and verse 15 turns to Sasarparī, a gift of Jamadagni, so it may not belong with the Sudās verses. A hymn neighbour is not a location. Tier 2, later tradition: the Nirukta (6.32), as Law reports it, calls Kīkaṭa a country of non-Aryans. It does not say Magadha. The explicit equation comes later: the Vāyu Purāṇa (108.73) has “Kīkaṭeṣu Gayā puṇyā”, the Bhāgavata Purāṇa (1.3.24) has the Buddha born among the Kīkaṭas, and Hemacandra’s Abhidhānacintāmaṇi lists Kīkaṭa and Magadha as names of one country. Many standard works accept Magadha (Law, Tribes in Ancient India; the Vedic Index is cited for it but not checked here), and the pin follows that: grade B, position = the conventional identification, not a verse. Dissent: some historical geographers place the Kīkaṭas much further west, near Kurukshetra, in Haryana or in western Uttar Pradesh or Rajasthan (Witzel, Pandey, Bharadwaj, R. S. Sharma, as summarised on Wikipedia; not checked in the originals). On that reading the hostile Kīkaṭas sit on the Bharatas’ own borders, not 1,000 km away. The ring is wide to reflect that the Rigveda gives no extent.",
+        chain: [
+          ["RV 3.53.14: cattle among the Kīkaṭas that give no āśir and heat no gharma; the vedaḥ (wealth) of Pramaganda; the naicāśākha.", 'A'],
+          ["No river, mountain or region is named in the verse.", 'A'],
+          ["Hymn context (3.53.9, 11, 12): Viśvāmitra, Sudās, the Bharata people. Context is not a place.", 'B'],
+          ["Later tradition equates Kīkaṭa with Magadha and puts Gayā inside it (Vāyu Purāṇa 108.73, Bhāgavata Purāṇa 1.3.24, Hemacandra). This is the standard identification.", 'B'],
+          ["Map position: Gayā district, schematic ring. Not a verse location.", 'C'],
+          ["Premise: the Rigveda hymn and the later Magadha tradition refer to the same people. Disputed by scholars who place the Kīkaṭas in the west.", 'P']
+        ],
+        audit: [
+          "New in v2.3, from your RAG run of 15 Nov 2026 (peripheral groups). Moved from a schematic Punjab ring to Gayā / south Bihar after you pointed out that the mainstream identification is Kīkaṭa = Magadha.",
+          "The RAG says RV 3.53.9–12 describes a horse sacrifice (aśvamedha) for Sudās. The verses checked here release Sudās’s horse (3.53.11) but do not name an aśvamedha.",
+          "The RAG calls Naicāśākha a capital or Pramaganda’s territory. Griffith renders it “the low-born”; whether it is a person, a clan or a place is open. The pin does not rely on it.",
+          "Nirukta 6.32: as Law reports it, it calls Kīkaṭa a non-Aryan country. It does not itself say Magadha. The earliest explicit Kīkaṭa = Magadha statements I found are Purāṇic and Hemacandra’s, all via secondary sources.",
+          "The RAG says Sāyaṇa glosses kīkaṭeṣu as magadheṣu. The only Sāyaṇa remark I found (a JRAS note) calls Pramaganda a king and does not mention Magadha. Not checked in the original.",
+          "Magadha is not named in the Rigveda, and Witzel uses that to argue the Kīkaṭas lay in the west. The pin shows the standard placement; the dissent is in the analysis above."
+        ],
+        toVerify: [
+          "Sāyaṇa on RV 3.53.14: does he say magadheṣu?",
+          "The full Nirukta 6.32 passage.",
+          "Vāyu Purāṇa 108.73 and Bhāgavata 1.3.24 in the editions (taken from Law’s quotation).",
+          "The western-location arguments (Witzel, Pandey, Bharadwaj, R. S. Sharma) in the originals.",
+          "Whether 3.53.14 belongs with verses 9–12 (the next verse changes subject)."
+        ],
+        geographyTags: ['Kīkaṭa', 'Pramaganda', 'Naicāśākha', 'Soma-milk (āśir)', 'Gayā (later tradition)', 'Magadha']
+      }
+      ,{
+        id: 24, layer: 'L1', group: 'peri', groupLabel: "Pakthas · Bhalānas · Alinas · Śivas · Viṣāṇins (RV 7.18.7)", evidence: 'B',
+        title: "Paruṣṇī (Ravi): the peoples who “came together” against Sudās",
+        modernName: "Ravi River, Punjab (third pin on this river, about 32 km downstream of site 1; position along the river is schematic)",
+        lat: 31.50, lng: 74.20,
+        movementContext: "Enemy peoples named one verse before the Paruṣṇī · which bank is NOT stated",
+        cites: [['RV 7.018.07','ok'], ['RV 7.018.08','ok'], ['RV 7.018.09','ok'], ['RV 7.018.05','ok'], ['RV 7.018.13','ok'], ['RV 7.083.07','ok']],
+        summary: "RV 7.18.7 lists the Pakthas, Bhalānas, Alinas, Śivas and Viṣāṇins as coming together; RV 7.18.8–9 then has the foe try to waste the Paruṣṇī’s waters and perish at it.",
+        analysis: "The peoples are in verse 7 and the river in verse 8, so the link is by neighbouring verses of one hymn (grade B). The hymn does not call these peoples non-Vedic or non-sacrificing: it sets them against Sudās and the Tṛtsus, and the same hymn lists the Anus, Druhyus and the Pūru among the defeated (7.18.12–14), so this is a coalition of rivals, not a clean outsider category. The RAG gives the epithets ayajyu, anindra, avrata, adevayu and mṛdhravāc for this hymn. The English text checked has “unmanly babblers” in 7.18.9 and “Indra’s denier” in 7.18.16, which may translate such words, but the Sanskrit forms were not checked here. Site 1 (the Pūru side) and site 9 (Sudās) are on the same river; which bank each party held is not in any verse.",
+        chain: [
+          ["RV 7.18.7: the Pakthas, Bhalānas, Alinas, Śivas and Viṣāṇins come together.", 'A'],
+          ["RV 7.18.8–9: the Paruṣṇī is named; the foes perish at it. RV 7.18.5 adds Śimyu cursing the rivers’ fury.", 'A'],
+          ["Neighbouring verses of one hymn tie the peoples to the river.", 'B'],
+          ["Position on the river is schematic (Ravi centre-line); no bank is stated.", 'C']
+        ],
+        audit: [
+          "New in v2.3.",
+          "The RAG lists these five peoples as “the Ten-King Coalition”. RV 7.83.7 numbers the ten kings without naming them, and no verse equates these five peoples with them.",
+          "The RAG’s citation range RV 7.18.5–19 is wider than what supports the pin; narrowed to 7.18.5, 7, 8, 9 and 13."
+        ],
+        toVerify: ["Which verse carries each of the epithets the RAG lists for 7.18 (ayajyu, anindra, avrata, adevayu, mṛdhravāc)."],
+        geographyTags: ['Paruṣṇī (Ravi)', 'Pakthas', 'Bhalānas', 'Alinas', 'Śivas', 'Viṣāṇins', 'Śimyu']
+      }
+      ,{
+        id: 25, layer: 'L1', group: 'peri', groupLabel: "Ajas · Śigrus · Yakṣus (RV 7.18.19)", evidence: 'A',
+        title: "Yamunā: Ajas, Śigrus and Yakṣus bring horses’ heads after Bheda falls",
+        modernName: "Yamuna River, Yamunanagar reach (about 26 km downstream of site 12; position along the river is schematic)",
+        lat: 29.88, lng: 77.20,
+        movementContext: "Peoples named in the same verse as the Yamunā · the Tṛtsu half of this verse is site 12",
+        cites: [['RV 7.018.19','ok'], ['RV 7.018.18','ok']],
+        summary: "RV 7.18.19: the Yamunā [people] and the Tṛtsus magnify Indra when Bheda is killed, and the Ajas, Śigrus and Yakṣus bring him horses’ heads (balim: tribute in Griffith, an offering in Sāyaṇa).",
+        analysis: "The verse names the Yamunā, the Tṛtsus, Bheda and these three peoples together (grade A). Site 12 shows the Yamunā–Tṛtsu half; this pin shows the other party. The word balim can mean tribute or offering, so “subdued” is one reading and not the verse’s own statement. The verse does not call the three peoples dasyus or non-sacrificers; they appear as parties to the Bheda episode. No verse says where along the river they lived, so the pin only shows the Yamunā.",
+        chain: [
+          ["RV 7.18.19: the Yamunā and the Tṛtsus aid Indra; Bheda is stripped of his treasures; the Ajas, Śigrus and Yakṣus bring horses’ heads.", 'A'],
+          ["balim: tribute (Griffith) or offering (Sāyaṇa as translated by Wilson). “Subdued” is a reading.", 'B'],
+          ["Position along the Yamunā is schematic.", 'C']
+        ],
+        audit: [
+          "New in v2.3. Replaces the RAG’s “Yamunā Coalition” row, which lists RV 7.18.19 as ayajvan / dasyu / anyavrata. None of those words is in the verse (Sanskrit checked).",
+          "The RAG says Bheda was “slain” and the tribes “subdued”; the verse says Bheda was stripped of treasures (muṣāyat) and the three peoples brought heads of horses."
+        ],
+        geographyTags: ['Yamunā', 'Bheda', 'Ajas', 'Śigrus', 'Yakṣus']
+      }
+      ,{
+        id: 26, layer: 'L2', group: 'peri', groupLabel: "Kṛṣṇa, the “black” foe (RV 8.96.13–15)", evidence: 'A',
+        title: "Aṃśumatī: Kṛṣṇa (the “black drop”) and the ten thousand",
+        modernName: "Aṃśumatī: identification open (the RAG says a Punjab stream or a Yamunā tributary). The ring is laid on the Yamunā plain and its position inside it is arbitrary.",
+        lat: 29.45, lng: 77.10, radiusKm: 110,
+        movementContext: "A named foe and a named river in the same verses · where the Aṃśumatī lies cannot be fixed",
+        cites: [['RV 8.096.13','ok'], ['RV 8.096.14','ok'], ['RV 8.096.15','rag']],
+        summary: "RV 8.96.13–14: a dark foe, which Griffith renders the “Black Drop” (dṛpsá kṛṣṇá), is set on the Aṃśumatī with ten thousand round about, and the poet sees him on the river’s slope. Indra’s and Bṛhaspati’s destruction of him is in verse 15, which the RAG cites and which was not read here.",
+        analysis: "Whether kṛṣṇa is a personal name (an asura Kṛṣṇa, as the RAG and the tradition take it) or the adjective “black” qualifying “drop”, as Griffith renders it, is a choice between readings. Either way the verses put a hostile force on the Aṃśumatī. The RAG’s “non-Vedic warlord with 10,000 troops” goes beyond the words: the foe is Indra’s enemy, and the verses do not say he stands outside the ritual community or that the ten thousand are soldiers. The river is named, so the pin is grade A, but because its identification is open the ring is wide (110 km) and it sits on the Yamunā plain only because later commentary is said to equate the Aṃśumatī with the Yamunā (not checked here). Hymn 8.96 is Late Rigveda.",
+        chain: [
+          ["RV 8.96.13–14: the Aṃśumatī is named; the dark foe and the ten thousand are there.", 'A'],
+          ["Kṛṣṇa as a person or as “black” with “drop”: translators differ.", 'B'],
+          ["Aṃśumatī = Yamunā or a tributary of it: RAG and later commentary, not checked.", 'P'],
+          ["The ring is placed on the Yamunā plain; the centre point is arbitrary.", 'C']
+        ],
+        audit: [
+          "New in v2.3.",
+          "The RAG says “10,000 troops encamped” and “destroyed by Indra and Bṛhaspati”. The English text checked says he advances with ten thousand round about; the destruction is verse 15, not read here."
+        ],
+        toVerify: [
+          "RV 8.96.13–15 in Sanskrit: is kṛṣṇa a name or an adjective, and what are the ten thousand?",
+          "Where Sāyaṇa and later authors put the Aṃśumatī."
+        ],
+        geographyTags: ['Aṃśumatī', 'Kṛṣṇa', 'Late Rigveda']
+      }
+      ,{
+        id: 27, layer: 'L3', group: 'peri', groupLabel: "Magadhas (AVŚ 5.22.14)", evidence: 'B',
+        title: "Magadha: one of the peoples to whom the fever is handed over",
+        modernName: "Magadha, southern Bihar (Gaya–Rajgir–Patna belt; the conventional identification of the name)",
+        lat: 25.00, lng: 85.30, radiusKm: 90,
+        movementContext: "Far east in the Atharvaveda fever charm · named with the Gandhāris, Mūjavants and Aṅgas",
+        cites: [['AVŚ 5.022.14','ok'], ['VS 30.22','rag'], ['VS 30.08','rag']],
+        summary: "AVŚ 5.22.14 hands the fever over to the Gandhāris, Mūjavants, Aṅgas and Magadhas, as one sends a treasure to someone.",
+        analysis: "The verse names a people. Magadha as south Bihar is the conventional identification of the name, not something the verse states (grade B). The charm sends a fever away to peoples at a distance from the speaker. Nothing in it says they were non-Vedic, outcast or non-sacrificing. The “outcast bard” reading comes from the Puruṣamedha list (VS 30.22, as the RAG gives it; unchecked), where Magadha is one of the categories offered. The equation Kīkaṭa = Magadha is later (see site 23); AVŚ 5.22 does not mention the Kīkaṭas.",
+        chain: [
+          ["AVŚ 5.22.14: the Gandhāris, Mūjavants, Aṅgas and Magadhas are named as recipients of the fever.", 'A'],
+          ["Magadha = south Bihar: the conventional identification of the ethnonym.", 'C'],
+          ["“Non-Vedic” or “outcast” status is not in the verse; it comes from other texts as the RAG reads them.", 'P']
+        ],
+        audit: [
+          "New in v2.3.",
+          "The RAG’s row says “takman-recipients, atikrūṣṭa”. The first is in AVŚ 5.22.14; the second comes from VS 30.22, which was not checked.",
+          "The same verse names the Gandhāris, whom the RAG did not pin. They are not plotted here (north-west, near Kubhā, site 18)."
+        ],
+        toVerify: ["VS 30.22 and 30.8: how Magadha appears in the Puruṣamedha list."],
+        geographyTags: ['Magadha', 'Takman charm', 'Far east']
+      }
+      ,{
+        id: 28, layer: 'L3', group: 'peri', groupLabel: "Aṅgas (AVŚ 5.22.14)", evidence: 'B',
+        title: "Aṅga: named with Magadha in the fever charm",
+        modernName: "Aṅga, eastern Bihar (Bhagalpur–Munger area; the conventional identification of the name)",
+        lat: 25.25, lng: 87.00, radiusKm: 70,
+        movementContext: "Far east in the Atharvaveda fever charm · same verse as Magadha",
+        cites: [['AVŚ 5.022.14','ok']],
+        summary: "AVŚ 5.22.14 names the Aṅgas beside the Magadhas among the peoples to whom the fever is committed.",
+        analysis: "Same verse and same caveats as site 27: a people is named, the position is the conventional identification of the name, and the verse does not call the Aṅgas non-Vedic. The pin sits about 160 km east of the Magadha pin.",
+        chain: [
+          ["AVŚ 5.22.14: the Aṅgas are named among the recipients of the fever.", 'A'],
+          ["Aṅga = the Bhagalpur–Munger area of east Bihar: conventional identification.", 'C']
+        ],
+        audit: [
+          "New in v2.3. The RAG gives “Eastern Bihar / Bengal (Bhagalpur, Munger)”. The ring is centred on the Bhagalpur–Munger area only.",
+          "The RAG’s cite AVŚ 5.22.14 is confirmed against Bloomfield’s and Whitney’s translations."
+        ],
+        geographyTags: ['Aṅga', 'Takman charm', 'Far east']
+      }
+      ,{
+        id: 29, layer: 'L3', group: 'peri', groupLabel: "Mūjavants · Mahāvṛṣas (AVŚ 5.22)", evidence: 'B',
+        title: "Mūjavants and Mahāvṛṣas: the fever’s “home” in the far north",
+        modernName: "Hindukush–Karakoram–Pamir belt. The name belongs to a mountain, Mūjavat; its identification is conventional and loose, so the ring is wide.",
+        lat: 36.4, lng: 71.8, radiusKm: 250,
+        movementContext: "Far north in the Atharvaveda fever charm · mountain peoples as the speaker’s “other regions”",
+        cites: [['AVŚ 5.022.05','ok'], ['AVŚ 5.022.07','ok'], ['AVŚ 5.022.08','ok'], ['AVŚ 5.022.14','ok'], ['SB 2.006.02.17','rag']],
+        summary: "AVŚ 5.22.5 and 5.22.8 give the Mūjavants and the Mahāvṛṣas as the fever’s kin and home; 5.22.7 sends it to the Mūjavants or to the Balhikas “farther away”; 5.22.14 lists the Mūjavants among the recipients.",
+        analysis: "The Mūjavants are the people of a mountain called Mūjavat. The RAG places it in the Hindukush–Pamir belt, and an old proposal links the name to the Muztagh range (not checked here). The verses give only that these peoples are far from the speaker, and verse 7 ranks the Balhikas beyond them. The Mahāvṛṣas are named with the Mūjavants in verses 5 and 8, so they are placed with them. Nothing in the verses calls any of these peoples non-Vedic or outcast; the RAG’s “outcasts, boundary-dwellers” is a reading.",
+        chain: [
+          ["AVŚ 5.22.5, 8: the Mūjavants and the Mahāvṛṣas are the fever’s home and kin.", 'A'],
+          ["AVŚ 5.22.7: the Balhikas are “farther away” than the Mūjavants.", 'A'],
+          ["Mūjavat = the mountains of the far north or north-west: conventional and loose.", 'C']
+        ],
+        audit: [
+          "New in v2.3.",
+          "The RAG pins “Mount Mūjavant, Northern Badakhshan”. No verse supports a position that precise, so the marker is a wide ring over the whole belt.",
+          "The RAG cites AVŚ 5.22.5 and 5.22.7 only; 5.22.8 and 5.22.14 also name the Mūjavants."
+        ],
+        toVerify: ["SB 2.6.2.17 (the RAG’s second source): what it says about Mūjavat."],
+        geographyTags: ['Mūjavat', 'Mahāvṛṣas', 'Takman charm', 'Far north']
+      }
+      ,{
+        id: 30, layer: 'L3', group: 'peri', groupLabel: "Balhikas (AVŚ 5.22)", evidence: 'B',
+        title: "Balhika: the farthest place the fever is sent",
+        modernName: "Bactria (Balkh, northern Afghanistan; the conventional identification of the name)",
+        lat: 36.75, lng: 66.90, radiusKm: 150,
+        movementContext: "Beyond the Mūjavants in the fever charm · the far north-west horizon",
+        cites: [['AVŚ 5.022.05','ok'], ['AVŚ 5.022.07','ok'], ['AVŚ 5.022.09','ok']],
+        summary: "AVŚ 5.22.5: the fever is at home among the Balhikas; 5.22.7: it is sent to the Mūjavants or the Balhikas “farther away”; 5.22.9: it is made to go to the Balhikas.",
+        analysis: "Balhika = Bactria is the conventional identification. The verses say only “farther away”, so the pin marks the far north-west horizon of the charm and not a precise place. The verses do not call the Balhikas non-Vedic.",
+        chain: [
+          ["AVŚ 5.22.5, 7, 9: the Balhikas are named as the fever’s farthest destination.", 'A'],
+          ["Balhika = Bactria (Balkh): conventional identification.", 'C']
+        ],
+        audit: ["New in v2.3. The RAG cites only AVŚ 5.22.7; 5.22.5 and 5.22.9 also name the Balhikas."],
+        geographyTags: ['Balhika', 'Bactria', 'Takman charm', 'Far north-west']
+      }
+      ,{
+        id: 31, layer: 'L3', group: 'geo', groupLabel: "Plant habitat (no tribe asserted)", evidence: 'B',
+        title: "Kuṣṭha, the fever-plant: born on the Himavat",
+        modernName: "Western Himalaya, schematic (Kashmir–Himachal, where Saussurea costus grows). The verses name the Himavat, not a peak.",
+        lat: 34.10, lng: 75.00, radiusKm: 220,
+        movementContext: "Born “in the north from the Himavat”, carried “to the people in the east” (AVŚ 5.4.8) · a remedy for takman, the fever AVŚ 5.22 sends to the Mūjavants (site 29)",
+        cites: [['AVŚ 5.004.01','ok'], ['AVŚ 5.004.02','ok'], ['AVŚ 5.004.08','ok'], ['AVŚ 19.039.08','ok'], ['AVŚ 19.039.09','sec'], ['AVŚ 5.022.05','ok'], ['ŚB 1.8.1.6','rag'], ['AVŚ 6.095','rag']],
+        summary: "AVŚ 5.4.1: kuṣṭha was “born on the mountains”, the strongest of plants, the destroyer of takman (fever). 5.4.2: born on the mountain where eagles hatch, from the Himavat; people come to it with wealth. 5.4.8: “born in the north from the Himavat, you are brought to the people in the east”. AVŚ 19.39.8: kuṣṭha was born where the ship slid down, on the Himavat’s summit.",
+        analysis: "This marks where the Atharvaveda says a plant grows, not where a people lived, so it is drawn in neutral grey as a toponym. The text names the Himavat but no peak; the ring is placed where the real plant (Saussurea costus) grows at high altitude in the western Himalaya, which is an inference from botany, not from the verse. AVŚ 5.4.8 adds the one directional fact: the plant is born in the north and carried east to the people, and verse 2 has people coming to it with wealth. Read together, the hymn describes kuṣṭha as a traded mountain medicine reaching the plains. Which people count as “the east” is relative to the poet and is not stated. The ship in AVŚ 19.39.8 is mythic: in 19.39.7 (and 5.4.4–5) golden ships carry kuṣṭha from heaven, and verse 8 brings the ship down on the Himavat’s summit. Later texts (ŚB 1.8.1.6, as reported) link a northern mountain with Manu’s flood ship; reading that link into AVŚ 19.39 is an inference.",
+        chain: [
+          ["AVŚ 5.4.1: kuṣṭha “born on the mountains” (giriṣu), destroyer of takman.", 'A'],
+          ["AVŚ 5.4.2 and 5.4.8: born “from the Himavat”, “in the north”; brought “to the people in the east”.", 'A'],
+          ["AVŚ 19.39.8: born where the ship slid down (nāvaprabhraṃśana), on the Himavat’s summit. The same refrain gives kuṣṭha heavenly birthplaces in verses 6–7.", 'A'],
+          ["The real plant (Saussurea costus) grows at high altitude in the western Himalaya, especially Kashmir.", 'C'],
+          ["Ring placed on the western Himalaya; no peak is named in any verse.", 'C'],
+          ["Premise: the Atharvavedic kuṣṭha is Saussurea costus (the standard identification; Greek kostos and Latin costus are thought to derive from the same word).", 'P']
+        ],
+        audit: [
+          "New in v2.5. You asked for this zone after the AVŚ 19.39.8 discussion; AVŚ 5.4 was pulled from your RAG first so the citations are checked.",
+          "AVŚ 5.4 (Book 5) is older than AVŚ 19.39 (Book 19 is a late supplement), so 19.39 is not the earliest kuṣṭha passage. The mountain origin is already in 5.4.1–2.",
+          "The RAG’s note on 19.39.8 says ŚB 1.8.1.6 calls the peak “Manor avasarpaṇam or Nāvaprabhraṃśana”. As far as I know the Śatapatha says only manor avasarpaṇam; the name Naubandhana for the peak is from the Mahābhārata. Unchecked, marked ◦.",
+          "AVŚ 19.39.9 (“whom the ancient Ikṣvāku knew… whom Mātsya knew”) was checked against a published edition, not your corpus (≈).",
+          "Kuṣṭha is often counted among the non-Indo-European loanwords in Sanskrit. A plant name says the poets were in contact with people who knew the plant; it does not say who the Ikṣvākus or Pūrus were."
+        ],
+        toVerify: [
+          "AVŚ 6.95 (another kuṣṭha hymn): does it name a place?",
+          "ŚB 1.8.1.6: the exact wording for the mountain where Manu’s ship came to rest.",
+          "AVŚ 19.39.9 through the verse route, to confirm it is in your corpus."
+        ],
+        geographyTags: ['Kuṣṭha', 'Himavat', 'Takman', 'Nāvaprabhraṃśana', 'Ancient Ikṣvāku (AVŚ 19.39.9)']
+      }
+      ,{
+        id: 32, layer: 'L4', group: 'geo', groupLabel: "Boundary river · Kosala | Videha (ŚB 1.4.1.17)", evidence: 'B',
+        title: "Sadānīrā: the boundary of the Kosalas and the Videhas",
+        modernName: "Gandak or Rāpti (the Sadānīrā’s identification is debated). Kosala to the west, Videha to the east; the ring spans both rivers.",
+        lat: 26.75, lng: 83.95, radiusKm: 110,
+        movementContext: "End point of the only Vedic migration the text itself narrates: Videgha Māthava follows Agni east (prāṅ) from the Sarasvatī to the Sadānīrā",
+        cites: [['ŚB 1.4.1.14','ok'], ['ŚB 1.4.1.15','ok'], ['ŚB 1.4.1.16','ok'], ['ŚB 1.4.1.17','ok'], ['ŚB 13.5.4.4','rag']],
+        summary: "ŚB 1.4.1.14–17: Videgha Māthava was on the Sarasvatī. Agni Vaiśvānara went burning eastward over the earth, with Gotama Rāhūgaṇa and Videgha Māthava following. He burnt over all the rivers except the Sadānīrā, which flows from the northern mountain; formerly Brahmins did not cross it. Agni told Māthava to live east of it, and “even now this river is the boundary (maryādā) of the Kosalas and the Videhas, for they are the Māthavas.”",
+        analysis: "This is the one Vedic passage that narrates a movement with a direction, a start and an end: from the Sarasvatī, eastward (prāṅ, prācīnam), to the Sadānīrā. It also names two peoples on either side of a named river, which is why it is grade B rather than C: the only uncertainty is which modern river the Sadānīrā is (Gandak or Rāpti). The passage is a Brāhmaṇa legend about how Agni (and with him sacrifice) came east, told by Brahmins who say there are “now many Brahmins east of it” and that the land was formerly uncultivated and marshy; it is a memory of expansion as the Brāhmaṇa period told it, not a dated event. Gotama Rāhūgaṇa, the priest who follows Agni, is the seer to whom tradition assigns a group of Rigveda Maṇḍala 1 hymns. The Kosalas are a people here, not a dynasty: no Vedic passage checked so far calls a Kosala king an Ikṣvāku; that link is later (epics, Purāṇas). ŚB 13.5.4.4 names a Kosala king, Para Āṭṇāra (unchecked).",
+        chain: [
+          ["ŚB 1.4.1.14: Videgha Māthava on the Sarasvatī; Agni goes burning eastward (prāṅ); the Sadānīrā flows from the northern mountain and is not burnt over.", 'A'],
+          ["ŚB 1.4.1.15–16: formerly Brahmins did not cross it; now many Brahmins live east of it; the land was uncultivated and marshy and is now cultivated.", 'A'],
+          ["ŚB 1.4.1.17: Agni: “east of this be your abode”; the river is now the boundary of the Kosalas and the Videhas.", 'A'],
+          ["The Sadānīrā is identified with the Gandak (more often) or the Rāpti; the ring covers both.", 'B'],
+          ["Premise: the Sadānīrā of the legend is a real river the Brāhmaṇa’s audience knew as a boundary.", 'P']
+        ],
+        audit: [
+          "New in v2.6, from your RAG export of ŚB 1.4.1.14–17 (text matches Eggeling’s edition).",
+          "RAG segmentation error in 1.4.1.15: taddhā kṣetrataram should be tad dha akṣetrataram, “very uncultivated” (the next verse has kṣetrataram, “cultivated”). The RAG’s translation got the sense right but the split wrong. Added to the gold test set.",
+          "The RAG lists the Karatoyā as an alternative for the Sadānīrā; the usual candidates are the Gandak and the Rāpti.",
+          "Videgha is the older form of Videha (inferred, standard).",
+          "No Ikṣvāku or Aikṣvāka king is named in this passage."
+        ],
+        toVerify: [
+          "ŚB 13.5.4.4 (Para Āṭṇāra, Kosala king) through the verse route.",
+          "Any Vedic passage that calls a Kosala king Aikṣvāka."
+        ],
+        geographyTags: ['Sadānīrā', 'Kosala', 'Videha', 'Videgha Māthava', 'Gotama Rāhūgaṇa', 'Agni Vaiśvānara']
+      }
+    ];
+    VEDIC_SITES.forEach(s => { s.color = GROUP_META[s.group].color; s.layerFull = LAYER_FULL[s.layer]; });
+
+    // =========================================================================
+    // 2. INITIALIZE LEAFLET MAP & BASEMAPS
+    // =========================================================================
+    const INITIAL_CENTER = [30.6, 75.5];
+    const INITIAL_ZOOM = 6;
+
+    const basemaps = {
+      topo: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, METI/TomTom',
+        maxZoom: 17
+      }),
+      light: L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19
+      }),
+      satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP',
+        maxZoom: 17
+      })
+    };
+
+    const map = L.map('map', {
+      center: INITIAL_CENTER,
+      zoom: INITIAL_ZOOM,
+      layers: [basemaps.topo],
+      zoomControl: false,
+      scrollWheelZoom: true, doubleClickZoom: true, touchZoom: true, boxZoom: true, keyboard: true
+    });
+
+    // Zoom buttons are plain HTML buttons placed above the map (#zoom-ctl), not Leaflet's own control:
+    // they sit outside the map's stacking context, so nothing can cover them, and a click always
+    // stops any running fly-to animation before zooming.
+    let pendingDelta = 0;      // clicks made while an animation runs are added up and applied when it ends
+    let zoomRunning = false, zoomStartedAt = 0;
+    const clampZoom = z => Math.max(map.getMinZoom(), Math.min(map.getMaxZoom(), z));
+    map.on('zoomstart', () => { zoomRunning = true; zoomStartedAt = Date.now(); });
+    map.on('dragstart', () => { zoomRunning = false; pendingDelta = 0; });   // a drag cancels a fly-to; never leave the buttons waiting
+    map.on('zoomend', () => {
+      zoomRunning = false;
+      if (pendingDelta !== 0) {
+        const t = clampZoom(Math.round(map.getZoom()) + pendingDelta);
+        pendingDelta = 0;
+        if (t !== map.getZoom()) map.setZoom(t, { animate: true });
+      }
+    });
+    function zoomMap(delta) {
+      if (zoomRunning && Date.now() - zoomStartedAt < 1500) { pendingDelta += delta; return; }
+      zoomRunning = false; pendingDelta = 0;
+      map.stop();                   // cancel any running fly-to, then zoom
+      const t = clampZoom(Math.round(map.getZoom()) + delta);
+      if (t !== map.getZoom()) map.setZoom(t, { animate: true });
+    }
+
+    let currentBasemapKey = 'topo';
+    function setBasemap(key) {
+      if (key === currentBasemapKey) return;
+      map.removeLayer(basemaps[currentBasemapKey]);
+      map.addLayer(basemaps[key]);
+      currentBasemapKey = key;
+
+      document.querySelectorAll('.basemap-btn').forEach(btn => {
+        btn.classList.remove('bg-slate-900', 'text-white', 'font-bold');
+        btn.classList.add('text-slate-600', 'font-medium');
+      });
+      const activeBtn = document.getElementById(`basemap-${key}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-slate-900', 'text-white', 'font-bold');
+        activeBtn.classList.remove('text-slate-600', 'font-medium');
+      }
+    }
+
+    // =========================================================================
+    // 3. CUSTOM SVG TEARDROP PIN GENERATOR
+    // =========================================================================
+    function createCustomPinIcon(site, isActive = false) {
+      if (site.group === 'dna') return createDnaIcon(site, isActive);
+      if (site.group === 'peri') return createPeriIcon(site, isActive);
+      const ev = site.evidence || 'A';
+      const pulseHtml = isActive
+        ? `<span class="pin-pulse-ring" style="background-color: ${site.color};"></span>`
+        : '';
+      // Evidence grade is encoded in the outline + opacity:
+      //   A = solid white outline · B = dashed outline · C = dotted outline, faded body
+      const bodyOpacity = ev === 'C' ? 0.62 : 1;
+      const dash = ev === 'B' ? '5 3' : (ev === 'C' ? '2 3' : 'none');
+      // Small ochre dot = a Dāsa attestation is attached to this site (keeps the palette to 4 tribe colours)
+      const dasaDot = site.dasa
+        ? `<circle cx="31" cy="9" r="5.4" fill="#B45309" stroke="#FFFFFF" stroke-width="1.8"/>`
+        : '';
+
+      const svgHtml = `
+        <div class="relative flex items-center justify-center ${isActive ? 'vedic-pin-active' : ''}" style="width: 38px; height: 48px;">
+          ${pulseHtml}
+          <svg class="vedic-pin-svg" width="38" height="48" viewBox="0 0 38 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 2C9.61116 2 2 9.61116 2 19C2 30.85 16.65 44.35 18.25 45.78C18.68 46.16 19.32 46.16 19.75 45.78C21.35 44.35 36 30.85 36 19C36 9.61116 28.3888 2 19 2Z"
+                  fill="${site.color}" fill-opacity="${bodyOpacity}"
+                  stroke="#FFFFFF" stroke-width="2.6" stroke-dasharray="${dash}"/>
+            <circle cx="19" cy="18.5" r="11.5" fill="rgba(15, 23, 42, 0.22)" />
+            <text x="19" y="22.5" text-anchor="middle" fill="#FFFFFF"
+                  font-family="Inter, sans-serif" font-size="11.5" font-weight="800" letter-spacing="-0.02em">${site.layer}</text>
+            ${dasaDot}
+          </svg>
+        </div>
+      `;
+
+      return L.divIcon({
+        html: svgHtml,
+        className: 'vedic-pin-wrapper',
+        iconSize: [38, 48],
+        iconAnchor: [19, 46],
+        popupAnchor: [0, -42]
+      });
+    }
+
+    // Ancient-DNA markers are diamonds (a different class from tribe pins).
+    // Outline encodes the sample tier: D1 solid · D2 dashed + faded body.
+    function createDnaIcon(site, isActive) {
+      const dash = site.evidence === 'D2' ? '4 3' : 'none';
+      const op = site.evidence === 'D2' ? 0.7 : 1;
+      const pulse = isActive ? `<span class="pin-pulse-ring" style="background-color: ${site.color};"></span>` : '';
+      const svg = `
+        <div class="relative flex items-center justify-center ${isActive ? 'vedic-pin-active' : ''}" style="width: 38px; height: 38px;">
+          ${pulse}
+          <svg class="vedic-pin-svg" width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 2 L36 19 L19 36 L2 19 Z" fill="${site.color}" fill-opacity="${op}"
+                  stroke="#FFFFFF" stroke-width="2.6" stroke-linejoin="round" stroke-dasharray="${dash}"/>
+            <text x="19" y="22.4" text-anchor="middle" fill="#FFFFFF"
+                  font-family="Inter, sans-serif" font-size="9.5" font-weight="800">DNA</text>
+          </svg>
+        </div>`;
+      return L.divIcon({ html: svg, className: 'vedic-pin-wrapper', iconSize: [38, 38], iconAnchor: [19, 19], popupAnchor: [0, -18] });
+    }
+
+    // Peripheral / “non-Vedic” groups are rounded squares (a different class from tribe pins and DNA diamonds).
+    // Outline encodes the same A / B / C grades as the tribe pins: solid · dashed · dotted + faded body.
+    function createPeriIcon(site, isActive) {
+      const ev = site.evidence || 'A';
+      const dash = ev === 'B' ? '5 3' : (ev === 'C' ? '2 3' : 'none');
+      const op = ev === 'C' ? 0.62 : 1;
+      const pulse = isActive ? `<span class="pin-pulse-ring" style="background-color: ${site.color};"></span>` : '';
+      const svg = `
+        <div class="relative flex items-center justify-center ${isActive ? 'vedic-pin-active' : ''}" style="width: 38px; height: 38px;">
+          ${pulse}
+          <svg class="vedic-pin-svg" width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="30" height="30" rx="6" fill="${site.color}" fill-opacity="${op}"
+                  stroke="#FFFFFF" stroke-width="2.6" stroke-dasharray="${dash}"/>
+            <text x="19" y="23" text-anchor="middle" fill="#FFFFFF"
+                  font-family="Inter, sans-serif" font-size="11.5" font-weight="800" letter-spacing="-0.02em">${site.layer}</text>
+          </svg>
+        </div>`;
+      return L.divIcon({ html: svg, className: 'vedic-pin-wrapper', iconSize: [38, 38], iconAnchor: [19, 19], popupAnchor: [0, -18] });
+    }
+
+    // =========================================================================
+    // 4. HYPOTHESIS VECTORS, RIVER LAYER & CULTURAL MACRO-ZONES
+    // =========================================================================
+    const macroZonesGroup = L.layerGroup().addTo(map);
+    const vectorGroups = {
+      vec1: L.layerGroup().addTo(map), // Bharata Pre-Dāśarājña Westward Campaign
+      vec2: L.layerGroup().addTo(map), // Bharata Post-Dāśarājña Consolidation
+      vec3: L.layerGroup().addTo(map), // Pūru Diachronic Eastward Migration
+      vec4: L.layerGroup().addTo(map), // Unified Pūru-Bharata -> Kuru-Pañcāla Expansion
+      vec5: L.layerGroup().addTo(map)  // Videgha Māthava, stated (ŚB 1.4.1)
+    };
+
+    function buildMacroZones() {
+      macroZonesGroup.clearLayers();
+
+      // 1. Sapta Sindhu (Early Pūru Horizon, Blue)
+      const saptaSindhuZone = L.circle([32.15, 73.15], {
+        radius: 195000,
+        color: '#2563EB',
+        weight: 1.3,
+        dashArray: '4, 6',
+        fillColor: '#2563EB',
+        fillOpacity: 0.05,
+        interactive: false
+      });
+
+      // 2. Sarasvatī–Dṛṣadvatī Bharata Homeland (Crimson)
+      const bharataHomelandZone = L.circle([29.95, 76.55], {
+        radius: 82000,
+        color: '#DC2626',
+        weight: 1.4,
+        dashArray: '4, 5',
+        fillColor: '#DC2626',
+        fillOpacity: 0.065,
+        interactive: false
+      });
+
+      // 3. Madhyadeśa / Kuru-Pañcāla Heartland (Purple)
+      const madhyadesaZone = L.circle([29.05, 78.35], {
+        radius: 195000,
+        color: '#7C3AED',
+        weight: 1.3,
+        dashArray: '4, 6',
+        fillColor: '#7C3AED',
+        fillOpacity: 0.055,
+        interactive: false
+      });
+
+      macroZonesGroup.addLayer(saptaSindhuZone);
+      macroZonesGroup.addLayer(bharataHomelandZone);
+      macroZonesGroup.addLayer(madhyadesaZone);
+
+      // Floating Macro-Region Labels
+      const labels = [
+        {
+          coords: [33.85, 72.75],
+          html: `<div class="px-2.5 py-1 rounded-full bg-blue-950/80 text-blue-50 text-[10px] font-bold uppercase tracking-widest shadow-sm whitespace-nowrap border border-blue-400/30">
+                   Sapta Sindhu · early Pūru horizon (inferred)
+                 </div>`,
+          width: 225
+        },
+        {
+          coords: [29.18, 75.85],
+          html: `<div class="px-2.5 py-1 rounded-full bg-red-950/80 text-red-50 text-[10px] font-bold uppercase tracking-widest shadow-sm whitespace-nowrap border border-red-400/30">
+                   Sarasvatī–Dṛṣadvatī Bharata Homeland (L1)
+                 </div>`,
+          width: 245
+        },
+        {
+          coords: [27.95, 79.10],
+          html: `<div class="px-2.5 py-1 rounded-full bg-purple-950/80 text-purple-50 text-[10px] font-bold uppercase tracking-widest shadow-sm whitespace-nowrap border border-purple-400/30">
+                   Madhyadeśa · Kuru-Pañcāla Heartland (L4)
+                 </div>`,
+          width: 240
+        }
+      ];
+
+      labels.forEach(lbl => {
+        macroZonesGroup.addLayer(
+          L.marker(lbl.coords, {
+            icon: L.divIcon({
+              className: 'macro-region-label',
+              html: lbl.html,
+              iconSize: [lbl.width, 24],
+              iconAnchor: [lbl.width / 2, 12]
+            }),
+            interactive: false
+          })
+        );
+      });
+    }
+
+    function addVectorPolylineWithArrows(targetGroup, options) {
+      const { name, color, coords, dashArray, lineClassName, weight } = options;
+
+      const line = L.polyline(coords, {
+        color,
+        weight: weight || 3,
+        opacity: 0.85,
+        dashArray: dashArray || '8, 8',
+        className: lineClassName || 'migration-vector-line'
+      });
+
+      line.bindTooltip(name, {
+        sticky: true,
+        className: 'text-xs font-bold px-2 py-1 rounded-lg shadow-md'
+      });
+      targetGroup.addLayer(line);
+
+      // Compute true geographic azimuth for each segment and render crisp inline SVG directional arrowheads
+      for (let i = 0; i < coords.length - 1; i++) {
+        const p1 = coords[i];
+        const p2 = coords[i + 1];
+        const midLat = (p1[0] + p2[0]) / 2;
+        const midLng = (p1[1] + p2[1]) / 2;
+
+        const dLat = p2[0] - p1[0];
+        const dLng = (p2[1] - p1[1]) * Math.cos((midLat * Math.PI) / 180);
+        const azimuthDeg = Math.atan2(dLng, dLat) * (180 / Math.PI);
+
+        const arrowSvg = `
+          <div style="width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; transform: rotate(${azimuthDeg.toFixed(1)}deg);">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 1px 2px rgba(255,255,255,0.95));">
+              <path d="M8 1.5L14.5 14L8 11L1.5 14L8 1.5Z" fill="${color}" stroke="#FFFFFF" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        `;
+
+        const arrowMarker = L.marker([midLat, midLng], {
+          icon: L.divIcon({
+            className: 'vector-arrow-icon',
+            html: arrowSvg,
+            iconSize: [18, 18],
+            iconAnchor: [9, 9]
+          }),
+          interactive: false
+        });
+        targetGroup.addLayer(arrowMarker);
+      }
+    }
+
+    let campaignFlipped = false;
+    function buildAllVectors() {
+      Object.values(vectorGroups).forEach(g => g.clearLayers());
+      const P = id => { const s = VEDIC_SITES.find(x => x.id === id); return [s.lat, s.lng]; };
+
+      // Vectors are HYPOTHESES. No cited verse states the direction of travel.
+      // Vector 1 — Bharata campaign across the river chain (H1: east→west as in v1; H2: west→east reading)
+      const v1 = [P(7), P(8), P(9)]; // Sarasvatī homeland → Vipāś–Śutudrī → Paruṣṇī
+      addVectorPolylineWithArrows(vectorGroups.vec1, {
+        name: campaignFlipped
+          ? '→ Hypothesis H2 (west→east reading): Paruṣṇī → Vipāś–Śutudrī → Sarasvatī homeland — direction not stated in RV 7.18 / 3.33'
+          : '← Hypothesis H1 (east→west, v1 reading): Sarasvatī homeland → Vipāś–Śutudrī → Paruṣṇī — direction not stated in RV 7.18 / 3.33',
+        color: '#DC2626',
+        weight: 3.2,
+        dashArray: '9, 7',
+        lineClassName: 'migration-vector-line',
+        coords: campaignFlipped ? v1.slice().reverse() : v1
+      });
+
+      // Vector 2 — "return" (only meaningful under H1; the Brāhmaṇa passage gives no route)
+      if (!campaignFlipped) {
+        addVectorPolylineWithArrows(vectorGroups.vec2, {
+          name: '→ Hypothesis: Bharata return Paruṣṇī → Kurukṣetra — not narrated in the cited AB passages (as summarised by the RAG)',
+          color: '#991B1B',
+          weight: 2.6,
+          dashArray: '2, 8',
+          lineClassName: 'migration-vector-line-slow',
+          coords: [P(9), [31.00, 75.90], P(10)]
+        });
+      }
+
+      // Vector 3 — Pūru west → east (HYPOTHESIS). Two parts, drawn differently on purpose:
+      //   3a main line: Paruṣṇī (L1) → Sarasvatī (L1) → Kurukṣetra (L4). Both L1 ends are the same layer.
+      //   3b north-west link: Suvāstu (L2, hymn-level) → Paruṣṇī. The western pin is the LATER layer.
+      addVectorPolylineWithArrows(vectorGroups.vec3, {
+        name: '→ Hypothesis: Pūru north-west link Suvāstu (L2, hymn-level) → Paruṣṇī (L1) — the western pin is the later layer, so the layers do not date this leg',
+        color: '#2563EB',
+        weight: 2.2,
+        dashArray: '2, 8',
+        lineClassName: 'migration-vector-line-slow',
+        coords: [P(17), P(1)]
+      });
+      addVectorPolylineWithArrows(vectorGroups.vec3, {
+        name: '→ Hypothesis: Pūru west → east, Paruṣṇī (RV 7.18.13) → Sarasvatī (RV 7.96.2) → Kurukṣetra (L4) — both river pins are Layer 1; the Kuru step rests on RV 10.33.4',
+        color: '#2563EB',
+        weight: 3.2,
+        dashArray: '9, 7',
+        lineClassName: 'migration-vector-line',
+        coords: [P(1), P(5), P(13)]
+      });
+
+      // Vector 4 — Kuru-Pañcāla expansion (endpoints are grade C: reference marker + direction zone)
+      addVectorPolylineWithArrows(vectorGroups.vec4, {
+        name: '→ Hypothesis: Kuru-Pañcāla expansion Kurukṣetra → Doab → Prācī (endpoints are grade C)',
+        color: '#7C3AED',
+        weight: 3.0,
+        dashArray: '9, 7',
+        lineClassName: 'migration-vector-line',
+        coords: [P(13), P(14), P(15)]
+      });
+
+      // Vector 5 — Videgha Māthava (STATED in the text: ŚB 1.4.1.14–17). Solid, unlike the hypotheses above.
+      addVectorPolylineWithArrows(vectorGroups.vec5, {
+        name: '→ Stated in the text: Videgha Māthava follows Agni east (prāṅ) from the Sarasvatī to the Sadānīrā, the Kosala–Videha boundary (ŚB 1.4.1.14–17, Layer 4)',
+        color: '#334155',
+        weight: 3.4,
+        lineClassName: 'stated-vector-line',
+        coords: [[29.95, 76.60], P(32)]
+      });
+    }
+
+    buildMacroZones();
+    buildAllVectors();
+
+    // ---- River layer: modern centre-lines (Natural Earth 1:10m, public domain), simplified.
+    const RIVER_LINES = {"Ravi":[[[32.33,76.83],[32.3,76.6],[32.39,76.48],[32.45,76.46],[32.47,76.19],[32.62,76.06],[32.61,75.91],[32.5,75.83],[32.41,75.7],[32.37,75.57],[32.15,75.31],[32.13,75.2],[32.09,75.17],[32.09,75.02],[32.07,75.03],[32.03,74.96],[32.03,74.83],[31.94,74.78],[31.95,74.7],[31.83,74.55],[31.7,74.48],[31.66,74.34],[31.5,74.2]],[[31.5,74.21],[31.39,74.09],[31.42,74.04],[31.31,73.98],[31.32,73.94],[31.23,73.87],[31.26,73.79],[31.12,73.57],[31.16,73.54],[31.11,73.48],[31.12,73.41],[31.01,73.35],[30.91,73.14],[30.86,73.15],[30.86,73.1],[30.76,72.97],[30.76,72.89],[30.7,72.83],[30.72,72.76],[30.6,72.69],[30.63,72.5],[30.59,72.46],[30.58,72.17],[30.66,71.92],[30.6,71.82],[30.61,71.77]]],"Sutlej":[[[31.41,76.76],[31.31,76.74],[31.27,76.65],[31.42,76.44]],[[30.79,81.29],[30.85,81.2]],[[31.42,76.44],[31.4,76.37],[31.34,76.38],[31.24,76.44],[31.17,76.55],[31.08,76.59],[31.06,76.54],[30.98,76.51],[31.01,76.4],[30.99,76.08],[31.02,75.92],[30.99,75.4],[31.05,75.2],[31.18,75.03],[31.16,74.84],[31.06,74.6],[30.89,74.4],[30.89,74.32],[30.67,74.16],[30.61,74.07],[30.53,74.06],[30.36,73.84],[30.32,73.59],[30.22,73.34],[30.13,73.28],[30.17,73.23],[30.13,73.23],[30.09,73.14],[30.09,73.05],[29.98,72.93],[30.0,72.89],[29.89,72.64],[29.83,72.62],[29.84,72.36],[29.71,72.25],[29.71,72.2],[29.66,72.15],[29.58,72.17],[29.49,71.98],[29.44,71.72],[29.47,71.67],[29.39,71.6],[29.41,71.49],[29.37,71.47],[29.41,71.44],[29.37,71.39],[29.43,71.27],[29.39,71.22],[29.42,71.18],[29.37,71.02]],[[30.85,81.2],[30.92,81.15],[30.98,80.95],[31.12,80.76],[31.12,80.63],[31.05,80.5],[31.07,80.39],[31.29,80.01],[31.47,79.89],[31.51,79.53],[31.67,79.24],[31.7,79.12],[31.66,78.95],[31.81,78.84],[31.85,78.72],[31.68,78.45],[31.6,78.44],[31.6,78.29],[31.52,78.26],[31.56,77.83],[31.5,77.7],[31.45,77.63],[31.4,77.63],[31.35,77.54],[31.36,77.37],[31.28,77.31],[31.24,77.16],[31.37,76.88],[31.41,76.88],[31.41,76.76]],[[30.76,81.38],[30.79,81.29]]],"Yamuna":[[[30.92,78.34],[30.78,78.1],[30.51,77.96],[30.54,77.89],[30.43,77.58],[30.33,77.58],[30.21,77.54],[29.96,77.22],[29.8,77.18],[29.66,77.09],[29.59,77.1],[29.56,77.06],[29.5,77.07],[29.48,77.12],[29.42,77.07],[29.41,77.15],[29.12,77.13],[28.91,77.22],[28.81,77.2],[28.69,77.22]],[[28.69,77.22],[28.69,77.22]],[[28.69,77.22],[28.46,77.38],[28.47,77.41],[28.39,77.5],[28.32,77.47],[28.24,77.54],[28.21,77.5],[28.18,77.54],[28.15,77.49],[28.09,77.5],[28.11,77.47],[28.05,77.47],[27.97,77.53],[27.9,77.52],[27.85,77.59],[27.8,77.58],[27.8,77.69],[27.76,77.66],[27.63,77.7],[27.61,77.66],[27.59,77.71],[27.51,77.68],[27.38,77.75],[27.39,77.79],[27.33,77.78],[27.27,77.86],[27.3,77.88],[27.26,77.93],[27.3,77.95],[27.25,77.98],[27.26,78.02],[27.18,78.02],[27.19,78.2],[27.09,78.21],[27.13,78.35],[27.06,78.3],[27.06,78.41],[26.93,78.51],[26.98,78.51],[26.93,78.59],[26.95,78.6],[26.89,78.64],[26.92,78.73],[26.8,78.86],[26.78,78.94],[26.76,78.93],[26.76,79.0],[26.74,78.98],[26.6,79.08],[26.52,79.29],[26.43,79.22],[26.44,79.29],[26.4,79.32],[26.44,79.46],[26.35,79.5],[26.36,79.56],[26.29,79.53],[26.19,79.72],[26.11,79.77],[26.1,79.9],[26.16,79.95],[26.07,79.96],[26.07,80.08],[26.0,80.08],[25.93,80.19],[25.87,80.54],[25.84,80.46],[25.79,80.49],[25.79,80.57],[25.73,80.57],[25.69,80.73],[25.73,80.82],[25.68,80.85],[25.69,80.92],[25.61,80.95],[25.63,81.02],[25.54,81.02],[25.49,81.18],[25.41,81.15],[25.33,81.26],[25.34,81.34],[25.28,81.39],[25.27,81.47],[25.36,81.66],[25.33,81.8],[25.42,81.83],[25.41,81.9]]],"Chenab":[[[32.29,77.44],[32.5,77.08],[32.51,76.99],[32.59,76.96],[32.64,76.88],[32.75,76.61],[32.77,76.44],[32.91,76.46],[33.05,76.43],[33.31,76.1],[33.38,75.75],[33.33,75.73],[33.22,75.81],[33.16,75.8],[33.14,75.6],[33.14,75.36],[33.27,75.14],[33.16,75.06],[33.18,74.8],[32.91,74.78],[32.79,74.54],[32.61,74.34],[32.42,73.99],[32.35,73.68],[32.24,73.52],[32.23,73.4],[32.04,73.21],[31.83,73.11],[31.79,72.99],[31.71,72.92],[31.67,72.66],[31.49,72.36],[31.36,72.25],[31.22,72.23],[31.18,72.14]],[[31.18,72.14],[31.09,72.14],[30.77,71.86],[30.66,71.84],[30.57,71.71],[30.57,71.65],[30.32,71.36],[29.93,71.23],[29.88,71.17],[29.79,71.21],[29.69,71.17],[29.53,71.01],[29.42,71.05],[29.29,71.0],[29.22,70.94],[29.22,70.83],[29.04,70.7],[29.04,70.64]]],"Jhelum":[[[34.38,74.59],[34.39,74.55],[34.3,74.53]],[[33.32,73.6],[33.19,73.67],[33.14,73.64]],[[34.3,74.53],[34.18,74.27],[34.1,74.02],[34.1,73.91],[34.2,73.63],[34.32,73.51],[34.34,73.45],[34.01,73.52],[33.91,73.58],[33.71,73.6],[33.63,73.57],[33.56,73.63],[33.45,73.63],[33.39,73.57],[33.32,73.6]],[[33.44,75.37],[33.58,75.19],[33.7,75.11],[33.8,75.1],[33.95,74.98],[33.96,74.92],[34.03,74.89],[34.14,74.72],[34.25,74.63],[34.38,74.59]],[[33.14,73.64],[33.1,73.64],[33.04,73.76],[32.98,73.77],[32.84,73.61],[32.71,73.53],[32.65,73.42],[32.54,72.93],[32.44,72.73],[32.44,72.61],[32.29,72.37],[32.01,72.24],[31.82,72.25],[31.7,72.17],[31.38,72.11],[31.23,72.16],[31.18,72.14]]],"Ganges":[[[30.89,79.84],[30.82,79.81],[30.69,79.87],[30.51,79.72],[30.5,79.65],[30.57,79.55],[30.4,79.32],[30.3,79.27],[30.28,79.21],[30.31,79.0],[30.24,78.8],[30.24,78.7],[30.15,78.59],[30.07,78.59],[30.07,78.46],[30.13,78.41],[30.14,78.32],[29.95,78.16],[29.71,78.19],[29.62,78.02],[29.53,77.99],[29.25,78.12],[29.14,78.08],[28.84,78.09],[28.69,78.18],[28.57,78.2],[28.49,78.26],[28.31,78.29],[28.11,78.46],[28.0,78.61],[27.92,78.88],[27.83,78.98],[27.82,79.16],[27.69,79.2],[27.64,79.33],[27.65,79.41],[27.54,79.55],[27.24,79.7],[27.15,79.84],[27.14,79.93],[26.97,80.01],[26.87,80.11],[26.74,80.14],[26.68,80.25],[26.49,80.35],[26.36,80.53],[26.24,80.56],[26.11,80.67],[26.11,80.75],[26.03,80.81],[26.08,80.96],[26.06,81.03],[26.0,81.07],[25.94,81.2],[25.87,81.22],[25.77,81.39],[25.67,81.4],[25.58,81.55],[25.59,81.63],[25.49,81.7],[25.51,81.91],[25.34,81.94],[25.33,82.06],[25.28,82.11],[25.31,82.2],[25.18,82.22],[25.19,82.27],[25.22,82.23],[25.28,82.29],[25.22,82.33],[25.26,82.4],[25.16,82.55],[25.17,82.59],[25.22,82.57],[25.22,82.64],[25.12,82.84],[25.19,82.92],[25.2,83.0]]],"Indus":[[[34.62,72.78],[34.29,72.85],[34.17,72.83],[34.09,72.71]],[[34.09,72.71],[34.01,72.63],[34.02,72.47],[33.94,72.24],[33.77,72.23],[33.79,72.09],[33.75,72.02],[33.53,71.95],[33.42,71.88],[33.36,71.72],[33.27,71.7],[33.18,71.75],[33.03,71.72],[32.89,71.45],[32.73,71.41],[32.64,71.33],[32.42,71.34],[32.18,71.23],[32.09,71.12],[31.71,70.9],[31.43,70.79],[31.25,70.77],[30.95,70.84],[30.77,70.75],[30.54,70.85],[30.32,70.77],[30.22,70.82],[29.9,70.84],[29.6,70.64],[29.4,70.72],[29.22,70.65],[29.06,70.66],[29.02,70.57],[28.92,70.47],[28.91,70.37],[28.79,70.28],[28.66,70.04],[28.6,70.03],[28.51,69.76],[28.4,69.72],[28.25,69.57],[28.23,69.42],[28.15,69.38],[28.17,69.29],[28.06,69.13],[28.06,69.03],[27.97,69.0],[27.98,68.92],[27.87,68.95],[27.81,68.86],[27.75,68.96],[27.71,68.93],[27.67,68.79],[27.79,68.68],[27.71,68.65],[27.68,68.45],[27.62,68.35],[27.56,68.29],[27.37,68.33],[27.36,68.21],[27.28,68.15],[27.21,68.2],[27.19,68.09],[27.09,68.11],[26.99,68.0],[26.24,68.01],[26.15,68.12],[26.06,68.14],[25.9,68.27],[25.83,68.39],[25.73,68.32],[25.66,68.43],[25.62,68.38],[25.55,68.39],[25.5,68.31],[25.28,68.35],[25.21,68.3],[25.14,68.37],[25.13,68.29],[24.97,68.26],[25.01,68.2],[24.94,68.13],[24.87,68.14],[24.87,68.04],[24.56,68.0]],[[32.74,79.44],[32.93,79.31],[32.99,79.18],[33.2,78.96],[33.15,78.79],[33.17,78.71],[33.43,78.2],[33.47,78.15],[33.57,78.15],[33.78,77.86],[34.11,77.56],[34.33,76.84],[34.55,76.6],[34.67,76.32],[34.83,76.19],[34.95,76.22],[35.17,75.92],[35.34,75.84],[35.31,75.64],[35.46,75.45],[35.49,75.36],[35.59,75.32],[35.6,75.09],[35.71,74.87],[35.72,74.75],[35.84,74.72],[35.82,74.63],[35.53,74.63],[35.42,74.4],[35.41,74.16],[35.53,73.76],[35.54,73.31],[35.32,73.25],[35.26,73.27],[35.04,72.89],[34.91,72.86],[34.82,72.98],[34.76,72.82],[34.62,72.78]],[[32.44,79.73],[32.74,79.43]],[[23.93,68.02],[24.02,68.01]]],"Beas":[[[31.89,76.2],[31.95,76.08],[31.96,75.93]],[[32.26,77.2],[31.94,77.12],[31.72,77.2],[31.71,76.94],[31.77,76.93],[31.9,76.68],[31.9,76.59],[31.81,76.44],[31.78,76.32],[31.89,76.2]],[[31.96,75.93],[32.05,75.71],[32.11,75.69],[32.08,75.59],[32.01,75.55],[31.78,75.56],[31.71,75.53],[31.46,75.23],[31.18,75.0]]]};
+    // Sarasvatī: SCHEMATIC Ghaggar–Hakra course only; identification and Vedic course are debated.
+    RIVER_LINES.Sarasvati = [[[30.78,76.90],[30.40,76.80],[30.15,76.22],[29.95,75.80],[29.70,75.35],[29.53,75.02],[29.60,74.40]]];
+    const RIVER_META = [
+      { key: 'Ravi',      skt: 'Paruṣṇī',  modern: 'Ravi',          cite: 'RV 7.018.08 · 10.075.05' },
+      { key: 'Beas',      skt: 'Vipāś',    modern: 'Beas',          cite: 'RV 3.033.01 · 4.030.11' },
+      { key: 'Sutlej',    skt: 'Śutudrī',  modern: 'Sutlej',        cite: 'RV 3.033.01 · 10.075.05' },
+      { key: 'Chenab',    skt: 'Asiknī',   modern: 'Chenab',        cite: 'RV 10.075.05' },
+      { key: 'Jhelum',    skt: 'Vitastā',  modern: 'Jhelum',        cite: 'RV 10.075.05' },
+      { key: 'Indus',     skt: 'Sindhu',   modern: 'Indus',         cite: 'RV 4.030.12 · 10.075.06' },
+      { key: 'Yamuna',    skt: 'Yamunā',   modern: 'Yamuna',        cite: 'RV 7.018.19 · 10.075.05' },
+      { key: 'Ganges',    skt: 'Gaṅgā',    modern: 'Ganges',        cite: 'RV 10.075.05 · 6.045.31' },
+      { key: 'Sarasvati', skt: 'Sarasvatī', modern: 'Ghaggar–Hakra (schematic)', cite: 'RV 3.023.04 · 7.096.02 · 10.075.05', dashed: true }
+    ];
+    const riversGroup = L.layerGroup().addTo(map);
+    function buildRivers() {
+      riversGroup.clearLayers();
+      RIVER_META.forEach(m => {
+        const lines = RIVER_LINES[m.key];
+        if (!lines) return;
+        const pl = L.polyline(lines, {
+          color: '#334155', weight: m.dashed ? 1.6 : 1.5, opacity: 0.7,
+          dashArray: m.dashed ? '5, 5' : null
+        });
+        pl.bindTooltip(`<b>${m.skt}</b> · ${m.modern}<br><span style="font-family:monospace;font-size:10px">${m.cite}</span>`, { sticky: true });
+        riversGroup.addLayer(pl);
+      });
+    }
+    buildRivers();
+
+    function toggleRivers() {
+      const on = document.getElementById('chk-rivers').checked;
+      if (on) { if (!map.hasLayer(riversGroup)) map.addLayer(riversGroup); }
+      else if (map.hasLayer(riversGroup)) map.removeLayer(riversGroup);
+    }
+
+    function toggleFlip() {
+      campaignFlipped = document.getElementById('chk-flip').checked;
+      const vec2 = document.getElementById('chk-vec-2');
+      if (vec2) { vec2.disabled = campaignFlipped; vec2.parentElement.classList.toggle('opacity-40', campaignFlipped); }
+      const t = document.getElementById('vec1-title');
+      if (t) t.textContent = campaignFlipped ? '→ Bharata river chain (H2: west → east)' : '← Bharata river chain (H1: east → west)';
+      buildAllVectors();
+      updateVectorVisibility();
+    }
+
+    function toggleMacroZones() {
+      const checked = document.getElementById('chk-macro-zones').checked;
+      if (checked) {
+        if (!map.hasLayer(macroZonesGroup)) map.addLayer(macroZonesGroup);
+      } else {
+        if (map.hasLayer(macroZonesGroup)) map.removeLayer(macroZonesGroup);
+      }
+    }
+
+    function updateVectorVisibility() {
+      const mapping = [
+        { chkId: 'chk-vec-1', group: vectorGroups.vec1 },
+        { chkId: 'chk-vec-2', group: vectorGroups.vec2 },
+        { chkId: 'chk-vec-3', group: vectorGroups.vec3 },
+        { chkId: 'chk-vec-4', group: vectorGroups.vec4 },
+        { chkId: 'chk-vec-5', group: vectorGroups.vec5 }
+      ];
+
+      mapping.forEach(({ chkId, group }) => {
+        const el = document.getElementById(chkId);
+        if (!el) return;
+        if (el.checked) {
+          if (!map.hasLayer(group)) map.addLayer(group);
+        } else {
+          if (map.hasLayer(group)) map.removeLayer(group);
+        }
+      });
+    }
+
+    // =========================================================================
+    // 5. MARKERS, POPUPS, FILTERING & STATE MANAGEMENT
+    // =========================================================================
+    let activeLayerFilter = 'ALL';
+    let selectedSiteId = 1;
+    const markersById = {};
+    const visibleMarkersGroup = L.featureGroup().addTo(map);
+
+    // (state used by the popup/marker builders below)
+    function citeChipHtml(c, big) {
+      const ref = c[0], m = CITE_STATUS[c[1]] || CITE_STATUS.rag;
+      const cls = big
+        ? 'inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-950 border border-amber-200/80 font-mono text-xs font-bold'
+        : 'inline-block px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 font-mono text-[10px] font-semibold border border-slate-200';
+      return `<span title="${m.tip}" class="${cls}"><span class="opacity-70">${m.icon}</span> ${ref}</span>`;
+    }
+
+    function evidenceBadgeHtml(site) {
+      const ev = site.evidence || 'A';
+      const tone = (ev === 'A' || ev === 'D1') ? 'bg-emerald-50 text-emerald-900 border-emerald-200'
+                 : (ev === 'B' || ev === 'D2') ? 'bg-amber-50 text-amber-900 border-amber-200'
+                 :              'bg-slate-100 text-slate-700 border-slate-300';
+      return `<span class="inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-bold ${tone}">${EVIDENCE_META[ev]}</span>`;
+    }
+
+    function createPopupHtml(site) {
+      const citationsHtml = site.cites.length
+        ? site.cites.map(c => citeChipHtml(c, false)).join(' ')
+        : '<span class="text-[10px] text-slate-400 italic">No source cited — inferred</span>';
+
+      return `
+        <div class="p-3.5">
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style="background-color: ${site.color};">
+              ${site.layer} · ${GROUP_META[site.group].label}
+            </span>
+            <span class="text-[10px] font-mono text-slate-400">${site.lat.toFixed(2)}°N, ${site.lng.toFixed(2)}°E</span>
+          </div>
+          <div class="mb-1.5">${evidenceBadgeHtml(site)}</div>
+          <h3 class="font-serif text-[17px] font-bold text-slate-900 leading-snug">${site.title}</h3>
+          <p class="text-[11px] font-semibold text-amber-800 mt-0.5 mb-1.5">${site.movementContext}</p>
+          <p class="text-xs text-slate-700 leading-relaxed mb-2.5">${site.summary}</p>
+          <div class="flex flex-wrap gap-1 mb-3">${citationsHtml}</div>
+          <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+            <button onclick="openDossierFromPopup(${site.id})" class="text-[11px] font-bold text-slate-900 hover:underline">
+              ${site.group === 'dna' ? 'Full sample dossier →' : 'Full Textual Dossier →'}
+            </button>
+            <a href="https://www.google.com/maps/search/?api=1&query=${site.lat},${site.lng}" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-900 text-white text-[10px] font-semibold hover:bg-slate-700 transition">
+              Google Maps ↗
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize all markers (+ an uncertainty ring for sites whose position is schematic)
+    const ringGroup = L.layerGroup().addTo(map);
+    const ringsById = {};
+    VEDIC_SITES.forEach(site => {
+      const marker = L.marker([site.lat + (site.dLat || 0), site.lng + (site.dLng || 0)], {
+        icon: createCustomPinIcon(site, site.id === selectedSiteId),
+        title: `${site.layer}: ${site.title}`
+      });
+
+      marker.bindPopup(createPopupHtml(site), { maxWidth: 305 });
+
+      marker.on('click', () => {
+        selectSite(site.id, false);
+      });
+
+      markersById[site.id] = marker;
+
+      if (site.radiusKm) {
+        ringsById[site.id] = L.circle([site.lat, site.lng], {
+          radius: site.radiusKm * 1000,
+          color: site.color,
+          weight: 1.2,
+          dashArray: '3, 6',
+          fillColor: site.color,
+          fillOpacity: 0.05,
+          interactive: false
+        });
+      }
+    });
+
+    function openDossierFromPopup(id) {
+      selectSite(id, false);
+      toggleMobileDrawer(true);
+    }
+
+    function setLayerFilter(layer) {
+      activeLayerFilter = layer;
+      document.querySelectorAll('.layer-pill').forEach(btn => {
+        if (btn.dataset.layer === layer) {
+          btn.className = 'layer-pill px-2.5 py-1 rounded-lg text-[11px] font-bold transition bg-slate-900 text-white shadow-2xs';
+        } else {
+          btn.className = 'layer-pill px-2.5 py-1 rounded-lg text-[11px] font-semibold transition bg-parchment-50 text-slate-700 border border-parchment-300 hover:bg-parchment-100';
+        }
+      });
+      applyFilters(true);
+    }
+
+    function applyFilters(shouldFitBounds = false) {
+      const on = id => { const el = document.getElementById(id); return el ? el.checked : true; };
+      const showGroup = {
+        puru: on('chk-puru'), bharata: on('chk-bharata'), kuru: on('chk-kuru'),
+        dasa: on('chk-dasa'), geo: on('chk-geo'), dna: on('chk-dna'), peri: on('chk-peri')
+      };
+      const anchoredOnly = on('chk-anchored');
+
+      visibleMarkersGroup.clearLayers();
+      ringGroup.clearLayers();
+      let visibleCount = 0;
+
+      VEDIC_SITES.forEach(site => {
+        const layerMatch = activeLayerFilter === 'ALL' || site.layer === activeLayerFilter;
+        const groupMatch = !!showGroup[site.group];
+        const evidenceMatch = !anchoredOnly || site.evidence !== 'C';
+
+        if (layerMatch && groupMatch && evidenceMatch) {
+          visibleMarkersGroup.addLayer(markersById[site.id]);
+          if (ringsById[site.id]) ringGroup.addLayer(ringsById[site.id]);
+          visibleCount++;
+        }
+      });
+
+      const badge = document.getElementById('visible-count-badge');
+      if (badge) {
+        badge.textContent = `${visibleCount} ${visibleCount === 1 ? 'Site' : 'Sites'} Visible`;
+      }
+
+      if (shouldFitBounds && visibleCount > 0) {
+        // markers flagged offFrame (e.g. the Kazakh steppe DNA site) never stretch the fitted view
+        let fitSites = VEDIC_SITES.filter(s => visibleMarkersGroup.hasLayer(markersById[s.id]) && !s.offFrame);
+        if (fitSites.length === 0) fitSites = VEDIC_SITES.filter(s => visibleMarkersGroup.hasLayer(markersById[s.id]));
+        if (fitSites.length === 1) {
+          map.flyTo([fitSites[0].lat, fitSites[0].lng], 8, { duration: 0.85 });
+        } else {
+          map.flyToBounds(L.latLngBounds(fitSites.map(s => [s.lat, s.lng])).pad(0.18), { duration: 0.85 });
+        }
+      }
+    }
+
+    function resetMapView() {
+      map.flyTo(INITIAL_CENTER, INITIAL_ZOOM, { duration: 0.85 });
+    }
+
+
+    // =========================================================================
+    // 6. RIGHT INSPECTOR SIDEBAR & CHRONOLOGICAL STEPPER
+    // =========================================================================
+    function renderInspector(site) {
+      const panel = document.getElementById('panel-dossier');
+      const isDna = site.group === 'dna';
+      const isPeri = site.group === 'peri';
+      const citationsList = site.cites.length
+        ? site.cites.map(c => citeChipHtml(c, true)).join('')
+        : '<span class="text-xs text-slate-500 italic">No source cited for this marker — position inferred.</span>';
+
+      const tagsList = site.geographyTags
+        .map(tag => `<span class="px-2 py-0.5 rounded-md bg-parchment-100 text-slate-700 border border-parchment-200 text-[11px] font-medium">${tag}</span>`)
+        .join('');
+
+      const auditHtml = (site.audit && site.audit.length)
+        ? `<div class="p-3 rounded-2xl bg-rose-50/80 border border-rose-200/80 text-xs space-y-1.5">
+             <span class="block text-[10px] font-extrabold uppercase tracking-wider text-rose-800">${(isDna || isPeri) ? 'Audit notes' : 'v2 audit notes (what changed vs v1)'}</span>
+             <ul class="list-disc pl-4 space-y-1 text-rose-950 leading-snug">${site.audit.map(a => `<li>${a}</li>`).join('')}</ul>
+           </div>` : '';
+
+      const GRADE_TONE = { A: 'bg-emerald-100 text-emerald-900', B: 'bg-amber-100 text-amber-900', C: 'bg-slate-200 text-slate-700', P: 'bg-rose-100 text-rose-900' };
+      const GRADE_LABEL = isDna ? { A: 'sample data', B: 'inference', C: 'geography', P: 'premise' }
+                                : { A: 'verse', B: 'inference', C: 'geography', P: 'premise' };
+      const chainHtml = (site.chain && site.chain.length)
+        ? `<div class="space-y-2">
+             <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Inference chain (how this pin is reached)</h3>
+             <ol class="space-y-1.5">
+               ${site.chain.map((c, i) => `
+                 <li class="flex gap-2 text-xs leading-snug text-slate-700">
+                   <span class="shrink-0 font-mono text-[10px] text-slate-400 pt-0.5">${i + 1}.</span>
+                   <span class="shrink-0 h-fit mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase ${GRADE_TONE[c[1]] || GRADE_TONE.C}">${GRADE_LABEL[c[1]] || c[1]}</span>
+                   <span>${c[0]}</span>
+                 </li>`).join('')}
+             </ol>
+           </div>` : '';
+
+      const dasaHtml = site.dasa
+        ? `<div class="p-3 rounded-2xl bg-[#FDF3E3] border border-[#E8C48B] text-xs">
+             <span class="block text-[10px] font-extrabold uppercase tracking-wider text-[#8A4B0B]">● Dāsa attestation at this site</span>
+             <span class="font-semibold text-[#5C3206] mt-0.5 block leading-snug">${site.dasa}</span>
+           </div>` : '';
+
+      const rosterHtml = (site.roster && site.roster.length)
+        ? `<div class="space-y-2">
+             <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">${site.rosterTitle || 'Named Dāsa / Dasyu figures (listed, not plotted)'}</h3>
+             <div class="border border-parchment-200 rounded-xl overflow-hidden divide-y divide-parchment-200">
+               ${site.roster.map(r => `
+                 <div class="p-2.5 text-xs">
+                   <div class="font-bold text-slate-900">${r[0]} <span class="font-normal text-slate-500">— ${r[1]}</span></div>
+                   <div class="font-mono text-[10.5px] text-amber-900 mt-0.5">${r[2]}</div>
+                 </div>`).join('')}
+             </div>
+           </div>` : '';
+
+      const verifyHtml = (site.toVerify && site.toVerify.length)
+        ? `<div class="p-3 rounded-2xl bg-sky-50 border border-sky-200 text-xs">
+             <span class="block text-[10px] font-extrabold uppercase tracking-wider text-sky-800">To verify in your corpus</span>
+             <ul class="list-disc pl-4 mt-1 space-y-1 text-sky-950">${site.toVerify.map(v => `<li>${v}</li>`).join('')}</ul>
+           </div>` : '';
+
+      const samplesHtml = (site.samples && site.samples.length)
+        ? `<div class="space-y-2">
+             <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Sample record</h3>
+             <div class="border border-parchment-200 rounded-xl overflow-hidden divide-y divide-parchment-200">
+               ${site.samples.map(r => `
+                 <div class="p-2.5 text-xs">
+                   <div class="font-bold text-slate-900">${r[0]} <span class="font-normal text-slate-500">— ${r[1]}</span></div>
+                   <div class="font-mono text-[10.5px] text-teal-900 mt-0.5">${r[2]} · ${r[3]}</div>
+                   <div class="text-[11px] text-slate-600 mt-0.5">${r[4]}</div>
+                 </div>`).join('')}
+             </div>
+           </div>` : '';
+
+      const radiusNote = site.radiusKm
+        ? `<span class="block text-[10px] text-slate-500 mt-1">Dashed ring on the map ≈ ${site.radiusKm} km: schematic extent, not a boundary.</span>` : '';
+
+      panel.innerHTML = `
+        <!-- Top Identity Badges -->
+        <div class="space-y-2">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-extrabold text-white shadow-2xs" style="background-color: ${site.color};">
+              ${site.layer} · ${site.groupLabel}
+            </span>
+            <span class="text-[11px] font-semibold text-slate-500 bg-parchment-100 px-2.5 py-0.5 rounded-full border border-parchment-200">
+              Site #${site.id} of ${VEDIC_SITES.length}
+            </span>
+          </div>
+          <div>${evidenceBadgeHtml(site)}</div>
+
+          <h2 class="font-serif text-2xl font-bold text-slate-900 leading-tight">
+            ${site.title}
+          </h2>
+
+          <div class="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>${site.modernName}</span>
+          </div>
+        </div>
+
+        <!-- Context Banner -->
+        <div class="p-3 rounded-2xl bg-amber-50/90 border border-amber-200/90 text-xs">
+          <span class="block text-[10px] font-extrabold uppercase tracking-wider text-amber-800">
+            ${isDna ? 'What the sample shows' : 'What the verses support'}
+          </span>
+          <span class="font-bold text-amber-950 mt-0.5 block leading-snug">
+            ${site.movementContext}
+          </span>
+        </div>
+
+        ${dasaHtml}
+
+        <!-- Scripture Layer & Coordinates Card -->
+        <div class="grid grid-cols-2 gap-2.5 p-3 rounded-2xl bg-parchment-50 border border-parchment-200 text-xs">
+          <div>
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">${isDna ? 'Dating' : 'Textual Layer (of attestation)'}</span>
+            <span class="font-semibold text-slate-800 mt-0.5 block">${site.layerFull}</span>
+          </div>
+          <div>
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Coordinates</span>
+            <span class="font-mono font-semibold text-slate-800 mt-0.5 block">${site.lat.toFixed(4)}° N, ${site.lng.toFixed(4)}° E</span>
+            ${radiusNote}
+          </div>
+        </div>
+
+        <!-- Primary Historical Synthesis -->
+        <div class="space-y-2">
+          <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            ${isDna ? 'What the DNA shows and does not show' : 'Vedic Textual &amp; Historical Context'}
+          </h3>
+          <p class="text-[13px] font-semibold text-slate-800 leading-relaxed">
+            ${site.summary}
+          </p>
+          <p class="text-[13px] text-slate-600 leading-relaxed">
+            ${site.analysis}
+          </p>
+        </div>
+
+        ${chainHtml}
+
+        ${samplesHtml}
+
+        ${rosterHtml}
+
+        <!-- Exact Vedic Citations -->
+        <div class="space-y-2">
+          <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            ${isDna ? 'Sources' : 'Citations'} <span class="normal-case font-medium text-slate-400">${isDna ? '(≈ taken from your project notes and the published datasets; not re-read at SNP level here)' : '(✓ text checked · ≈ secondary source · ◦ as cited by RAG)'}</span>
+          </h3>
+          <div class="flex flex-wrap gap-1.5">
+            ${citationsList}
+          </div>
+        </div>
+
+        ${auditHtml}
+        ${verifyHtml}
+
+        <!-- Geographic & Tribal Markers -->
+        <div class="space-y-2">
+          <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            ${isDna ? 'Place &amp; context tags' : 'Hydronymy &amp; Polity Identifiers'}
+          </h3>
+          <div class="flex flex-wrap gap-1.5">
+            ${tagsList}
+          </div>
+        </div>
+
+        <!-- External Google Maps Verification Action -->
+        <div class="pt-2">
+          <a href="https://www.google.com/maps/search/?api=1&query=${site.lat},${site.lng}"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm transition active:scale-[0.99]">
+            <span>Open in Google Maps ↗</span>
+          </a>
+        </div>
+      `;
+
+      // Sync dropdowns
+      const quickDropdown = document.getElementById('quick-site-select');
+      if (quickDropdown) quickDropdown.value = String(site.id);
+
+      const stepperDropdown = document.getElementById('stepper-site-select');
+      if (stepperDropdown) stepperDropdown.value = String(site.id);
+    }
+
+    function selectSite(id, flyToSite = true) {
+      const prevId = selectedSiteId;
+      selectedSiteId = id;
+      const site = VEDIC_SITES.find(s => s.id === id);
+      if (!site) return;
+      const toggleId = { dna: 'chk-dna', peri: 'chk-peri' }[site.group];
+      if (toggleId) { const c = document.getElementById(toggleId); if (c && !c.checked) { c.checked = true; applyFilters(false); } }
+
+      // Update pin active visuals
+      if (markersById[prevId]) {
+        const prevSite = VEDIC_SITES.find(s => s.id === prevId);
+        markersById[prevId].setIcon(createCustomPinIcon(prevSite, false));
+      }
+      if (markersById[id]) {
+        markersById[id].setIcon(createCustomPinIcon(site, true));
+        if (!visibleMarkersGroup.hasLayer(markersById[id])) {
+          visibleMarkersGroup.addLayer(markersById[id]);
+        }
+        if (flyToSite) {
+          map.flyTo([site.lat, site.lng], Math.max(map.getZoom(), 7), { duration: 0.85 });
+        }
+        markersById[id].openPopup();
+      }
+
+      renderInspector(site);
+    }
+
+    function stepChronology(delta) {
+      const groupOn = g => { const id = { dna: 'chk-dna', peri: 'chk-peri' }[g]; if (!id) return true; const c = document.getElementById(id); return !c || c.checked; };
+      let nextId = selectedSiteId;
+      for (let k = 0; k < VEDIC_SITES.length; k++) {
+        nextId += delta;
+        if (nextId > VEDIC_SITES.length) nextId = 1;
+        if (nextId < 1) nextId = VEDIC_SITES.length;
+        const st = VEDIC_SITES.find(x => x.id === nextId);
+        if (st && groupOn(st.group)) break;
+      }
+      selectSite(nextId, true);
+    }
+
+    // =========================================================================
+    // 7. CONTROL CARD, COMPARISON MODAL & MOBILE DRAWER CONTROLS
+    // =========================================================================
+    let isControlCardExpanded = true;
+    function toggleControlCard() {
+      isControlCardExpanded = !isControlCardExpanded;
+      const body = document.getElementById('floating-control-body');
+      const chevron = document.getElementById('control-chevron');
+      if (isControlCardExpanded) {
+        body.classList.remove('hidden');
+        chevron.style.transform = 'rotate(0deg)';
+      } else {
+        body.classList.add('hidden');
+        chevron.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    function toggleComparisonModal(open) {
+      const modal = document.getElementById('comparison-modal');
+      if (open) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    function toggleMobileDrawer(open) {
+      const sidebar = document.getElementById('inspector-sidebar');
+      if (open) {
+        sidebar.classList.remove('translate-x-full');
+      } else {
+        sidebar.classList.add('translate-x-full');
+      }
+    }
+
+    // Close modal on Escape key
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        toggleComparisonModal(false);
+      }
+    });
+
+    // =========================================================================
+    // 8. INITIALIZATION ON WINDOW LOAD
+    // =========================================================================
+    function initVedicMapApp() {
+      const quickSelect = document.getElementById('quick-site-select');
+      const stepperSelect = document.getElementById('stepper-site-select');
+
+      VEDIC_SITES.forEach(site => {
+        const label = `${site.id}. [${site.layer}] ${site.title}`;
+
+        const opt1 = document.createElement('option');
+        opt1.value = String(site.id);
+        opt1.textContent = label;
+        quickSelect.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = String(site.id);
+        opt2.textContent = label;
+        stepperSelect.appendChild(opt2);
+      });
+
+      // Collapse floating control card automatically on very narrow mobile screens so map remains unobstructed
+      if (window.innerWidth < 640) {
+        toggleControlCard();
+      }
+
+      applyFilters(false);
+      renderInspector(VEDIC_SITES[0]);
+      markersById[1].openPopup();
+    }
+
+    // Explicitly expose handlers on window for inline HTML event attributes
+    window.setBasemap = setBasemap;
+    window.toggleRivers = toggleRivers;
+    window.toggleFlip = toggleFlip;
+    window.toggleMacroZones = toggleMacroZones;
+    window.updateVectorVisibility = updateVectorVisibility;
+    window.openDossierFromPopup = openDossierFromPopup;
+    window.setLayerFilter = setLayerFilter;
+    window.applyFilters = applyFilters;
+    window.resetMapView = resetMapView;
+    window.selectSite = selectSite;
+    window.stepChronology = stepChronology;
+    window.toggleControlCard = toggleControlCard;
+    window.toggleComparisonModal = toggleComparisonModal;
+    window.toggleMobileDrawer = toggleMobileDrawer;
+    window.zoomMap = zoomMap;
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initVedicMapApp);
+    } else {
+      initVedicMapApp();
+    }
+  </script>
+</body>
+</html>

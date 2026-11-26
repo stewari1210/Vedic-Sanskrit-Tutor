@@ -1,0 +1,77 @@
+{
+ "_meta": {
+  "built_by": "build_pada_samhita_divergence.py",
+  "spec": "docs/phase1_correction_rules.md",
+  "rule": "R2 visarga pada-vs-saṃhitā divergence with attested implied alternative",
+  "excluded_units_loaded": [
+   "RV 1.131",
+   "RV 1.174",
+   "RV 4.38",
+   "RV 5.27",
+   "RV 6.20",
+   "RV 7.96",
+   "RV 8.19",
+   "RV 10.33",
+   "RV 10.75",
+   "AVS 5.4",
+   "AVS 19.39",
+   "PB 13.3",
+   "SB 1.8.1",
+   "SB 11.5.1",
+   "AB 8.21"
+  ],
+  "stats": {
+   "verses": 10445,
+   "tokens": 163022,
+   "aligned": 152875,
+   "visarga_evaluated": 34763,
+   "regular": 34541,
+   "irregular": 222,
+   "irregular_no_attested_alt": 219,
+   "visarga_core_mismatch": 10,
+   "verses_skipped_excluded": 107
+  },
+  "entries": 3
+ },
+ "by_token": {
+  "8.095.07|10": {
+   "padapatha_form": "śuddhaíḥ",
+   "samhita_word": "śuddhá",
+   "next_initial": "ā",
+   "alternatives": [
+    {
+     "form": "śuddhaḥ",
+     "lemmas": [
+      "śudh"
+     ]
+    }
+   ]
+  },
+  "9.069.07|16": {
+   "padapatha_form": "vā́jaḥ",
+   "samhita_word": "vā́jāḥ",
+   "next_initial": "s",
+   "alternatives": [
+    {
+     "form": "vājāḥ",
+     "lemmas": [
+      "vāja"
+     ]
+    }
+   ]
+  },
+  "9.101.10|5": {
+   "padapatha_form": "gātuvíttamaḥ",
+   "samhita_word": "gātuvíttamāḥ",
+   "next_initial": null,
+   "alternatives": [
+    {
+     "form": "gātuvittamāḥ",
+     "lemmas": [
+      "gātuvittama"
+     ]
+    }
+   ]
+  }
+ }
+}

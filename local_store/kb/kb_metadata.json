@@ -1,0 +1,18 @@
+{
+  "title": "Kauṣītaki Brāhmaṇa (Śāṅkhāyana Brāhmaṇa)",
+  "author": [
+    "Vedic Tradition",
+    "Muneo Tokunaga (March–April 1995); Reinhold Grünendahl; TEI by Maximilian Mehner"
+  ],
+  "edition": "E. R. Sreekrishna Sarma (Wiesbaden 1968; VOHD, Suppl. 9,1)",
+  "creator": "GRETIL (Göttingen Register of Electronic Texts in Indian Languages)",
+  "source_url": "https://gretil.sub.uni-goettingen.de/gretil/corpustei/sa_kauSItakibrAhmaNa.xml",
+  "source_id": "kausitaki_brahmana",
+  "licence": "CC BY-NC-SA 4.0",
+  "filename": "kb",
+  "preprocessing": "sanskrit",
+  "source_type": "vedic_text",
+  "veda": "kausitaki_brahmana",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose"
+}

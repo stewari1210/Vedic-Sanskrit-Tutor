@@ -1,0 +1,18 @@
+{
+  "title": "Atharvaveda Saṃhitā (Paippalāda)",
+  "author": [
+    "Vedic Tradition",
+    "Arlo Griffiths, Thomas Zehnder, Philipp Kubisch, Duccio Lelli, Alexander Lubotsky, Carmen Spiers, Michael Witzel; TEI by Maximilian Mehner (GRETIL 2020-02-10)"
+  ],
+  "edition": "Dipak Bhattacharya, The Paippalāda-Saṁhitā of the Atharvaveda, Vols. 1–4 (Calcutta 1997–2016); Umberto Selva (2019, Kāṇḍa 17 selections)",
+  "creator": "GRETIL (Göttingen Register of Electronic Texts in Indian Languages)",
+  "source_url": "https://gretil.sub.uni-goettingen.de/gretil/corpustei/sa_paippalAdasaMhitA.xml",
+  "source_id": "atharvaveda_paippalada",
+  "licence": "CC BY-NC-SA 4.0",
+  "filename": "avp",
+  "preprocessing": "sanskrit",
+  "source_type": "vedic_text",
+  "veda": "atharvaveda_paippalada",
+  "chronology_layer": 3,
+  "chronology_name": "av_samhita"
+}

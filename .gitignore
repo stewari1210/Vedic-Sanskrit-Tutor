@@ -45,3 +45,11 @@ __pycache__/
 PROJECT_STATUS.md
 # private decision/lessons log for CLI sessions (CLAUDE.md is public-safe and IS tracked)
 memory.md
+
+# gold-test / fix-phase backups (copies of src + knowledge_store)
+backups/
+
+# private diagnosis / fix-log working notes
+RETRIEVAL_DIAGNOSIS.md
+TRANSLATION_DIAGNOSIS.md
+TRANSLATION_FIX_LOG.md

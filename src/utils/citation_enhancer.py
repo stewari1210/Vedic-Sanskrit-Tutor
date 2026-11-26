@@ -49,6 +49,15 @@ class VedicCitationExtractor:
         Returns:
             Citation string like "RV 1.1.1" or None if not found
         """
+        # 0. Prefer canonical ॥ PREFIX N.N... ॥ marker from original Devanagari corpus
+        try:
+            from src.utils.citations import parse_marker_citation
+            marker_cite = parse_marker_citation(text)
+            if marker_cite:
+                return marker_cite
+        except Exception:
+            pass
+
         # Special handling for Ramayana: combine Book + Canto + Verse if available
         book_match = re.search(VedicCitationExtractor.PATTERNS['ramayana_book'], text, re.MULTILINE)
         canto_match = re.search(VedicCitationExtractor.PATTERNS['ramayana_canto'], text, re.MULTILINE)
@@ -178,7 +187,9 @@ class VedicCitationExtractor:
         Returns:
             Citation string or None
         """
-        # Check for stored verse reference
+        # Check for stored verse reference / canonical citation metadata
+        if 'citation' in metadata and metadata['citation']:
+            return metadata['citation']
         if 'verse_reference' in metadata:
             return metadata['verse_reference']
 
@@ -274,6 +285,10 @@ class CitationFormatter:
         else:
             citation_label = f"Passage {passage_number}"
 
+        # Commentary texts (e.g. Nirukta) must always be visibly labelled as commentary
+        if doc.metadata.get("source_type") == "commentary" and "commentary" not in citation_label.lower():
+            citation_label = f"{citation_label} [Commentary — NOT primary verse evidence]"
+
         return citation_label, source_identifier
 
     @staticmethod
@@ -308,24 +323,24 @@ def enhance_corpus_results_with_citations(examples: List[Document]) -> str:
     """
     Convert retrieved documents to formatted text with proper citations.
 
-    Args:
-        examples: List of retrieved Document objects
-
-    Returns:
-        Formatted string with citations instead of generic "Passage N"
-
-    Example:
-        Input:  [Document(page_content="...", metadata={"filename": "rigveda-griffith..."}), ...]
-        Output: "RV 1.1.1 - Invocation to Agni:\n...\n\nRV 1.1.2 - Agni as Messenger:\n..."
+    For sliding-window prose units (`full_unit_text` + `matched_window` attached
+    during retrieval deduplication), renders the full native unit centered around
+    the matching window within the character budget, always preserving `॥ citation ॥`.
     """
+    from src.utils.windowing import center_excerpt_around_window
     char_limit = 500
+    windowed_char_limit = 1200
     formatted_passages = []
 
     for i, doc in enumerate(examples):
         citation_label, source = CitationFormatter.format_citation_with_source(doc, i + 1)
 
-        # Truncate content
-        content = doc.page_content[:char_limit]
+        full_unit = doc.metadata.get("full_unit_text")
+        matched_win = doc.metadata.get("matched_window")
+        if full_unit and matched_win:
+            content = center_excerpt_around_window(full_unit, matched_win, char_budget=windowed_char_limit)
+        else:
+            content = doc.page_content[:char_limit]
 
         # Create formatted passage with proper citation
         formatted_passage = f"{citation_label}:\n{content}"

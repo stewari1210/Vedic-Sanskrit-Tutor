@@ -1,0 +1,19 @@
+{
+  "title": "Gopatha Brāhmaṇa",
+  "author": [
+    "Vedic Tradition",
+    "Arlo Griffiths (2005–06); Reinhold Grünendahl; TEI by Maximilian Mehner"
+  ],
+  "edition": "Dieuke Gaastra, Das Gopatha Brāhmaṇa (Leiden: Brill, 1919)",
+  "creator": "GRETIL (Göttingen Register of Electronic Texts in Indian Languages)",
+  "source_url": "https://gretil.sub.uni-goettingen.de/gretil/corpustei/sa_gopathabrAhmaNa.xml",
+  "source_id": "gopatha_brahmana",
+  "licence": "CC BY-NC-SA 4.0",
+  "filename": "gb",
+  "preprocessing": "sanskrit",
+  "source_type": "vedic_text",
+  "veda": "gopatha_brahmana",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose",
+  "chronology_note": "late Brāhmaṇa"
+}

@@ -1,0 +1,1149 @@
+{
+  "tranche": 2,
+  "status": "full_ta_dry_run (TB, JUB, full TA 1-9; excludes TA 10, Ekagnikanda, and BSS)",
+  "context_gated_entries": [
+    "ayu",
+    "kashi",
+    "kasi",
+    "parshu",
+    "parsu",
+    "puru",
+    "vasa",
+    "vasha"
+  ],
+  "curated_exact_entries": [
+    "ayu",
+    "janaka",
+    "kashi",
+    "kasi",
+    "parshu",
+    "parsu",
+    "puru",
+    "vasa",
+    "vasha"
+  ],
+  "priority_names_found": {
+    "kuru": {
+      "forms_found": [
+        "कुरु",
+        "कौरव",
+        "कौरव्य"
+      ],
+      "count": 64,
+      "example_citation": "TB 1.1.5.40",
+      "by_corpus": {
+        "tb": 26,
+        "jub": 16,
+        "ta": 10
+      }
+    },
+    "pancala": {
+      "forms_found": [
+        "पञ्चाल",
+        "पाञ्चाल"
+      ],
+      "count": 9,
+      "example_citation": "TB 1.8.4.12",
+      "by_corpus": {
+        "tb": 2,
+        "jub": 7
+      }
+    },
+    "kuru_pancala": {
+      "forms_found": [
+        "कुरुपञ्चाल"
+      ],
+      "count": 8,
+      "example_citation": "TB 1.8.4.12",
+      "by_corpus": {
+        "tb": 2,
+        "jub": 6
+      }
+    },
+    "videha": {
+      "forms_found": [
+        "वैदेह"
+      ],
+      "count": 2,
+      "example_citation": "TB 3.10.9.31",
+      "by_corpus": {
+        "tb": 1,
+        "ta": 1
+      }
+    },
+    "janaka": {
+      "forms_found": [
+        "जनक"
+      ],
+      "count": 1,
+      "example_citation": "TB 3.10.9.31",
+      "by_corpus": {
+        "tb": 1
+      }
+    },
+    "pravahana_jaivali": {
+      "forms_found": [
+        "जैवलि"
+      ],
+      "count": 1,
+      "example_citation": "JUB 1.12.4",
+      "by_corpus": {
+        "jub": 1
+      }
+    },
+    "bhagiratha": {
+      "forms_found": [
+        "भगेरथ"
+      ],
+      "count": 2,
+      "example_citation": "JUB 4.6.1",
+      "by_corpus": {
+        "jub": 1
+      }
+    }
+  },
+  "priority_names_not_found_in_tranche2": [
+    "kosala",
+    "kasi",
+    "matsya",
+    "usinara",
+    "vasa",
+    "gandhari",
+    "aratta",
+    "amavasu",
+    "asvapati_kaikeya",
+    "mandhatr",
+    "ayu",
+    "parsu"
+  ],
+  "priority_names_still_not_found_across_t1_and_t2": [
+    "usinara",
+    "aratta",
+    "amavasu",
+    "mandhatr"
+  ],
+  "new_gazetteer_additions": {
+    "aruni": {
+      "forms_found": [
+        "आरुणि"
+      ],
+      "count": 2,
+      "example_citation": "TB 3.10.9.24",
+      "by_corpus": {
+        "tb": 1,
+        "jub": 1
+      }
+    },
+    "jabala": {
+      "forms_found": [
+        "जाबाल"
+      ],
+      "count": 7,
+      "example_citation": "JUB 3.2.2",
+      "by_corpus": {
+        "jub": 2
+      }
+    },
+    "sandilya": {
+      "forms_found": [
+        "शाण्डिल्य"
+      ],
+      "count": 6,
+      "example_citation": "JUB 4.9.2",
+      "by_corpus": {
+        "jub": 1
+      }
+    },
+    "balaki": {
+      "forms_found": [
+        "गार्ग्य"
+      ],
+      "count": 1,
+      "example_citation": "TA 1.7.3",
+      "by_corpus": {
+        "ta": 1
+      }
+    },
+    "bhujyu": {
+      "forms_found": [
+        "भुज्यु"
+      ],
+      "count": 3,
+      "example_citation": "TB 2.8.7.56",
+      "by_corpus": {
+        "tb": 1,
+        "ta": 2
+      }
+    },
+    "gargya": {
+      "forms_found": [
+        "गार्ग्य"
+      ],
+      "count": 1,
+      "example_citation": "TA 1.7.3",
+      "by_corpus": {
+        "ta": 1
+      }
+    },
+    "madra": {
+      "forms_found": [
+        "मद्र"
+      ],
+      "count": 2,
+      "example_citation": "TB 2.4.3.31",
+      "by_corpus": {
+        "tb": 2
+      }
+    },
+    "kurukshetra": {
+      "forms_found": [
+        "कुरुक्षेत्र"
+      ],
+      "count": 1,
+      "example_citation": "TA 5.1",
+      "by_corpus": {
+        "ta": 1
+      }
+    },
+    "nachiketas": {
+      "forms_found": [
+        "नचिकेत"
+      ],
+      "count": 1,
+      "example_citation": "TB 3.11.8.42",
+      "by_corpus": {
+        "tb": 1
+      }
+    },
+    "bhrgu": {
+      "forms_found": [
+        "भार्गव",
+        "भृगु"
+      ],
+      "count": 5,
+      "example_citation": "TB 1.8.2.7",
+      "by_corpus": {
+        "tb": 1,
+        "jub": 1,
+        "ta": 2
+      }
+    },
+    "aruna_aupavesi": {
+      "forms_found": [
+        "अरुण",
+        "औपवेशि"
+      ],
+      "count": 19,
+      "example_citation": "TB 2.1.5.44",
+      "by_corpus": {
+        "tb": 11,
+        "ta": 6
+      }
+    },
+    "brahmadatta": {
+      "forms_found": [
+        "ब्रह्मदत्त"
+      ],
+      "count": 2,
+      "example_citation": "JUB 1.12.4",
+      "by_corpus": {
+        "jub": 2
+      }
+    },
+    "caikitayana": {
+      "forms_found": [
+        "चैकितानेय"
+      ],
+      "count": 6,
+      "example_citation": "JUB 1.12.3",
+      "by_corpus": {
+        "jub": 5
+      }
+    },
+    "dalbhya": {
+      "forms_found": [
+        "दाल्भ्य"
+      ],
+      "count": 4,
+      "example_citation": "JUB 1.2.2",
+      "by_corpus": {
+        "jub": 4
+      }
+    },
+    "satyavaha": {
+      "forms_found": [
+        "सत्यवच"
+      ],
+      "count": 1,
+      "example_citation": "TA 7.9.1",
+      "by_corpus": {
+        "ta": 1
+      }
+    },
+    "naka_maudgalya": {
+      "forms_found": [
+        "नाक"
+      ],
+      "count": 46,
+      "example_citation": "TB 1.3.4.24",
+      "by_corpus": {
+        "tb": 14,
+        "jub": 9,
+        "ta": 10
+      }
+    },
+    "shatyayani": {
+      "forms_found": [
+        "शाट्यायनि"
+      ],
+      "count": 8,
+      "example_citation": "JUB 1.1.6",
+      "by_corpus": {
+        "jub": 8
+      }
+    },
+    "ikshvaku": {
+      "forms_found": [
+        "ऐक्ष्वाक"
+      ],
+      "count": 1,
+      "example_citation": "JUB 4.6.1",
+      "by_corpus": {
+        "jub": 1
+      }
+    },
+    "nahusha": {
+      "forms_found": [
+        "नहुष"
+      ],
+      "count": 1,
+      "example_citation": "TB 2.4.7.71",
+      "by_corpus": {
+        "tb": 1
+      }
+    },
+    "sarasvati": {
+      "forms_found": [
+        "सरस्वती",
+        "सारस्वत"
+      ],
+      "count": 79,
+      "example_citation": "TB 1.3.4.22",
+      "by_corpus": {
+        "tb": 54,
+        "ta": 1
+      }
+    },
+    "ganga": {
+      "forms_found": [
+        "गङ्ग",
+        "गङ्गा"
+      ],
+      "count": 6,
+      "example_citation": "TA 2.20.1",
+      "by_corpus": {
+        "ta": 1
+      }
+    }
+  },
+  "candidate_new_not_found": [
+    "yajnavalkya",
+    "uddalaka",
+    "svetaketu",
+    "gargi",
+    "maitreyi",
+    "ajatashatru",
+    "satyakama",
+    "ushasti",
+    "raikva",
+    "janashruti",
+    "ashvala",
+    "sakalya",
+    "kahola",
+    "artabhaga",
+    "kausitaki",
+    "paingya",
+    "sankhayana",
+    "saka_puni",
+    "aupamanyava",
+    "aurnavabha",
+    "sakata_yana",
+    "kautsa",
+    "audumbarayana",
+    "kekaya",
+    "srnjaya",
+    "naimisha",
+    "uttarakuru",
+    "bahika",
+    "salva",
+    "trishanku",
+    "paurushishti",
+    "varshagira",
+    "kaushalya",
+    "ashvalayana",
+    "pururavas",
+    "urvashi",
+    "yayati",
+    "janamejaya",
+    "parikshit",
+    "drishadvati",
+    "yamuna",
+    "vibhindukiya"
+  ],
+  "existing_gazetteer_new_attestations_count": 59,
+  "existing_gazetteer_new_attestations": {
+    "vasishtha": {
+      "forms_found": [
+        "वसिष्ठ"
+      ],
+      "count": 13,
+      "example_citation": "TB 1.3.10.64",
+      "by_corpus": {
+        "tb": 6,
+        "jub": 3
+      }
+    },
+    "vasistha": {
+      "forms_found": [
+        "वसिष्ठ"
+      ],
+      "count": 13,
+      "example_citation": "TB 1.3.10.64",
+      "by_corpus": {
+        "tb": 6,
+        "jub": 3
+      }
+    },
+    "bharata": {
+      "forms_found": [
+        "भरत"
+      ],
+      "count": 23,
+      "example_citation": "TB 1.7.4.25",
+      "by_corpus": {
+        "tb": 11,
+        "jub": 1,
+        "ta": 2
+      }
+    },
+    "anu": {
+      "forms_found": [
+        "अनु"
+      ],
+      "count": 450,
+      "example_citation": "TB 1.1.3.16",
+      "by_corpus": {
+        "tb": 208,
+        "jub": 35,
+        "ta": 28
+      }
+    },
+    "bheda": {
+      "forms_found": [
+        "भेद"
+      ],
+      "count": 2,
+      "example_citation": "TB 2.6.13.64",
+      "by_corpus": {
+        "tb": 2
+      }
+    },
+    "trasadasyu": {
+      "forms_found": [
+        "त्रसदस्यु"
+      ],
+      "count": 1,
+      "example_citation": "JUB 2.2.4",
+      "by_corpus": {
+        "jub": 1
+      }
+    },
+    "dasa": {
+      "forms_found": [
+        "दास"
+      ],
+      "count": 48,
+      "example_citation": "TB 1.2.6.47",
+      "by_corpus": {
+        "tb": 25,
+        "jub": 7,
+        "ta": 7
+      }
+    },
+    "dasyu": {
+      "forms_found": [
+        "दस्यु"
+      ],
+      "count": 2,
+      "example_citation": "TB 2.5.8.44",
+      "by_corpus": {
+        "tb": 1,
+        "jub": 1
+      }
+    },
+    "sarasvati": {
+      "forms_found": [
+        "सरस्वत",
+        "सरस्वती"
+      ],
+      "count": 186,
+      "example_citation": "TB 1.3.4.26",
+      "by_corpus": {
+        "tb": 63,
+        "ta": 9
+      }
+    },
+    "saraswati": {
+      "forms_found": [
+        "सरस्वत",
+        "सरस्वती"
+      ],
+      "count": 186,
+      "example_citation": "TB 1.3.4.26",
+      "by_corpus": {
+        "tb": 63,
+        "ta": 9
+      }
+    },
+    "sindhu": {
+      "forms_found": [
+        "सिन्धु"
+      ],
+      "count": 4,
+      "example_citation": "TB 2.4.1.5",
+      "by_corpus": {
+        "tb": 2,
+        "ta": 2
+      }
+    },
+    "indra": {
+      "forms_found": [
+        "इन्द्र"
+      ],
+      "count": 944,
+      "example_citation": "TB 1.1.1.5",
+      "by_corpus": {
+        "tb": 397,
+        "jub": 23,
+        "ta": 48
+      }
+    },
+    "agni": {
+      "forms_found": [
+        "अग्नि"
+      ],
+      "count": 628,
+      "example_citation": "TB 1.1.1.5",
+      "by_corpus": {
+        "tb": 348,
+        "jub": 28,
+        "ta": 55
+      }
+    },
+    "varuna": {
+      "forms_found": [
+        "वरुण"
+      ],
+      "count": 253,
+      "example_citation": "TB 1.1.1.5",
+      "by_corpus": {
+        "tb": 139,
+        "jub": 7,
+        "ta": 37
+      }
+    },
+    "mitra": {
+      "forms_found": [
+        "मित्र"
+      ],
+      "count": 150,
+      "example_citation": "TB 1.1.1.5",
+      "by_corpus": {
+        "tb": 82,
+        "jub": 5,
+        "ta": 20
+      }
+    },
+    "soma": {
+      "forms_found": [
+        "सोम"
+      ],
+      "count": 376,
+      "example_citation": "TB 1.1.3.23",
+      "by_corpus": {
+        "tb": 189,
+        "jub": 8,
+        "ta": 30
+      }
+    },
+    "rudra": {
+      "forms_found": [
+        "रुद्र"
+      ],
+      "count": 172,
+      "example_citation": "TB 1.1.5.42",
+      "by_corpus": {
+        "tb": 70,
+        "jub": 3,
+        "ta": 23
+      }
+    },
+    "marut": {
+      "forms_found": [
+        "मरुत्",
+        "मरुद्"
+      ],
+      "count": 29,
+      "example_citation": "TB 1.4.5.29",
+      "by_corpus": {
+        "tb": 19,
+        "ta": 7
+      }
+    },
+    "maruts": {
+      "forms_found": [
+        "मरुत्",
+        "मरुद्"
+      ],
+      "count": 29,
+      "example_citation": "TB 1.4.5.29",
+      "by_corpus": {
+        "tb": 19,
+        "ta": 7
+      }
+    },
+    "ushas": {
+      "forms_found": [
+        "उषस्",
+        "उषा"
+      ],
+      "count": 19,
+      "example_citation": "TB 1.4.4.21",
+      "by_corpus": {
+        "tb": 15,
+        "ta": 3
+      }
+    },
+    "usas": {
+      "forms_found": [
+        "उषस्",
+        "उषा"
+      ],
+      "count": 19,
+      "example_citation": "TB 1.4.4.21",
+      "by_corpus": {
+        "tb": 15,
+        "ta": 3
+      }
+    },
+    "ashvins": {
+      "forms_found": [
+        "अश्विन"
+      ],
+      "count": 117,
+      "example_citation": "TB 1.4.2.7",
+      "by_corpus": {
+        "tb": 60,
+        "jub": 1,
+        "ta": 13
+      }
+    },
+    "asvins": {
+      "forms_found": [
+        "अश्विन"
+      ],
+      "count": 117,
+      "example_citation": "TB 1.4.2.7",
+      "by_corpus": {
+        "tb": 60,
+        "jub": 1,
+        "ta": 13
+      }
+    },
+    "vishnu": {
+      "forms_found": [
+        "विष्णु"
+      ],
+      "count": 52,
+      "example_citation": "TB 1.2.5.40",
+      "by_corpus": {
+        "tb": 29,
+        "jub": 1,
+        "ta": 5
+      }
+    },
+    "visnu": {
+      "forms_found": [
+        "विष्णु"
+      ],
+      "count": 52,
+      "example_citation": "TB 1.2.5.40",
+      "by_corpus": {
+        "tb": 29,
+        "jub": 1,
+        "ta": 5
+      }
+    },
+    "brihaspati": {
+      "forms_found": [
+        "बृहस्पति"
+      ],
+      "count": 76,
+      "example_citation": "TB 1.1.1.5",
+      "by_corpus": {
+        "tb": 38,
+        "jub": 6,
+        "ta": 16
+      }
+    },
+    "brhaspati": {
+      "forms_found": [
+        "बृहस्पति"
+      ],
+      "count": 76,
+      "example_citation": "TB 1.1.1.5",
+      "by_corpus": {
+        "tb": 38,
+        "jub": 6,
+        "ta": 16
+      }
+    },
+    "brahmanaspati": {
+      "forms_found": [
+        "ब्रह्मणस्पति"
+      ],
+      "count": 7,
+      "example_citation": "TB 2.4.2.20",
+      "by_corpus": {
+        "tb": 5,
+        "ta": 2
+      }
+    },
+    "vishvamitra": {
+      "forms_found": [
+        "विश्वामित्र"
+      ],
+      "count": 3,
+      "example_citation": "JUB 3.1.3",
+      "by_corpus": {
+        "jub": 2
+      }
+    },
+    "visvamitra": {
+      "forms_found": [
+        "विश्वामित्र"
+      ],
+      "count": 3,
+      "example_citation": "JUB 3.1.3",
+      "by_corpus": {
+        "jub": 2
+      }
+    },
+    "vritra": {
+      "forms_found": [
+        "वृत्र"
+      ],
+      "count": 83,
+      "example_citation": "TB 1.2.1.21",
+      "by_corpus": {
+        "tb": 57,
+        "ta": 4
+      }
+    },
+    "vrtra": {
+      "forms_found": [
+        "वृत्र"
+      ],
+      "count": 83,
+      "example_citation": "TB 1.2.1.21",
+      "by_corpus": {
+        "tb": 57,
+        "ta": 4
+      }
+    },
+    "sattra": {
+      "forms_found": [
+        "सत्त्र",
+        "सत्र"
+      ],
+      "count": 24,
+      "example_citation": "TB 1.2.2.28",
+      "by_corpus": {
+        "tb": 17,
+        "jub": 1,
+        "ta": 3
+      }
+    },
+    "panchavimsa": {
+      "forms_found": [
+        "पञ्चविंश"
+      ],
+      "count": 5,
+      "example_citation": "TB 1.2.6.44",
+      "by_corpus": {
+        "tb": 4
+      }
+    },
+    "pancavimsa": {
+      "forms_found": [
+        "पञ्चविंश"
+      ],
+      "count": 5,
+      "example_citation": "TB 1.2.6.44",
+      "by_corpus": {
+        "tb": 4
+      }
+    },
+    "janaka": {
+      "forms_found": [
+        "जनको"
+      ],
+      "count": 1,
+      "example_citation": "TB 3.10.9.31",
+      "by_corpus": {
+        "tb": 1
+      }
+    },
+    "jaivali": {
+      "forms_found": [
+        "जैवलि"
+      ],
+      "count": 1,
+      "example_citation": "JUB 1.12.4",
+      "by_corpus": {
+        "jub": 1
+      }
+    },
+    "madhyandina": {
+      "forms_found": [
+        "माध्यन्दिन"
+      ],
+      "count": 20,
+      "example_citation": "TB 1.3.8.52",
+      "by_corpus": {
+        "tb": 7,
+        "jub": 5
+      }
+    },
+    "kuru": {
+      "forms_found": [
+        "कुरु"
+      ],
+      "count": 62,
+      "example_citation": "TB 1.1.5.40",
+      "by_corpus": {
+        "tb": 26,
+        "jub": 15,
+        "ta": 10
+      }
+    },
+    "pancala": {
+      "forms_found": [
+        "पञ्चाल"
+      ],
+      "count": 8,
+      "example_citation": "TB 1.8.4.12",
+      "by_corpus": {
+        "tb": 2,
+        "jub": 6
+      }
+    },
+    "panchala": {
+      "forms_found": [
+        "पञ्चाल"
+      ],
+      "count": 8,
+      "example_citation": "TB 1.8.4.12",
+      "by_corpus": {
+        "tb": 2,
+        "jub": 6
+      }
+    },
+    "ikshvaku": {
+      "forms_found": [
+        "ऐक्ष्वाक"
+      ],
+      "count": 1,
+      "example_citation": "JUB 4.6.1",
+      "by_corpus": {
+        "jub": 1
+      }
+    },
+    "iksvaku": {
+      "forms_found": [
+        "ऐक्ष्वाक"
+      ],
+      "count": 1,
+      "example_citation": "JUB 4.6.1",
+      "by_corpus": {
+        "jub": 1
+      }
+    },
+    "rohita": {
+      "forms_found": [
+        "रोहित"
+      ],
+      "count": 17,
+      "example_citation": "TB 2.5.1.2",
+      "by_corpus": {
+        "tb": 7,
+        "jub": 1,
+        "ta": 4
+      }
+    },
+    "anga": {
+      "forms_found": [
+        "अङ्ग"
+      ],
+      "count": 87,
+      "example_citation": "TB 1.1.4.34",
+      "by_corpus": {
+        "tb": 62,
+        "jub": 4,
+        "ta": 6
+      }
+    },
+    "atharvan": {
+      "forms_found": [
+        "अथर्व"
+      ],
+      "count": 7,
+      "example_citation": "TB 1.1.10.76",
+      "by_corpus": {
+        "tb": 6,
+        "ta": 1
+      }
+    },
+    "kurupancala": {
+      "forms_found": [
+        "कुरुपञ्चाल"
+      ],
+      "count": 8,
+      "example_citation": "TB 1.8.4.12",
+      "by_corpus": {
+        "tb": 2,
+        "jub": 6
+      }
+    },
+    "kurupanchala": {
+      "forms_found": [
+        "कुरुपञ्चाल"
+      ],
+      "count": 8,
+      "example_citation": "TB 1.8.4.12",
+      "by_corpus": {
+        "tb": 2,
+        "jub": 6
+      }
+    },
+    "bhagiratha": {
+      "forms_found": [
+        "भगेरथ"
+      ],
+      "count": 2,
+      "example_citation": "JUB 4.6.1",
+      "by_corpus": {
+        "jub": 1
+      }
+    },
+    "bhagirathi": {
+      "forms_found": [
+        "भगेरथ"
+      ],
+      "count": 2,
+      "example_citation": "JUB 4.6.1",
+      "by_corpus": {
+        "jub": 1
+      }
+    },
+    "aruni": {
+      "forms_found": [
+        "आरुणि"
+      ],
+      "count": 2,
+      "example_citation": "TB 3.10.9.24",
+      "by_corpus": {
+        "tb": 1,
+        "jub": 1
+      }
+    },
+    "jabala": {
+      "forms_found": [
+        "जाबाल"
+      ],
+      "count": 7,
+      "example_citation": "JUB 3.2.2",
+      "by_corpus": {
+        "jub": 2
+      }
+    },
+    "sandilya": {
+      "forms_found": [
+        "शाण्डिल्य"
+      ],
+      "count": 6,
+      "example_citation": "JUB 4.9.2",
+      "by_corpus": {
+        "jub": 1
+      }
+    },
+    "shandilya": {
+      "forms_found": [
+        "शाण्डिल्य"
+      ],
+      "count": 6,
+      "example_citation": "JUB 4.9.2",
+      "by_corpus": {
+        "jub": 1
+      }
+    },
+    "gargya": {
+      "forms_found": [
+        "गार्ग्य"
+      ],
+      "count": 1,
+      "example_citation": "TA 1.7.3",
+      "by_corpus": {
+        "ta": 1
+      }
+    },
+    "bhujyu": {
+      "forms_found": [
+        "भुज्यु"
+      ],
+      "count": 3,
+      "example_citation": "TB 2.8.7.56",
+      "by_corpus": {
+        "tb": 1,
+        "ta": 2
+      }
+    },
+    "madra": {
+      "forms_found": [
+        "मद्र"
+      ],
+      "count": 2,
+      "example_citation": "TB 2.4.3.31",
+      "by_corpus": {
+        "tb": 2
+      }
+    },
+    "kurukshetra": {
+      "forms_found": [
+        "कुरुक्षेत्र"
+      ],
+      "count": 1,
+      "example_citation": "TA 5.1",
+      "by_corpus": {
+        "ta": 1
+      }
+    },
+    "kuruksetra": {
+      "forms_found": [
+        "कुरुक्षेत्र"
+      ],
+      "count": 1,
+      "example_citation": "TA 5.1",
+      "by_corpus": {
+        "ta": 1
+      }
+    }
+  },
+  "discovered_ayana_patronymics": [
+    {
+      "form": "प्रजायन्ते",
+      "count": 7,
+      "example_citation": "TB 1.1.4.32"
+    },
+    {
+      "form": "हैवास्याजायन्ते",
+      "count": 7,
+      "example_citation": "JUB 2.2.4"
+    },
+    {
+      "form": "श्रायन्ती",
+      "count": 5,
+      "example_citation": "TB 1.5.12.58"
+    },
+    {
+      "form": "शाट्यायनिर्",
+      "count": 5,
+      "example_citation": "JUB 1.9.3"
+    },
+    {
+      "form": "ऽजायन्त",
+      "count": 4,
+      "example_citation": "TB 2.1.1.1"
+    },
+    {
+      "form": "अजायन्त",
+      "count": 3,
+      "example_citation": "TB 2.2.9.51"
+    },
+    {
+      "form": "पर्यायन्",
+      "count": 3,
+      "example_citation": "TB 2.2.10.65"
+    },
+    {
+      "form": "समायन्ति",
+      "count": 2,
+      "example_citation": "TB 1.5.3.15"
+    },
+    {
+      "form": "प्राजायन्त",
+      "count": 2,
+      "example_citation": "TB 1.6.2.12"
+    },
+    {
+      "form": "उदायन्",
+      "count": 2,
+      "example_citation": "TB 2.2.10.67"
+    },
+    {
+      "form": "आजायन्ते",
+      "count": 2,
+      "example_citation": "TB 3.9.1.4"
+    },
+    {
+      "form": "शाट्यायनिस्",
+      "count": 2,
+      "example_citation": "JUB 1.1.6"
+    },
+    {
+      "form": "उद्गायन्तं",
+      "count": 2,
+      "example_citation": "JUB 1.3.4"
+    },
+    {
+      "form": "उपागायन्",
+      "count": 2,
+      "example_citation": "JUB 1.6.2"
+    },
+    {
+      "form": "उदायन्न्",
+      "count": 2,
+      "example_citation": "JUB 3.4.1"
+    },
+    {
+      "form": "कात्यायनय",
+      "count": 2,
+      "example_citation": "JUB 3.7.4"
+    },
+    {
+      "form": "कात्यायनिर्",
+      "count": 2,
+      "example_citation": "JUB 3.7.4"
+    },
+    {
+      "form": "समायन्",
+      "count": 2,
+      "example_citation": "JUB 4.8.3"
+    },
+    {
+      "form": "शाट्यायनी",
+      "count": 2,
+      "example_citation": "JUB 4.9.1"
+    }
+  ]
+}

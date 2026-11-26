@@ -29,14 +29,17 @@ import glob
 from src.helper import project_root, logger
 from src.config import LOCAL_FOLDER, COLLECTION_NAME, VECTORDB_FOLDER
 from src.utils.index_files import create_qdrant_vector_store
-from src.utils.agentic_rag import run_agentic_rag, set_shared_vector_store
+from src.utils.agentic_rag import run_agentic_rag, set_shared_vector_store, set_llm
 
-from langchain_community.chat_models import ChatOllama
+# Use the modern langchain_ollama client (same as src/settings.py): the old
+# community ChatOllama has NO reasoning/thinking control, so a reasoning model
+# (e.g. Qwen3.6) spends its whole token budget "thinking" and returns EMPTY content.
+from langchain_ollama import ChatOllama
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
-from src.settings import OLLAMA_BASE_URL, OLLAMA_MODEL, GEMINI_MODEL
-from src.config import GROQ_API_KEY
+from src.settings import OLLAMA_BASE_URL, OLLAMA_MODEL, GEMINI_MODEL, OLLAMA_QA_NUM_CTX
+from src.config import GROQ_API_KEY, LLM_PROVIDER
 from src.utils.sanskrit_translator import get_translator
 
 
@@ -238,6 +241,24 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+
+@st.cache_data(ttl=30, show_spinner=False)
+def _installed_ollama_models(base_url: str) -> list:
+    """Model tags actually installed on the running Ollama server (via /api/tags).
+
+    So the sidebar lists whatever `ollama pull` has fetched (e.g. qwen3.6:27b-q4_K_M,
+    gemma4:26b-a4b-it-q4_K_M) instead of a stale hardcoded set. Returns [] if Ollama
+    is unreachable, and the caller falls back to a curated default list. Cached for
+    30s so it is not re-queried on every Streamlit rerun.
+    """
+    try:
+        import urllib.request
+        with urllib.request.urlopen(f"{base_url.rstrip('/')}/api/tags", timeout=3) as r:
+            data = json.loads(r.read().decode())
+        return sorted(m.get("name", "") for m in data.get("models", []) if m.get("name"))
+    except Exception:
+        return []
 
 
 class SanskritTutorApp:
@@ -466,11 +487,23 @@ class SanskritTutorApp:
                         base_url=OLLAMA_BASE_URL,
                         model=model_name,
                         temperature=0.7,
-                        timeout=180,
-                        num_predict=2048
+                        # reasoning=False: give a DIRECT answer. Reasoning models
+                        # (Qwen3.6) otherwise spend the whole budget thinking and
+                        # return empty content → the RAG reports "no info found".
+                        reasoning=False,
+                        # Large local models (e.g. qwen3.6:27b) are slow (~7 tok/s on
+                        # Metal), so a 180s timeout / 2048-token cap would truncate or
+                        # time out a full scholarly answer. Give them room.
+                        timeout=900,
+                        num_predict=4096,
+                        num_ctx=OLLAMA_QA_NUM_CTX,
                     )
 
                 st.session_state.llm = llm
+                # Drive the agentic RAG pipeline with the selected model (otherwise
+                # it would keep using the config-default LLM and the sidebar choice
+                # would have no effect on answers).
+                set_llm(llm)
                 st.session_state.model_name = model_name
                 st.session_state.llm_provider = llm_provider
                 st.session_state.initialized = True
@@ -857,9 +890,14 @@ Have natural conversation about Sanskrit:
             st.markdown("---")
             st.subheader("⚙️ Settings")
 
+            _providers = ["gemini", "ollama", "groq"]
+            # Default to the provider configured in .env (LLM_PROVIDER), so an
+            # Ollama-configured install opens on Ollama rather than Gemini.
+            _prov_default = _providers.index(LLM_PROVIDER) if LLM_PROVIDER in _providers else 0
             llm_provider = st.selectbox(
                 "LLM Provider",
-                ["gemini", "ollama", "groq"],
+                _providers,
+                index=_prov_default,
                 key="llm_provider_select"
             )
 
@@ -872,11 +910,30 @@ Have natural conversation about Sanskrit:
                 st.info("💡 Ollama: Local models, requires Ollama running")
 
             if llm_provider == "ollama":
+                # List models actually installed on the Ollama server; fall back to a
+                # curated default set (incl. the .env OLLAMA_MODEL and current builds)
+                # if Ollama can't be reached.
+                installed = _installed_ollama_models(OLLAMA_BASE_URL)
+                fallback = [OLLAMA_MODEL, "qwen3.6:27b-q4_K_M", "gemma4:26b-a4b-it-q4_K_M",
+                            "qwen3:4b", "gemma4:e4b", "llama3.1:8b"]
+                # de-dupe, drop empties, keep order
+                seen, options = set(), []
+                for m in (installed or fallback):
+                    if m and m not in seen:
+                        seen.add(m); options.append(m)
+                # ensure the .env-configured model is present and selected by default
+                if OLLAMA_MODEL and OLLAMA_MODEL not in seen:
+                    options.insert(0, OLLAMA_MODEL)
+                default_idx = options.index(OLLAMA_MODEL) if OLLAMA_MODEL in options else 0
                 model_name = st.selectbox(
-                    "Ollama Model",
-                    ["llama3.1:8b", "phi3.5:mini", "phi3:mini", "llama3.2:3b", "llama3.2:1b", "gemma2:2b"],
-                    help="Smaller models are faster. phi3.5:mini recommended!"
+                    "Ollama Model", options, index=default_idx,
+                    help="Auto-detected from your running Ollama server. "
+                         "The default comes from OLLAMA_MODEL in your .env."
                 )
+                if not installed:
+                    st.caption("⚠️ Couldn't reach Ollama to list installed models — "
+                               "showing defaults. Is `ollama serve` running at "
+                               f"{OLLAMA_BASE_URL}?")
             elif llm_provider == "groq":
                 model_name = st.selectbox(
                     "Groq Model",
@@ -1041,15 +1098,29 @@ Have natural conversation about Sanskrit:
             st.markdown("""
             <div class="panel">
             <div class="eyebrow">📚 The corpus</div>
-            <div class="corpus-group">Saṃhitās</div>
-            <div class="corpus-card"><span class="abbr">RV</span><span class="name">Ṛgveda <small>· all 10 maṇḍalas</small></span></div>
-            <div class="corpus-card"><span class="abbr">AVŚ</span><span class="name">Atharvaveda <small>· Śaunaka, 20 kāṇḍas</small></span></div>
+            <div class="corpus-group">Saṃhitās (Layers 1–3)</div>
+            <div class="corpus-card"><span class="abbr">RV</span><span class="name">Ṛgveda <small>· all 10 maṇḍalas (L1–2)</small></span></div>
+            <div class="corpus-card"><span class="abbr">AVŚ</span><span class="name">Atharvaveda <small>· Śaunaka (L3)</small></span></div>
+            <div class="corpus-card"><span class="abbr">AVP</span><span class="name">Atharvaveda <small>· Paippalāda (L3)</small></span></div>
             <div class="corpus-card"><span class="abbr">VS</span><span class="name">Vājasaneyi <small>· Śukla Yajurveda</small></span></div>
-            <div class="corpus-card"><span class="abbr">TS</span><span class="name">Taittirīya <small>· Kṛṣṇa Yajurveda, 7 kāṇḍas</small></span></div>
-            <div class="corpus-group">Brāhmaṇas</div>
-            <div class="corpus-card"><span class="abbr">AB</span><span class="name">Aitareya <small>· complete</small></span></div>
-            <div class="corpus-card"><span class="abbr">PB</span><span class="name">Pañcaviṃśa <small>· complete</small></span></div>
+            <div class="corpus-card"><span class="abbr">TS</span><span class="name">Taittirīya <small>· Kṛṣṇa Yajurveda</small></span></div>
+            <div class="corpus-card"><span class="abbr">MS</span><span class="name">Maitrāyaṇī <small>· Kṛṣṇa Yajurveda (L3)</small></span></div>
+            <div class="corpus-card"><span class="abbr">KS</span><span class="name">Kāṭhaka <small>· Kṛṣṇa Yajurveda (L3)</small></span></div>
+            <div class="corpus-group">Brāhmaṇas, Āraṇyakas &amp; Upaniṣads (Layer 4)</div>
+            <div class="corpus-card"><span class="abbr">AB</span><span class="name">Aitareya <small>· Brāhmaṇa</small></span></div>
+            <div class="corpus-card"><span class="abbr">PB</span><span class="name">Pañcaviṃśa <small>· Brāhmaṇa</small></span></div>
             <div class="corpus-card"><span class="abbr">SB</span><span class="name">Śatapatha <small>· Mādhyandina</small></span></div>
+            <div class="corpus-card"><span class="abbr">KB</span><span class="name">Kauṣītaki <small>· Brāhmaṇa</small></span></div>
+            <div class="corpus-card"><span class="abbr">GB</span><span class="name">Gopatha <small>· late Brāhmaṇa</small></span></div>
+            <div class="corpus-card"><span class="abbr">JB</span><span class="name">Jaiminīya <small>· Brāhmaṇa</small></span></div>
+            <div class="corpus-card"><span class="abbr">JUB</span><span class="name">Jaiminīya Upaniṣad <small>· Brāhmaṇa</small></span></div>
+            <div class="corpus-card"><span class="abbr">TB</span><span class="name">Taittirīya <small>· Brāhmaṇa</small></span></div>
+            <div class="corpus-card"><span class="abbr">TA</span><span class="name">Taittirīya Āraṇyaka <small>· Books 1–9</small></span></div>
+            <div class="corpus-card"><span class="abbr">BĀU</span><span class="name">Bṛhadāraṇyaka <small>· Kāṇva Upaniṣad</small></span></div>
+            <div class="corpus-card"><span class="abbr">ChU</span><span class="name">Chāndogya <small>· Upaniṣad</small></span></div>
+            <div class="corpus-group">Sūtra &amp; Vedāṅga (Layer 5)</div>
+            <div class="corpus-card"><span class="abbr">BŚS</span><span class="name">Baudhāyana Śrauta <small>· Sūtra (L5)</small></span></div>
+            <div class="corpus-card"><span class="abbr">Nir</span><span class="name">Nirukta <small>· Yāska, commentary only (L5)</small></span></div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -1190,16 +1261,29 @@ Have natural conversation about Sanskrit:
                     st.session_state.learned_words.extend([category])
 
     # (corpus prefix in the danda, detection regex, local_store file, n levels)
+    # Colliding abbreviations (VS, MS, KS, GB, JB, TB, TA, ChU) are matched here
+    # ONLY because `_lookup_nonrv_verse` requires citation digits immediately
+    # after the prefix (checked on tail). Order: longer/more specific names first.
     _NONRV_CORPORA = [
-        ("AVŚ", r'\b(av[sś]?|atharva\w*)\b', "avs/avs.md", 3),
-        ("VS",  r'\b(vs|vajasaneyi\w*)\b',   "yv/yv.md",  2),
-        ("TS",  r'\b(ts|taittir\w*)\b',      "ts/ts.md",  4),
-        # Brāhmaṇas: ॥ AB P.A.S ॥ (3), ॥ PB K.A.V ॥ (3), ॥ SB K.A.B.V ॥ (4).
-        # Śatapatha is split one file per kāṇḍa → relpath carries a {k} slot
-        # filled with the first citation number (Book 12 has no file → None).
-        ("AB",  r'\b(ab|aitareya\w*)\b',     "ab/ab.md",  3),
-        ("PB",  r'\b(pb|pancavim\w*|pañcavim\w*)\b', "pb/pb.md", 3),
-        ("SB",  r'\b(sb|shatapatha\w*|satapatha\w*)\b', "sb/sb_{k:02d}.md", 4),
+        ("AVP", r'\b(avp|paippal[aā]d\w*)\b',                                 "avp/avp.md", 3),
+        ("AVŚ", r'\b(av[sś]?|atharva\w*|[sś]aunak\w*)\b',                      "avs/avs.md", 3),
+        ("VS",  r'\b(vs|v[aā]jasaney\w*)\b',                                  "yv/yv.md",   2),
+        ("TB",  r'\b(tb|taittir[iī]ya\s+br[aā]hma[nṇ]\w*)\b',                 "tb/tb.md",   4),
+        ("TA",  r'\b(t[aā]|taittir[iī]ya\s+[aā]ra[nṇ]yak\w*)\b',              "ta/ta.md",   3),
+        ("TS",  r'\b(ts|taittir[iī]ya(?:\s+sa[mṃ]hit\w*)?)\b',                "ts/ts.md",   4),
+        ("MS",  r'\b(ms|maitr[aā]ya[nṇ]\w*)\b',                               "ms/ms.md",   3),
+        ("KS",  r'\b(ks|k[aā][tṭ]hak\w*)\b',                                  "ks/ks.md",   2),
+        ("AB",  r'\b(ab|aitareya\w*)\b',                                      "ab/ab.md",   3),
+        ("PB",  r'\b(pb|tmb|pancavim\w*|pañcavim\w*)\b',                      "pb/pb.md",   3),
+        ("SB",  r'\b(sb|sbm|shatapatha\w*|satapatha\w*)\b',                   "sb/sb_{k:02d}.md", 4),
+        ("KB",  r'\b(kb|kau[sṣ][iī]tak\w*|sankhayana\s+br\w*)\b',             "kb/kb.md",   3),
+        ("GB",  r'\b(gb|gopath\w*)\b',                                        "gb/gb.md",   3),
+        ("JUB", r'\b(jub|jaimin[iī]ya\s+upani[sṣ]ad\w*)\b',                   "jub/jub.md", 3),
+        ("JB",  r'\b(jb|jaimin[iī]ya\s+br[aā]hma[nṇ]\w*)\b',                  "jb/jb.md",   2),
+        ("BĀU", r'\b(b[aā]u|brhadaranyak\w*|brihadaranyak\w*)\b',             "bau/bau.md", 3),
+        ("ChU", r'\b(chu|cu|ch[aā]ndogy\w*)\b',                               "chu/chu.md", 3),
+        ("BŚS", r'\b(b[sś]s|baudh[aā]yana\s+[sś]raut\w*)\b',                  "bss/bss.md", 2),
+        ("Nir", r'\b(nir|nirukt\w*)\b',                                       "nir/nir.md", 2),
     ]
     _NONRV_MAX_CTX = 30   # cap section context (VS/TS sections can be large)
 
@@ -1216,9 +1300,20 @@ Have natural conversation about Sanskrit:
         from src.utils.anukramani import get_hymn_anukramani
         low = verse_ref.lower().replace("ṛ", "r").replace("ś", "s")
         for prefix, pat, relpath, levels in self._NONRV_CORPORA:
-            if not _re.search(pat, low):
+            cm = _re.search(pat, low)
+            if not cm:
                 continue
-            nums = _re.findall(r'\d+', verse_ref)
+            # D1 fix: take the numbers of the citation that FOLLOWS the corpus
+            # name, not every digit in the query. A full natural-language query
+            # ("Interpret AB 7.13.1: 1) Devanagari, 2) IAST …") used to yield 8
+            # numbers and silently fall back to semantic search. `low` has the
+            # same length as `verse_ref` (1:1 char replacements), so cm.end() is valid.
+            tail = low[cm.end():]
+            run = _re.search(r'\d+(?:\.\d+)*', tail)            # dotted: 7.13.1
+            nums = _re.findall(r'\d+', run.group(0)) if run else []
+            if not (levels - 1 <= len(nums) <= levels):
+                run = _re.search(r'\d+(?:[.\s]\d+)*', tail)     # spaced: 7 13 1
+                nums = _re.findall(r'\d+', run.group(0))[:levels] if run else []
             if not (levels - 1 <= len(nums) <= levels):
                 return None
             # Śatapatha (and any split corpus) selects its file by the first
@@ -1233,7 +1328,8 @@ Have natural conversation about Sanskrit:
             lines = f.read_text(encoding="utf-8").splitlines()
             group_path = ".".join(nums[:levels - 1])
             group_marker = f"॥ {prefix} {group_path}."
-            section = [ln.strip() for ln in lines if group_marker in ln]
+            exact_marker = f"॥ {prefix} {group_path} ॥"
+            section = [ln.strip() for ln in lines if (group_marker in ln or exact_marker in ln)]
             if not section:
                 return None
             if len(nums) == levels:
@@ -1243,8 +1339,13 @@ Have natural conversation about Sanskrit:
                     return None
                 citation = f"{prefix} {'.'.join(nums)}"
             else:
-                focus = section
-                citation = f"{prefix} {group_path} (whole section)"
+                exact_hits = [ln for ln in section if exact_marker in ln]
+                if exact_hits:
+                    focus = exact_hits
+                    citation = f"{prefix} {group_path}"
+                else:
+                    focus = section
+                    citation = f"{prefix} {group_path} (whole section)"
             # Cap large sections to a window around the focus verse.
             if len(section) > self._NONRV_MAX_CTX and len(nums) == levels:
                 try:
@@ -1279,10 +1380,16 @@ Have natural conversation about Sanskrit:
         nonrv = self._lookup_nonrv_verse(verse_ref)
         if nonrv:
             return nonrv
-        s = verse_ref.lower().replace("ṛ", "r")
+        # D2 fix: also fold ś→s so "ŚB"/"AVŚ" trip the other-corpus guard below.
+        # Without it, a non-RV citation that the non-RV path couldn't resolve
+        # (e.g. a nonexistent "ŚB 1.4.1.99") fell through to the RV regex and was
+        # silently pinned as "RV 1.4.1" — stored text, but the wrong verse.
+        s = verse_ref.lower().replace("ṛ", "r").replace("ś", "s").replace("ā", "a").replace("ī", "i").replace("ṣ", "s").replace("ṭ", "t").replace("ṇ", "n")
         # Skip if another corpus is explicitly named — this RV branch is RV-only.
-        if _re.search(r'\b(ts|vs|sb|ab|pb|av|avs|avś|taittir|vajasan|shatapatha|'
-                      r'aitareya|pancavim|atharva)\b', s):
+        if _re.search(r'\b(ts|vs|sb|ab|pb|av|avs|avp|ms|ks|kb|gb|jb|jub|tb|ta|bau|chu|bss|nir|'
+                      r'taittir|vajasan|shatapatha|satapatha|aitareya|pancavim|atharva|'
+                      r'paippalad|maitrayan|kathak|kausitak|gopath|jaiminiy|brhadaranyak|'
+                      r'brihadaranyak|chandogy|baudhayan|nirukt)\b', s):
             return None
         # "Mandala 10 Sukta 60 (verse 1)"  or  "RV 10.60.1" / "10.060.01" / "RV 10.60"
         m = _re.search(r'mandal\w*\s*(\d+)[,\s]+s[uuū]kt\w*\s*(\d+)'
@@ -1349,9 +1456,13 @@ Have natural conversation about Sanskrit:
         """
         import re as _re
         scan = _re.compile(
-            r'(?P<prefix>\b(?:rv|rgveda|rigveda|av[sś]?|avs|avś|vs|ts|sb|ab|pb|'
-            r'mandala|maṇḍala|taittir\w*|vajasan\w*|atharva\w*|aitareya\w*|'
-            r'shatapatha\w*|satapatha\w*|śatapatha\w*|pancavim\w*|pañcavim\w*)\s*)?'
+            r'(?P<prefix>\b(?:rv|rgveda|rigveda|avp|av[sś]?|avs|avś|vs|ts|ms|ks|kaps|'
+            r'[sś]b|ab|pb|kb|gb|jub|jb|tb|t[aā]|b[aā]u|chu|cu|b[sś]s|nir|nirukt\w*|'
+            r'mandala|maṇḍala|taittir\w*|vajasan\w*|atharva\w*|paippal[aā]d\w*|'
+            r'maitr[aā]ya[nṇ]\w*|k[aā][tṭ]hak\w*|aitareya\w*|shatapatha\w*|'
+            r'satapatha\w*|śatapatha\w*|pancavim\w*|pañcavim\w*|kau[sṣ][iī]tak\w*|'
+            r'gopath\w*|jaimin[iī]y\w*|b[rṛ]had[aā]ra[nṇ]yak\w*|brihadaranyak\w*|'
+            r'ch[aā]ndogy\w*|baudh[aā]yan\w*)\s*)?'
             r'(?P<core>\d{1,2}(?:[.\s]\d{1,3}){1,3})'
             r'(?P<range>\s*[-–—]\s*\d{1,3})?',
             _re.IGNORECASE)

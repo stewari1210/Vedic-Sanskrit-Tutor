@@ -78,15 +78,18 @@ cloud Qdrant (delete+upload) — don't run them without the user asking.
 
 ## Corpus & citation formats
 
-Chronology layers: 1 = RV 2–7 · 2 = RV 1/8/9/10 · 3 = AVŚ, VS, TS · 4 = Brāhmaṇas.
-Chunks are verse-per-line; payload fields: `veda`, `chronology_layer`,
-`chronology_name`, `filename`, `source_type="vedic_text"`.
+Chronology layers: 1 = RV 2–7 · 2 = RV 1/8/9/10 · 3 = AVŚ, AVP, VS, TS, MS ·
+4 = AB, PB, ŚB, KB, GB (late Brāhmaṇa), BĀU, ChU · 5 = Nirukta (`source_type="commentary"`).
+Chunks are verse-per-line (or ~120-token word-boundary sliding windows with ~20-token overlap
+and native citations for long Tranche 1+ prose); payload fields: `veda`, `chronology_layer`,
+`chronology_name`, `filename`, `source_type` (`"vedic_text"` or `"commentary"`).
 
-`॥ RV M.SSS.VV ॥` · `॥ AVŚ K.H.V ॥` · `॥ VS A.V ॥` · `॥ TS K.P.A.V ॥` ·
-`॥ AB P.A.S ॥` · `॥ PB K.A.V ॥` · `॥ SB K.A.B.V ॥`
+`॥ RV M.SSS.VV ॥` · `॥ AVŚ K.H.V ॥` · `॥ AVP K.H.V ॥` · `॥ VS A.V ॥` · `॥ TS K.P.A.V ॥` ·
+`॥ MS K.P.A ॥` · `॥ AB P.A.S ॥` · `॥ PB K.A.V ॥` · `॥ SB K.A.B.V ॥` · `॥ KB A.K.S ॥` ·
+`॥ GB B.P.K ॥` · `॥ BĀU A.B.K ॥` · `॥ ChU P.K.V ॥` · `॥ Nir A.K ॥`
 (In `local_store/rNN.md` the RV danda markers are `॥ M.SSS.VV ॥` without the `RV`; the prefix is in the `## RV M.SSS` header.)
 
-Not indexed: Maitrāyaṇī, Kāṭhaka, AV Paippalāda, Baudhāyana Śrauta Sūtra; SB Book 12 (GRETIL 404).
+Not indexed: Kāṭhaka Saṃhitā, Kapiṣṭhala-Kaṭha Saṃhitā, Jaiminīya Brāhmaṇa, Jaiminīya Upaniṣad Brāhmaṇa, Taittirīya Brāhmaṇa, Taittirīya Āraṇyaka, Baudhāyana Śrauta Sūtra; SB Book 12 (GRETIL 404).
 
 ## Rules for changes
 

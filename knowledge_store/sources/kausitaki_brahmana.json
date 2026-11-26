@@ -1,0 +1,18 @@
+{
+  "source_id": "kausitaki_brahmana",
+  "code": "kb",
+  "title": "Kauṣītaki Brāhmaṇa (Śāṅkhāyana Brāhmaṇa)",
+  "veda": "kausitaki_brahmana",
+  "source_url": "https://gretil.sub.uni-goettingen.de/gretil/corpustei/sa_kauSItakibrAhmaNa.xml",
+  "retrieved_utc": "2026-11-24T03:38:54Z",
+  "bytes": 577726,
+  "sha256": "59e97f03edd6c49b4a5fdd267acae74943bc88b318199d428b0b7a71c325bcf0",
+  "edition": "E. R. Sreekrishna Sarma (Wiesbaden 1968; VOHD, Suppl. 9,1)",
+  "inputter": "Muneo Tokunaga (March–April 1995); Reinhold Grünendahl; TEI by Maximilian Mehner",
+  "licence": "CC BY-NC-SA 4.0",
+  "licence_verbatim": "Distributed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose",
+  "chronology_note": null,
+  "source_type": "vedic_text"
+}

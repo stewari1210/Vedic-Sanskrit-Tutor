@@ -1,0 +1,18 @@
+{
+  "source_id": "atharvaveda_paippalada",
+  "code": "avp",
+  "title": "Atharvaveda Saṃhitā (Paippalāda)",
+  "veda": "atharvaveda_paippalada",
+  "source_url": "https://gretil.sub.uni-goettingen.de/gretil/corpustei/sa_paippalAdasaMhitA.xml",
+  "retrieved_utc": "2026-11-24T03:38:53Z",
+  "bytes": 2490805,
+  "sha256": "c6ffd9e8bae027999794ce90051213888d3b587125af630a7983a496ed657f1d",
+  "edition": "Dipak Bhattacharya, The Paippalāda-Saṁhitā of the Atharvaveda, Vols. 1–4 (Calcutta 1997–2016); Umberto Selva (2019, Kāṇḍa 17 selections)",
+  "inputter": "Arlo Griffiths, Thomas Zehnder, Philipp Kubisch, Duccio Lelli, Alexander Lubotsky, Carmen Spiers, Michael Witzel; TEI by Maximilian Mehner (GRETIL 2020-02-10)",
+  "licence": "CC BY-NC-SA 4.0",
+  "licence_verbatim": "Distributed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.",
+  "chronology_layer": 3,
+  "chronology_name": "av_samhita",
+  "chronology_note": null,
+  "source_type": "vedic_text"
+}

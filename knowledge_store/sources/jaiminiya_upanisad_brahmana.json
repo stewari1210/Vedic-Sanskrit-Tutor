@@ -1,0 +1,22 @@
+{
+  "source_id": "jaiminiya_upanisad_brahmana",
+  "code": "jub",
+  "title": "Jaiminīya Upaniṣad Brāhmaṇa",
+  "veda": "jaiminiya_upanisad_brahmana",
+  "provider": "The Sanskrit Library",
+  "retrieved_utc": "2026-11-24T14:11:17Z",
+  "sl_sources": {
+    "jub": {
+      "url": "https://sanskritlibrary.org/Library/LoadText?text=titus/vedic/jub&texttype=forTranslation",
+      "catalog_url": "https://sanskritlibrary.org/Catalog/texts.php?text=titus/vedic/jub",
+      "bytes": 192942,
+      "sha256": "d0911a7281c0899b1b89fbe0f75742400249438737fda1648228731e05a63c36"
+    }
+  },
+  "edition": "The Sanskrit Library First XML edition v0.1 (Peter M. Scharf & Matthias H. Ahlborn, 2010); TITUS (Jost Gippert, 2008); Masato Fujii & Mieko Kajihara (1995), based on Hanns Oertel (JAOS 16, 1896)",
+  "licence": "CC BY-NC-SA 3.0 (The Sanskrit Library)",
+  "licence_verbatim": "Copyright (C) 2010 The Sanskrit Library. All rights reserved other than those granted under the Creative Commons Attribution Non-Commercial Share Alike license available in full at http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode , and summarized at http://creativecommons.org/licenses/by-nc-sa/3.0/ . Permission is granted to build upon this work non-commercially, as long as credit is explicitly acknowledged exactly as described herein and derivative work is distributed under the same license.",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose",
+  "source_type": "vedic_text"
+}

@@ -1,1 +1,2 @@
 monier_williams_concept_store.json filter=lfs diff=lfs merge=lfs -text
+knowledge_store/morphology_rv.json filter=lfs diff=lfs merge=lfs -text

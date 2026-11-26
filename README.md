@@ -47,17 +47,25 @@ tagged with a chronological layer.
 |---|---|---|
 | Ṛgveda Saṃhitā (Maṇḍalas 1–10) | 1–2 (earliest) | sanskritdocuments.org (.itx) |
 | Atharvaveda Śaunaka | 3 | GRETIL |
+| Atharvaveda Paippalāda (`AVP`) | 3 | GRETIL (CC BY-NC-SA 4.0) |
 | Vājasaneyi Saṃhitā (Śukla YV) | 3 | TITUS |
 | Taittirīya Saṃhitā (Kṛṣṇa YV) | 3 | TITUS |
+| Maitrāyaṇī Saṃhitā (`MS`, Kṛṣṇa YV) | 3 | GRETIL / TITUS |
 | Aitareya Brāhmaṇa | 4 | TITUS |
 | Pañcaviṃśa Brāhmaṇa | 4 | GRETIL |
-| Śatapatha Brāhmaṇa | 4 (latest) | GRETIL |
+| Śatapatha Brāhmaṇa (Books 1–11, 13–14) | 4 | GRETIL |
+| Kauṣītaki Brāhmaṇa (`KB`) | 4 | GRETIL (CC BY-NC-SA 4.0) |
+| Gopatha Brāhmaṇa (`GB`, late Brāhmaṇa) | 4 | GRETIL (CC BY-NC-SA 4.0) |
+| Bṛhadāraṇyaka Upaniṣad (`BĀU`, Kāṇva mūla) | 4 | GRETIL |
+| Chāndogya Upaniṣad (`ChU`, mūla) | 4 | GRETIL |
+| Nirukta (`Nir`, commentary — not primary verse evidence) | 5 | GRETIL (CC BY-NC-SA 4.0) |
 
 Public-domain English translations (Griffith, Eggeling, Caland) are kept only as
 an internal cross-checking reference layer — **never** as the answering corpus.
 
-**Not yet included** (secondary/specialized texts): Maitrāyaṇī Saṃhitā, Kāṭhaka
-Saṃhitā, Atharvaveda Paippalāda, and the Baudhāyana Śrauta Sūtra.
+**Not yet included** (planned next tranches): Kāṭhaka Saṃhitā, Kapiṣṭhala-Kaṭha
+Saṃhitā, Jaiminīya Brāhmaṇa, Jaiminīya Upaniṣad Brāhmaṇa, Taittirīya Brāhmaṇa,
+Taittirīya Āraṇyaka (Books 1–9), Baudhāyana Śrauta Sūtra, and Śatapatha Brāhmaṇa Book 12.
 
 ---
 

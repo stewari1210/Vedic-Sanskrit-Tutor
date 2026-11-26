@@ -406,7 +406,6 @@
     "rigveda_lineage": {
       "early_references": [
         "Trasadasyu (famous ancestor)",
-        "Kurusravana (king, grandson of Trasadasyu, RV 10.33.4)",
         "Pakasthaman Kaurayan (patron/chieftain, RV 8.3.21-24)"
       ],
       "kuru_identity": "The 'Kuru-ness' (Kauravya) is the common thread connecting these figures",
@@ -584,7 +583,7 @@
     "role": "Clan/Dynasty (constituent of Panchalas)",
     "rigveda_context": "Closely allied with Bharatas",
     "key_references": [
-      "RV 10.60.4: 'Srnjaya, Devavata's son'",
+      "RV 4.15.4: Srnjaya, Devavata's descendant (patronymic)",
       "Associated with prince Sahadeva Somaka"
     ],
     "historical_role": "Allied clan that merged into Panchala confederation",
@@ -605,7 +604,7 @@
     "role": "Royal lineage (constituent of Panchalas)",
     "rigveda_context": "Prince Sahadeva Somaka mentioned in RV 10.60",
     "key_references": [
-      "RV 10.60.9: 'the princely son of Sahadeva, Somaka'"
+      "RV 4.15.7–9: the princely descendant (patronymic) of Sahadeva, Somaka"
     ],
     "historical_role": "Royal lineage that provided Panchala kings in later literature",
     "becomes": "Royal lineage of Panchalas (see Panchalas entry)",
@@ -935,8 +934,6 @@
       ],
       "role": "King",
       "dynasty": "Kuru dynasty",
-      "lineage": "Grandson of Trasadasyu",
-      "hymn_reference": "RV 10.33.4",
       "context": "Part of the emerging Kuru royal lineage in late Rigvedic period",
       "historical_significance": "Represents the continuity of Kuru dynasty from Rigveda to Yajurveda period",
       "name_etymology": "Kuru + sravana (hearing/fame) = 'Fame of the Kurus' or 'Hearing about Kurus'",
@@ -958,9 +955,7 @@
       ],
       "role": "Famous King/Warrior",
       "achievement": "Renowned ancestor in Kuru lineage",
-      "descendants": "Kurusravana (grandson)",
       "context": "Celebrated warrior king whose descendants include Kuru dynasty members",
-      "hymn_reference": "RV 10.33.4 (mentions his grandson Kurusravana)",
       "fame": "Named in genealogies as illustrious ancestor",
       "dynasty_role": "Progenitor figure in Kuru royal lineage",
       "sources": {
@@ -1056,7 +1051,7 @@
       },
       "total_occurrences": 1500,
       "priority": "CRITICAL",
-      "note": "Heroine of Ramayana, daughter of King Janaka"
+      "note": "Heroine of Ramayana, daughter of King Janaka (itihāsa tradition, not attested in the Vedic corpus)"
     },
     "Lakshmana": {
       "canonical": "Lakshmana",
@@ -1065,7 +1060,7 @@
         "Lakshman"
       ],
       "role": "Prince/Warrior",
-      "context": "Brother and companion of Rama",
+      "context": "Brother and companion of Rama (itihāsa tradition, not attested in the Vedic corpus)",
       "epic": "Ramayana",
       "sources": {
         "Griffith-Ramayana": 1000
@@ -1080,7 +1075,7 @@
       ],
       "role": "Prince (Ramayana)/Sage/Tribe",
       "disambiguation": {
-        "ramayana_context": "Brother of Rama, ruled Ayodhya during Rama's exile",
+        "ramayana_context": "Brother of Rama, ruled Ayodhya during Rama's exile (itihāsa tradition, not attested in the Vedic corpus)",
         "rigveda_context": "Tribal confederation, priestly lineage",
         "sage_context": "Legendary sage"
       },
@@ -1132,7 +1127,7 @@
         "Dasaratha"
       ],
       "role": "King",
-      "context": "Father of Rama, king of Ayodhya",
+      "context": "Father of Rama, king of Ayodhya (itihāsa tradition, not attested in the Vedic corpus)",
       "sons": ["Rama", "Lakshmana", "Bharata", "Shatrughna"],
       "kingdom": "Ayodhya",
       "epic": "Ramayana",

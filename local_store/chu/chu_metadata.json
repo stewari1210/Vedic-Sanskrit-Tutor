@@ -1,0 +1,18 @@
+{
+  "title": "Chāndogya Upaniṣad",
+  "author": [
+    "Vedic Tradition",
+    "Members of the Sansknet project; revision 2017-03-17 (7,16.1) by James Fitzgerald; Reinhold Grünendahl (GRETIL)"
+  ],
+  "edition": "Checked against V. P. Limaye & R. D. Vadekar, Eighteen Principal Upanisads, vol. 1 (Poona 1958), and TITUS",
+  "creator": "GRETIL (Göttingen Register of Electronic Texts in Indian Languages)",
+  "source_url": "https://gretil.sub.uni-goettingen.de/gretil/1_sanskr/1_veda/4_upa/chup___u.htm",
+  "source_id": "chandogya_upanisad",
+  "licence": "GRETIL (scholarly, non-commercial; companion TEI CC BY-NC-SA 4.0)",
+  "filename": "chu",
+  "preprocessing": "sanskrit",
+  "source_type": "vedic_text",
+  "veda": "chandogya_upanisad",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose"
+}

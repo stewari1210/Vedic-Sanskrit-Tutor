@@ -17,11 +17,13 @@ from src.config import QDRANT_URL, QDRANT_API_KEY, COLLECTION_NAME
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qm
 
-# Fields the retriever filters/may filter on. KEYWORD = exact-match string index.
+# Fields the retriever filters/may filter on.
 FIELDS = [
-    "metadata.veda",
-    "metadata.chronology_name",
-    "metadata.filename",
+    ("metadata.veda", qm.PayloadSchemaType.KEYWORD),
+    ("metadata.chronology_name", qm.PayloadSchemaType.KEYWORD),
+    ("metadata.chronology_layer", qm.PayloadSchemaType.INTEGER),
+    ("metadata.source_type", qm.PayloadSchemaType.KEYWORD),
+    ("metadata.filename", qm.PayloadSchemaType.KEYWORD),
 ]
 
 
@@ -32,15 +34,15 @@ def main():
 
     c = QdrantClient(url=str(QDRANT_URL), api_key=str(QDRANT_API_KEY), timeout=120)
 
-    for field in FIELDS:
+    for field, schema in FIELDS:
         try:
             c.create_payload_index(
                 collection_name=COLLECTION_NAME,
                 field_name=field,
-                field_schema=qm.PayloadSchemaType.KEYWORD,
+                field_schema=schema,
                 wait=True,
             )
-            print(f"✅ indexed {field}")
+            print(f"✅ indexed {field} ({schema})")
         except Exception as e:
             msg = str(e).lower()
             if "already exists" in msg or "already indexed" in msg:

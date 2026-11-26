@@ -357,29 +357,40 @@ class HybridRetriever(BaseRetriever):
         query_lower = query.lower()
 
         # Maps query keywords → veda metadata values used in chunk payloads.
-        # Abbreviations are bare tokens (rv, ts, av…); they are matched with word
-        # boundaries below, so they only fire as standalone words — never as a
-        # substring inside a longer word (e.g. "rv" in "athaRVaveda", "ab" in
-        # "ABout", "av" in "hAVe"). Order: more specific patterns first.
+        # Whole-word / phrase matching ONLY. Colliding abbreviations (VS, MS, KS,
+        # TA, GB, JB, TB, ChU, CU) are NEVER listed as bare tokens — they are
+        # matched ONLY when followed by a verse number (see `cited_abbr_map` below)
+        # so queries like "MS Word", "the TA said", "GB of RAM", "early vs later"
+        # never misfire. Order: more specific phrases before general ones.
         source_mapping = {
+            'taittiriya_brahmana': [
+                'taittiriya brahmana', 'taittirīya brāhmaṇa',
+            ],
+            'taittiriya_aranyaka': [
+                'taittiriya aranyaka', 'taittirīya āraṇyaka',
+            ],
             'taittiriya_samhita': [
-                'taittiriya samhita', 'taittirīya saṃhitā', 'taittiriya',
+                'taittiriya samhita', 'taittirīya saṃhitā',
                 'black yajurveda', 'krishna yajurveda', 'kṛṣṇa yajurveda',
                 'ts',
             ],
             'vajasaneyi_samhita': [
                 'vajasaneyi samhita', 'vājasaneyi saṃhitā', 'vajasaneyi',
                 'white yajurveda', 'shukla yajurveda', 'śukla yajurveda',
-                # NOTE: the bare abbreviation 'vs' is intentionally NOT listed — it
-                # collides with English "vs" (versus), which wrongly forced every
-                # comparison query (e.g. "early vs later layers") to filter to the
-                # Vājasaneyi corpus. Use "vajasaneyi"/"shukla yajurveda" to target it;
-                # 'VS 1.1' citations are handled by the verse-lookup path, not here.
+            ],
+            'maitrayani_samhita': [
+                'maitrayani samhita', 'maitrāyaṇī saṃhitā', 'maitrayani', 'maitrāyaṇī',
+            ],
+            'kathaka_samhita': [
+                'kathaka samhita', 'kāṭhaka saṃhitā', 'kathaka', 'kāṭhaka',
+            ],
+            'kapisthala_katha_samhita': [
+                'kapisthala katha samhita', 'kapiṣṭhala-kaṭha saṃhitā', 'kapisthala', 'kapiṣṭhala',
             ],
             'shatapatha_brahmana': [
                 'shatapatha brahmana', 'śatapatha brāhmaṇa', 'shatapatha',
                 'satapatha brahmana', 'satapatha',
-                'sb',
+                'sb', 'śb',
             ],
             'aitareya_brahmana': [
                 'aitareya brahmana', 'aitareya brāhmaṇa', 'aitareya',
@@ -387,14 +398,51 @@ class HybridRetriever(BaseRetriever):
             ],
             'pancavimsa_brahmana': [
                 'pancavimsa brahmana', 'pañcaviṃśa brāhmaṇa', 'pancavimsa',
-                'pancavimsha', 'pañcaviṃśa',
+                'pancavimsha', 'pañcaviṃśa', 'tandya mahabrahmana',
                 'pb',
+            ],
+            'kausitaki_brahmana': [
+                'kausitaki brahmana', 'kauṣītaki brāhmaṇa', 'kausitaki', 'kauṣītaki',
+                'sankhayana brahmana', 'śāṅkhāyana brāhmaṇa',
+            ],
+            'gopatha_brahmana': [
+                'gopatha brahmana', 'gopatha brāhmaṇa', 'gopatha',
+            ],
+            'jaiminiya_upanisad_brahmana': [
+                'jaiminiya upanisad brahmana', 'jaiminīya upaniṣad brāhmaṇa',
+                'jaiminiya upanishad brahmana', 'jaiminiya upanisad', 'jaiminīya upaniṣad',
+                'jub',
+            ],
+            'jaiminiya_brahmana': [
+                'jaiminiya brahmana', 'jaiminīya brāhmaṇa',
+            ],
+            'brihadaranyaka_upanisad': [
+                'brihadaranyaka upanisad', 'brihadaranyaka upanishad',
+                'bṛhadāraṇyaka upaniṣad', 'brihadaranyaka', 'bṛhadāraṇyaka',
+                'brhadaranyaka', 'bāu', 'bau',
+            ],
+            'chandogya_upanisad': [
+                'chandogya upanisad', 'chandogya upanishad',
+                'chāndogya upaniṣad', 'chandogya', 'chāndogya',
+            ],
+            'baudhayana_srauta_sutra': [
+                'baudhayana srauta sutra', 'baudhāyana śrauta sūtra',
+                'baudhayana shrauta sutra', 'baudhayana srauta', 'baudhāyana śrauta',
+                'bśs', 'bss',
+            ],
+            'nirukta': [
+                'nirukta', 'yaska', 'yāska',
+            ],
+            'atharvaveda_paippalada': [
+                'atharvaveda paippalada', 'atharvaveda paippalāda',
+                'paippalada samhita', 'paippalāda saṃhitā',
+                'paippalada', 'paippalāda', 'avp',
             ],
             # AV Śaunaka — key must equal the chunk metadata.veda value set by
             # ingest_atharvaveda_shaunaka.py ("atharvaveda_shaunaka").
             'atharvaveda_shaunaka': [
-                'atharvaveda', 'atharva veda', 'atharva-veda', 'atharvaveda samhita',
-                'atharvaveda śaunaka', 'atharvaveda shaunaka',
+                'atharvaveda shaunaka', 'atharvaveda śaunaka', 'atharvaveda samhita',
+                'atharvaveda', 'atharva veda', 'atharva-veda',
                 'śaunaka', 'shaunaka', 'saunaka',
                 'avś', 'avs', 'av',
             ],
@@ -404,15 +452,47 @@ class HybridRetriever(BaseRetriever):
             ],
         }
 
+        # Abbreviations that collide with ordinary English / tech acronyms are
+        # accepted ONLY when immediately followed by a dotted verse citation.
+        cited_abbr_map = {
+            'maitrayani_samhita':       r'\bms\s+\d+(?:\.\d+)+',
+            'kathaka_samhita':          r'\bks\s+\d+(?:\.\d+)+',
+            'kapisthala_katha_samhita': r'\bkaps\s+\d+(?:\.\d+)+',
+            'vajasaneyi_samhita':       r'\bvs\s+\d+(?:\.\d+)+',
+            'kausitaki_brahmana':       r'\bkb\s+\d+(?:\.\d+)+',
+            'gopatha_brahmana':         r'\bgb\s+\d+(?:\.\d+)+',
+            'jaiminiya_brahmana':       r'\bjb\s+\d+(?:\.\d+)+',
+            'taittiriya_brahmana':      r'\btb\s+\d+(?:\.\d+)+',
+            'taittiriya_aranyaka':      r'\bt[aā]\s+\d+(?:\.\d+)+',
+            'chandogya_upanisad':       r'\b(?:chu|cu)\s+\d+(?:\.\d+)+',
+            'nirukta':                  r'\bnir\s+\d+(?:\.\d+)+',
+        }
+
         detected_sources = []
         for veda_key, patterns in source_mapping.items():
             for pat in patterns:
-                # Word-boundary match: a bare abbreviation like "rv" must be its
-                # own token, not a substring inside another word.
-                if re.search(r'\b' + re.escape(pat) + r'\b', query_lower):
+                if re.search(r'(?<!\w)' + re.escape(pat) + r'(?!\w)', query_lower):
                     if veda_key not in detected_sources:
                         detected_sources.append(veda_key)
                     break
+
+        for veda_key, rx in cited_abbr_map.items():
+            if veda_key not in detected_sources and re.search(rx, query_lower):
+                detected_sources.append(veda_key)
+
+        # Bare "taittiriya" (without brahmana / aranyaka) defaults to taittiriya_samhita
+        if (re.search(r'\btaittir[iī]ya\b', query_lower)
+                and 'taittiriya_brahmana' not in detected_sources
+                and 'taittiriya_aranyaka' not in detected_sources
+                and 'taittiriya_samhita' not in detected_sources):
+            detected_sources.append('taittiriya_samhita')
+
+        # If the user explicitly asked for "atharvaveda paippalada", don't also
+        # trigger atharvaveda_shaunaka via the bare "atharvaveda" keyword.
+        if ('atharvaveda_paippalada' in detected_sources
+                and 'atharvaveda_shaunaka' in detected_sources
+                and not re.search(r'\b([sś]aunak\w*|av[sś])\b', query_lower)):
+            detected_sources.remove('atharvaveda_shaunaka')
 
         # Strict mode: only return docs from that corpus.
         # Use strict when exactly one corpus is explicitly named and the query
@@ -435,7 +515,13 @@ class HybridRetriever(BaseRetriever):
 
         return detected_sources, strict_filter
 
-    def _filter_docs_by_source(self, docs: List[Document], source_filters: list[str], strict: bool) -> List[Document]:
+    def _filter_docs_by_source(
+        self,
+        docs: List[Document],
+        source_filters: list[str],
+        strict: bool,
+        allow_fallback: bool = True,
+    ) -> List[Document]:
         """Filter/reorder documents based on source text.
 
         Checks the `veda`, `filename`, `title`, and `source` metadata fields.
@@ -445,6 +531,9 @@ class HybridRetriever(BaseRetriever):
             docs: Documents to filter
             source_filters: List of veda-field identifiers
             strict: If True, drop non-matching docs. If False, push them to the end.
+            allow_fallback: If True (default, for primary results), return unfiltered docs
+                when strict finds 0 matches; set False for expansion docs so non-matching
+                corpora never leak into a strict single-corpus query.
 
         Returns:
             Filtered/reordered documents
@@ -480,9 +569,9 @@ class HybridRetriever(BaseRetriever):
                 non_matching_docs.append(doc)
 
         if strict:
-            # Strict: return only corpus-matching docs; fall back to all if none matched
-            # (avoids returning an empty result set when the corpus isn't yet indexed)
-            if matching_docs:
+            # Strict: return only corpus-matching docs; fall back only when allowed
+            # (primary results when a corpus isn't yet indexed — NEVER for expansion docs).
+            if matching_docs or not allow_fallback:
                 logger.info(
                     f"HybridRetriever: Strict filter — {len(matching_docs)} matched "
                     f"{source_filters}, {len(non_matching_docs)} dropped"
@@ -652,8 +741,9 @@ class HybridRetriever(BaseRetriever):
             keyword_query_normalized = unicodedata.normalize('NFD', keyword_query)
             keyword_query_normalized = ''.join(char for char in keyword_query_normalized if unicodedata.category(char) != 'Mn')
             
-            # Remove punctuation except hyphens and brackets (keep hymn references intact)
-            keyword_query_normalized = re.sub(r'[^\w\s\[\]\-]', '', keyword_query_normalized)
+            # Remove punctuation except hyphens, brackets, and dots inside numeric citations (e.g. MS 1.6.3)
+            keyword_query_normalized = re.sub(r'[^\w\s\[\]\-\.]', '', keyword_query_normalized)
+            keyword_query_normalized = re.sub(r'(?<!\d)\.|\.(?!\d)', '', keyword_query_normalized)
             keyword_query_normalized = keyword_query_normalized.strip()
             logger.info(f"🔤 Latin script detected: Normalized diacritics for BM25")
 
@@ -954,9 +1044,24 @@ class HybridRetriever(BaseRetriever):
             except ImportError:
                 from utils.devanagari_lexical import devanagari_lexical_hits  # app-style import
             corpus_docs = getattr(self.keyword_retriever, 'docs', None) or []
-            logger.info(f"🪷 RESCUE ENTRY: query='{query[:60]}', corpus_docs={len(corpus_docs)}")
+            rescue_query = query
+            if strict_filter and source_filters and corpus_docs:
+                corpus_docs = self._filter_docs_by_source(
+                    corpus_docs, source_filters, strict=True, allow_fallback=True
+                )
+                rescue_query = re.sub(
+                    r"\b(?:taittir[iī]ya|aitareya|shatapatha|satapatha|pa[nñ]cavi[mṃ][sś]a|"
+                    r"kau[sṣ][iī]taki|gopatha|jaimin[iī]ya(?:\s+upani[sṣ]ad)?|maitr[aā]ya[nṇ][iī]|"
+                    r"v[aā]jasaney[iī]|atharvaveda|paippal[aā]da|[sś]aunaka|"
+                    r"b[rṛ]had[aā]ra[nṇ]yaka|ch[aā]ndogya|baudh[aā]yana)\s+"
+                    r"(?:sa[mṃ]hit[aā]|br[aā]hma[nṇ]a|[aā]ra[nṇ]yaka|upani[sṣ]ad|[sś]rauta\s*s[uū]tra)\b",
+                    " ",
+                    rescue_query,
+                    flags=re.I,
+                )
+            logger.info(f"🪷 RESCUE ENTRY: query='{rescue_query[:60]}', corpus_docs={len(corpus_docs)}")
             rescue_hits, rescue_terms = devanagari_lexical_hits(
-                query, corpus_docs, top_k=max(3, self.k // 3))
+                rescue_query, corpus_docs, top_k=max(3, self.k // 3))
             logger.info(f"🪷 RESCUE RESULT: terms={rescue_terms}, hits={len(rescue_hits)}")
             if rescue_hits:
                 rescue_hashes = {hash(d.page_content) for d in rescue_hits}
@@ -1008,7 +1113,11 @@ class HybridRetriever(BaseRetriever):
                          r"period|layer|mandala|time)|evolv|over time|diachronic|"
                          r"through time|chronolog", query, re.I):
                 by_layer = {}
+                commentary_docs = []
                 for d in merged_docs:
+                    if d.metadata.get("source_type") == "commentary":
+                        commentary_docs.append(d)
+                        continue
                     layer = d.metadata.get("chronology_layer")
                     by_layer.setdefault(layer, []).append(d)
                 known = sorted(k for k in by_layer if k is not None)
@@ -1019,24 +1128,34 @@ class HybridRetriever(BaseRetriever):
                             if rank < len(by_layer[k]):
                                 balanced.append(by_layer[k][rank])
                                 used.add(id(by_layer[k][rank]))
-                    merged_docs = balanced + [d for d in merged_docs
-                                              if id(d) not in used]
+                    # Keep commentary (e.g. Nirukta) after primary verse layers so it
+                    # never displaces primary verse evidence.
+                    rest = [d for d in merged_docs if id(d) not in used and d.metadata.get("source_type") != "commentary"]
+                    merged_docs = balanced + rest + commentary_docs
                     tagged = []
-                    for d in merged_docs[:8]:
+                    for d in merged_docs[:12]:
                         name = d.metadata.get("chronology_name", "unknown")
                         layer = d.metadata.get("chronology_layer", "?")
+                        note = d.metadata.get("chronology_note")
                         title = d.metadata.get("title", "")
-                        if d.page_content.startswith("[SOURCE:"):
+                        note_str = f", {note}" if note else ""
+                        if d.page_content.startswith("[SOURCE:") or d.page_content.startswith("[COMMENTARY"):
                             tagged.append(d)
+                        elif d.metadata.get("source_type") == "commentary":
+                            tagged.append(Document(
+                                page_content=(f"[COMMENTARY (NOT primary verse evidence): {title} — "
+                                              f"chronology: {name}, layer {layer}]\n"
+                                              f"{d.page_content}"),
+                                metadata=d.metadata))
                         else:
                             tagged.append(Document(
                                 page_content=(f"[SOURCE: {title} — chronology: "
-                                              f"{name}, layer {layer}]\n"
+                                              f"{name}{note_str}, layer {layer}]\n"
                                               f"{d.page_content}"),
                                 metadata=d.metadata))
-                    merged_docs = tagged + merged_docs[8:]
+                    merged_docs = tagged + merged_docs[12:]
                     logger.info(f"⏳ Diachronic mode: layer-balanced {known}, "
-                                f"tagged top {len(tagged)} docs")
+                                f"tagged top {len(tagged)} docs (commentary={len(commentary_docs)})")
         except Exception:
             logger.exception("⏳ Diachronic mode failed (non-fatal):")
 
@@ -1182,9 +1301,17 @@ class HybridRetriever(BaseRetriever):
                     variants = self._get_transliteration_variants(noun)
                     logger.info(f"HybridRetriever: Searching variants for '{noun}': {variants}")
 
-                    # Search semantically for the proper noun and all its variants
+                    # Search semantically for the proper noun and all its variants.
+                    # Under a strict single-corpus filter, query Qdrant server-side
+                    # restricted to that veda so non-matching corpora never flood or
+                    # leak into expansion_docs.
                     for variant in variants:
-                        noun_docs = self.semantic_retriever.invoke(variant)
+                        if strict_filter and len(source_filters) == 1:
+                            noun_docs = self._filtered_semantic_search(
+                                variant, source_filters[0], k=EXPANSION_DOCS
+                            )
+                        else:
+                            noun_docs = self.semantic_retriever.invoke(variant)
 
                         for doc in noun_docs[:EXPANSION_DOCS]:
                             content_hash = hash(doc.page_content)
@@ -1200,13 +1327,24 @@ class HybridRetriever(BaseRetriever):
                             break
 
                 if expansion_docs:
-                    # Apply source filtering to expansion docs as well
+                    # Apply source filtering to expansion docs as well (NEVER fall back
+                    # to unfiltered expansion docs under a strict corpus filter).
                     if source_filters:
-                        expansion_docs = self._filter_docs_by_source(expansion_docs, source_filters, strict_filter)
+                        expansion_docs = self._filter_docs_by_source(
+                            expansion_docs, source_filters, strict_filter, allow_fallback=False
+                        )
 
-                    logger.info(f"HybridRetriever: Added {len(expansion_docs)} expansion docs via proper noun association")
-                    merged_docs = merged_docs[:self.k] + expansion_docs
-                    logger.info(f"HybridRetriever: Total docs (primary + expansion) = {len(merged_docs)}")
+                    if expansion_docs:
+                        logger.info(f"HybridRetriever: Added {len(expansion_docs)} expansion docs via proper noun association")
+                        merged_docs = merged_docs[:self.k] + expansion_docs
+                        logger.info(f"HybridRetriever: Total docs (primary + expansion) = {len(merged_docs)}")
+
+        # DEDUPLICATE SLIDING WINDOWS BY CITATION:
+        # Multi-part prose units (MS, GB, BĀU, Nir, etc.) are indexed as ~120-token
+        # windows sharing one exact native citation. Keep only the highest-ranked
+        # window per (veda, citation), and attach the full native unit text so
+        # synthesis and display show the complete unit centered on the winning window.
+        merged_docs = self._deduplicate_windowed_docs(merged_docs)
 
         # ATTACH MW CONTEXT to all documents for UI display
         if mw_context:
@@ -1216,6 +1354,41 @@ class HybridRetriever(BaseRetriever):
         # For Groq: Keep total manageable to stay under 6K token limit
         max_expansion = EXPANSION_DOCS * 2 if EXPANSION_DOCS > 0 else 0
         return merged_docs[:self.k + max_expansion]
+
+    @staticmethod
+    def _deduplicate_windowed_docs(docs: List[Document]) -> List[Document]:
+        """Deduplicate sliding-window chunks by (veda, citation), keeping each
+        native unit's best-scoring window and attaching its full native unit text."""
+        from src.utils.windowing import get_full_unit_text
+        seen_cites = set()
+        out: List[Document] = []
+        for doc in docs:
+            meta = getattr(doc, "metadata", None) or {}
+            cite = meta.get("citation")
+            n_parts = meta.get("n_parts", 1)
+            if cite and n_parts and int(n_parts) > 1:
+                key = (meta.get("veda", ""), cite)
+                if key in seen_cites:
+                    continue
+                seen_cites.add(key)
+                full_text = get_full_unit_text(doc)
+                if full_text:
+                    new_meta = {
+                        **meta,
+                        "matched_window": doc.page_content,
+                        "full_unit_text": full_text,
+                    }
+                    # Preserve any [SOURCE: ...] / [COMMENTARY ...] prefix added by diachronic mode
+                    prefix_match = re.match(r"^(\[(?:SOURCE|COMMENTARY)[^\]]*\]\n)", doc.page_content)
+                    if prefix_match:
+                        new_meta["matched_window"] = doc.page_content[prefix_match.end():]
+                        display_text = prefix_match.group(1) + full_text
+                    else:
+                        display_text = full_text
+                    out.append(Document(page_content=display_text, metadata=new_meta))
+                    continue
+            out.append(doc)
+        return out
 
 
 def create_retriever(vec_db, documents, top_n=5):
@@ -1236,10 +1409,18 @@ def create_retriever(vec_db, documents, top_n=5):
     try:
         from langchain_community.retrievers import BM25Retriever
 
-        # Create BM25 keyword retriever
+        # Create BM25 keyword retriever using accent-stripped text_search when present
+        # so accented texts (MS, AVP) match unaccented queries, while preserving
+        # the intact accented `page_content` on returned documents.
+        from src.utils.citations import strip_vedic_accents
         logger.info(f"Creating BM25 retriever with {len(documents)} documents")
 
-        bm25_retriever = BM25Retriever.from_documents(documents=documents)
+        def _bm25_preprocess(text: str) -> list[str]:
+            return strip_vedic_accents(text).split()
+
+        bm25_retriever = BM25Retriever.from_documents(
+            documents=documents, preprocess_func=_bm25_preprocess
+        )
         bm25_retriever.k = effective_k
 
         # Create custom hybrid retriever

@@ -1,0 +1,18 @@
+{
+  "title": "Nirukta (Yāska)",
+  "author": [
+    "Yāska",
+    "Muneo Tokunaga (and partly M. Kobayashi, 1999-07-29); Reinhold Grünendahl; TEI by Maximilian Mehner (2020-07-31)"
+  ],
+  "edition": "Lakshman Sarup",
+  "creator": "GRETIL (Göttingen Register of Electronic Texts in Indian Languages)",
+  "source_url": "https://gretil.sub.uni-goettingen.de/gretil/corpustei/sa_yAska-nirukta.xml",
+  "source_id": "nirukta",
+  "licence": "CC BY-NC-SA 4.0",
+  "filename": "nir",
+  "preprocessing": "sanskrit",
+  "source_type": "commentary",
+  "veda": "nirukta",
+  "chronology_layer": 5,
+  "chronology_name": "sutra_vedanga"
+}

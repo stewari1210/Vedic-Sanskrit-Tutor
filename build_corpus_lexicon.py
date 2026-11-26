@@ -25,14 +25,17 @@ load_dotenv(PROJECT_ROOT / ".env", override=True)
 from indic_transliteration import sanscript
 from src.config import LOCAL_FOLDER, VECTORDB_FOLDER, COLLECTION_NAME
 from src.utils.devanagari_lexical import normalize_iast_ascii
+from src.utils.citations import strip_vedic_accents
 
 DEV_TOKEN = re.compile(r"[ऀ-ॿ]+")
 
 # 1. Collect unique Devanagari tokens from all markdown in local_store
+# Strip Vedic svaras so accented texts (MS, AVP) index cleanly alongside unaccented texts.
 tokens = set()
 md_files = sorted(Path(LOCAL_FOLDER).rglob("*.md"))
 for md in md_files:
-    for tok in DEV_TOKEN.findall(md.read_text(encoding="utf-8")):
+    clean_text = strip_vedic_accents(md.read_text(encoding="utf-8"))
+    for tok in DEV_TOKEN.findall(clean_text):
         if len(tok) >= 3:
             tokens.add(tok)
 print(f"📚 {len(md_files)} files -> {len(tokens):,} unique Devanagari tokens")

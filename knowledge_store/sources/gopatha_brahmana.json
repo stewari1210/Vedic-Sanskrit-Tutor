@@ -1,0 +1,18 @@
+{
+  "source_id": "gopatha_brahmana",
+  "code": "gb",
+  "title": "Gopatha Brāhmaṇa",
+  "veda": "gopatha_brahmana",
+  "source_url": "https://gretil.sub.uni-goettingen.de/gretil/corpustei/sa_gopathabrAhmaNa.xml",
+  "retrieved_utc": "2026-11-24T03:38:55Z",
+  "bytes": 391724,
+  "sha256": "94d4e75d9db5ae513f189fe820f9bf2919c6dc09ecfa34cc2451ce0182641c69",
+  "edition": "Dieuke Gaastra, Das Gopatha Brāhmaṇa (Leiden: Brill, 1919)",
+  "inputter": "Arlo Griffiths (2005–06); Reinhold Grünendahl; TEI by Maximilian Mehner",
+  "licence": "CC BY-NC-SA 4.0",
+  "licence_verbatim": "Distributed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose",
+  "chronology_note": "late Brāhmaṇa",
+  "source_type": "vedic_text"
+}

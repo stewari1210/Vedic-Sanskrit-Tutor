@@ -1,0 +1,16 @@
+{
+  "title": "Taittirīya Brāhmaṇa",
+  "author": [
+    "Vedic Tradition",
+    "The Sanskrit Library First XML edition v0.1 (Peter M. Scharf & Matthias H. Ahlborn, 2010); TITUS Black Yajur-Veda Taittirīya-Brāhmaṇa (Jost Gippert, 2008); Makoto Fushimi (Ōsaka)"
+  ],
+  "creator": "The Sanskrit Library (CC BY-NC-SA 3.0)",
+  "source_id": "taittiriya_brahmana",
+  "licence": "CC BY-NC-SA 3.0 (The Sanskrit Library)",
+  "filename": "tb",
+  "preprocessing": "sanskrit",
+  "source_type": "vedic_text",
+  "veda": "taittiriya_brahmana",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose"
+}

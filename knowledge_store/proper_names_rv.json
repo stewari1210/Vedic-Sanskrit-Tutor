@@ -1,0 +1,272 @@
+{
+ "_meta": {
+  "built_by": "build_name_flags.py",
+  "sources": [
+   "gazetteer",
+   "kg (display names only)",
+   "anukramani (cross-ref)"
+  ],
+  "note": "Hand seeds and the gold-seeded contextual entry were removed (Phase-1 correction). Grassmann entries not available locally (TODO).",
+  "always_lemmas": 39,
+  "flagged_tokens": 7530,
+  "context_gated": {
+   "rohita": {
+    "contexts": {
+     "RV": false,
+     "AVŚ": {
+      "books": [
+       13
+      ]
+     }
+    },
+    "rv_tokens_not_flagged": 14
+   }
+  }
+ },
+ "always": {
+  "sutudri": {
+   "name": "Sutudri",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "vasistha": {
+   "name": "Vasistha",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "druhyu": {
+   "name": "Druhyu",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "indra": {
+   "name": "Indra",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "anga": {
+   "name": "Aṅga",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "suyavasa": {
+   "name": "Suyavasa",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "sudas": {
+   "name": "Sudas",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "varuna": {
+   "name": "Varuna",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "agni": {
+   "name": "Agni",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "grtsamada": {
+   "name": "Grtsamada",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "mitra": {
+   "name": "Mitra",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "soma": {
+   "name": "Soma",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "divodasa": {
+   "name": "Divodasa",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "visnu": {
+   "name": "Viṣṇu",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "bheda": {
+   "name": "Bheda",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "visvamitra": {
+   "name": "Viśvāmitra",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "sunahsepa": {
+   "name": "Śunaḥśepa",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "gandhari": {
+   "name": "Gandhāri",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "rudra": {
+   "name": "Rudra",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "yadu": {
+   "name": "Yadu",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "brhaspati": {
+   "name": "Bṛhaspati",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "sindhu": {
+   "name": "Sindhu",
+   "sources": [
+    "gazetteer",
+    "anukramani"
+   ]
+  },
+  "pariksit": {
+   "name": "Pariksit",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "trtsu": {
+   "name": "Trtsu",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "vrtra": {
+   "name": "Vṛtra",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "vipas": {
+   "name": "Vipas",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "marut": {
+   "name": "Marut",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "bharata": {
+   "name": "Bharata",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "usas": {
+   "name": "Uṣas",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "purukutsa": {
+   "name": "Purukutsa",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "sadanva": {
+   "name": "Sadanva",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "yamuna": {
+   "name": "Yamuna",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "paijavana": {
+   "name": "Paijavana",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "trksi": {
+   "name": "Tṛkṣi",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "rohita": {
+   "name": "rohitā",
+   "sources": [
+    "gazetteer"
+   ],
+   "contexts": {
+    "RV": false,
+    "AVŚ": {
+     "books": [
+      13
+     ]
+    }
+   }
+  },
+  "trasadasyu": {
+   "name": "Trasadasyu",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "atharvan": {
+   "name": "Atharvan",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "iksvaku": {
+   "name": "Ikṣvāku",
+   "sources": [
+    "gazetteer"
+   ]
+  },
+  "turvasa": {
+   "name": "Turvaśa",
+   "sources": [
+    "gazetteer"
+   ]
+  }
+ },
+ "contextual": {}
+}

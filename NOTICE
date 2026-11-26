@@ -27,6 +27,71 @@ mechanically (IAST/ITRANS → Devanāgarī) by this project's ingest scripts.
     (e.g. Kümmel, Griffiths, Kobayashi, Gardner, Orlandi, Roth–Whitney).
     See gretil.sub.uni-goettingen.de and titus.uni-frankfurt.de.
 
+- Maitrāyaṇī Saṃhitā (Tranche 1 — GRETIL / TITUS)
+    Source: https://gretil.sub.uni-goettingen.de/gretil/1_sanskr/1_veda/1_sam/maitrs_pu.htm
+    Edition: Leopold von Schroeder, Maitrāyaṇī Saṃhitā (Leipzig 1881–1886; repr. Wiesbaden 1970–1972).
+    Input/Editor: Makoto Fushimi (Osaka, 2015); TITUS version by Jost Gippert (Frankfurt a/M, 5.5.2016); GRETIL version 01.12.2016.
+    Terms (quoted from source): "All texts that can be downloaded via http from the TITUS server can be used freely for scholarly purposes, provided that they are quoted as sources and the name(s) of the editor(s) and the date of last changes are indicated in publications. The texts must not be used for any kind of commercial usage."
+
+- Atharvaveda Paippalāda-Saṃhitā (Tranche 1 — GRETIL)
+    Source: https://gretil.sub.uni-goettingen.de/gretil/corpustei/sa_paippalAdasaMhitA.xml
+    Edition: Dipak Bhattacharya, The Paippalāda-Saṁhitā of the Atharvaveda, Vols. 1–4 (Calcutta: The Asiatic Society, 1997–2016) & Umberto Selva (2019, Kāṇḍa 17 selections).
+    Input/Editor: Arlo Griffiths, Thomas Zehnder, Philipp Kubisch, Duccio Lelli, Alexander Lubotsky, Carmen Spiers, Michael Witzel; TEI conversion by Maximilian Mehner (GRETIL, 2020-02-10).
+    Terms (quoted from source): "Distributed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License." (https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+- Kauṣītaki Brāhmaṇa / Śāṅkhāyana Brāhmaṇa (Tranche 1 — GRETIL)
+    Source: https://gretil.sub.uni-goettingen.de/gretil/corpustei/sa_kauSItakibrAhmaNa.xml
+    Edition: E. R. Sreekrishna Sarma (Wiesbaden 1968; VOHD, Suppl. 9,1).
+    Input/Editor: Muneo Tokunaga (March–April 1995); legacy GRETIL by Reinhold Grünendahl; TEI conversion by Maximilian Mehner.
+    Terms (quoted from source): "Distributed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License." (https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+- Gopatha Brāhmaṇa (Tranche 1 — GRETIL)
+    Source: https://gretil.sub.uni-goettingen.de/gretil/corpustei/sa_gopathabrAhmaNa.xml
+    Edition: Dieuke Gaastra, Das Gopatha Brāhmaṇa (Leiden: Brill, 1919).
+    Input/Editor: Arlo Griffiths (2005–06); legacy GRETIL by Reinhold Grünendahl; TEI conversion by Maximilian Mehner.
+    Terms (quoted from source): "Distributed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License." (https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+- Bṛhadāraṇyaka Upaniṣad, Kāṇva recension — Mūla text (Tranche 1 — GRETIL)
+    Source: https://gretil.sub.uni-goettingen.de/gretil/1_sanskr/1_veda/4_upa/brup___u.htm
+    Edition: Checked against V. P. Limaye & R. D. Vadekar, Eighteen Principal Upanisads, vol. 1 (Poona 1958), and TITUS.
+    Input/Editor: Members of the Sansknet project (www.sansknet.org); legacy GRETIL normalization by Reinhold Grünendahl.
+    Terms (quoted from source): "THIS GRETIL TEXT FILE IS FOR REFERENCE PURPOSES ONLY! COPYRIGHT AND TERMS OF USAGE AS FOR SOURCE FILE." (GRETIL scholarly non-commercial / CC BY-NC-SA 4.0 on companion TEI edition.)
+
+- Chāndogya Upaniṣad — Mūla text (Tranche 1 — GRETIL)
+    Source: https://gretil.sub.uni-goettingen.de/gretil/1_sanskr/1_veda/4_upa/chup___u.htm
+    Edition: Checked against V. P. Limaye & R. D. Vadekar, Eighteen Principal Upanisads, vol. 1 (Poona 1958), and TITUS.
+    Input/Editor: Members of the Sansknet project (www.sansknet.org); revision 2017-03-17 (7,16.1) by James Fitzgerald; legacy GRETIL normalization by Reinhold Grünendahl.
+    Terms (quoted from source): "THIS GRETIL TEXT FILE IS FOR REFERENCE PURPOSES ONLY! COPYRIGHT AND TERMS OF USAGE AS FOR SOURCE FILE." (GRETIL scholarly non-commercial / CC BY-NC-SA 4.0 on companion TEI edition.)
+
+- Yāska: Nirukta — Vedāṅga commentary (Tranche 1 — GRETIL; indexed as commentary only)
+    Source: https://gretil.sub.uni-goettingen.de/gretil/corpustei/sa_yAska-nirukta.xml
+    Edition: Lakshman Sarup.
+    Input/Editor: Muneo Tokunaga (and partly M. Kobayashi, 1999-07-29); legacy GRETIL by Reinhold Grünendahl; TEI conversion by Maximilian Mehner (2020-07-31).
+    Terms (quoted from source): "Distributed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License." (https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+- Tranche 2 Texts from The Sanskrit Library (CC BY-NC-SA 3.0)
+    Required Attribution & Copyright Notice (verbatim from The Sanskrit Library catalog headers):
+    "Copyright (C) 2010 The Sanskrit Library. All rights reserved other than those granted under the Creative Commons Attribution Non-Commercial Share Alike license available in full at http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode , and summarized at http://creativecommons.org/licenses/by-nc-sa/3.0/ . Permission is granted to build upon this work non-commercially, as long as credit is explicitly acknowledged exactly as described herein and derivative work is distributed under the same license."
+
+  - Taittirīya Brāhmaṇa (Tranche 2 — The Sanskrit Library, `titus/vedic/tb`)
+      Title: The Taittirīya-Brāhmaṇa: First XML edition, Version 0.1 (Providence, RI: The Sanskrit Library, 2010).
+      Editor: Peter M. Scharf; Contributor: Matthias H. Ahlborn (TEI XML markup and header).
+      Sources credited: TITUS Black Yajur-Veda Taittirīya-Brāhmaṇa (Ed. Jost Gippert, Frankfurt, 2008; http://titus.uni-frankfurt.de/texte/etcs/ind/aind/ved/yvs/tb/tb.htm) and Taittirīya-Brāhmaṇa (Ed. Makoto Fushimi, Ōsaka).
+
+  - Jaiminīya Upaniṣad Brāhmaṇa (Tranche 2 — The Sanskrit Library, `titus/vedic/jub`)
+      Title: The Jaiminīya-Upaniṣad-Brāhmaṇa: First XML edition, Version 0.1 (Providence, RI: The Sanskrit Library, 2010).
+      Editor: Peter M. Scharf; Contributor: Matthias H. Ahlborn (TEI XML markup and header).
+      Sources credited: TITUS Sāma-Veda Jaiminīya-Upaniṣad-Brāhmaṇa (Ed. Jost Gippert, Frankfurt, 2008; http://titus.uni-frankfurt.de/texte/etcs/ind/aind/ved/sv/jub/jub.htm) and Masato Fujii (1995, Version 1, proofread by Mieko Kajihara) on the basis of Hanns Oertel, "The Jaiminiya or Talavakara Upanisad Brahmana: Text, Translation, and Notes", JAOS 16 (1896), pp. 79–260.
+
+  - Taittirīya Āraṇyaka, Books 1–9 only (Tranche 2 — Book 10 / Mahānārāyaṇa Upaniṣad excluded)
+      * Prapāṭhakas 1 (Anuvākas 1–6), 4, 5: The Sanskrit Library (`titus/vedic/ta1`, `titus/vedic/ta4`, `titus/vedic/ta5`), First XML edition, Version 0.1 (Providence, RI: The Sanskrit Library, 2010), Ed. Peter M. Scharf, Contrib. Matthias H. Ahlborn; sources credited: TITUS (Ed. Jost Gippert, Frankfurt, 2008; http://titus.uni-frankfurt.de/texte/etcs/ind/aind/ved/yvs/ta/ta.htm), Arlo Griffiths (Leiden, 1997–1998), Rājendralāla Mitra (Calcutta, 1872), A. Mahādeva Śāstri (Delhi, 1985), and Hari Nārāyaṇa Āpaṭe (Poona, 1897, Ānandāśrama-saṃskṛta-granthāvaliḥ 36).
+      * Prapāṭhakas 7–9 (Taittirīya Upaniṣad: Śīkṣāvallī, Brahmānandavallī, Bhṛguvallī): The Sanskrit Library (`titus/vedic/taittup`), First XML edition, Version 0.1 (Providence, RI: The Sanskrit Library, 2010), Ed. Peter M. Scharf, Contrib. Matthias H. Ahlborn; sources credited: TITUS (Ed. Jost Gippert, Frankfurt, 2008; http://titus.uni-frankfurt.de/texte/etcs/ind/aind/ved/yvs/upanisad/taittup/taitt.htm) and Kartik Jayaraman (edited in ITRANS format).
+      * Prapāṭhakas 1 (Anuvākas 7–32), 2, 3, and 6: `sanskritdocuments.org` accented master (`taittirIyaAraNyaka.itx`, SHA-256 `4be2a36e55afc0aec18f61ca50d64a36a7bddc85511842befee78f7374149f6d`), published Sept 21, 2022 / updated Aug 6, 2023; transliterated and proofread by Muralidhara B A (acknowledging Professor Anathakrishna). Note: Prapāṭhaka 10 (Mahānārāyaṇa Upaniṣad) and the Ekāgnikāṇḍa appended to this file are explicitly excluded.
+        Terms (quoted verbatim from file header): "This text is prepared by volunteers and is to be used for personal study and research. The file is not to be copied or reposted for promotion of any website or individuals or for commercial purpose without permission. Please help to maintain respect for volunteer spirit."
+
+  - Baudhāyana Śrauta Sūtra (Tranche 2 — HELD pending `baudhss.xml` from The Sanskrit Library)
+      Licence (same as `titus/vedic/baudhss` catalog): CC BY-NC-SA 3.0 — The Sanskrit Library (2010), Ed. Peter M. Scharf, Contrib. Matthias H. Ahlborn; sources credited: TITUS (Ed. Jost Gippert, Frankfurt, 2008), Makoto Fushimi (Ōsaka, 1982), and Willem Caland (Calcutta 1904–1913 / New Delhi 1982).
+
 2. ANUKRAMAṆĪ (hymn metadata: ṛṣi / devatā / meter)
 ---------------------------------------------------
 - Digital Rigveda Anukramaṇī
@@ -45,6 +110,12 @@ mechanically (IAST/ITRANS → Devanāgarī) by this project's ingest scripts.
     Public domain. Used for the concept store and query expansion.
 - The Bṛhaddevatā, ed. A. A. Macdonell (1904).
     Public domain. Basis of the itihāsa/legend layer.
+- The morphologically glossed Rigveda — Zurich annotation corpus (Lubotsky et al.),
+  hosted by VedaWeb (Zenodo, DOI 10.5281/zenodo.8410655). Licensed CC-BY 4.0;
+  attribution required. Used for per-verse padapāṭha forms, morphological tags
+  and lemmas (knowledge_store/padapatha_rv.json, morphology_rv.json,
+  lemma_index_rv.json — generated by ingest_padapatha.py; changed from the
+  source by re-keying, tag normalisation and transliteration of forms).
 - R. T. H. Griffith translations of the Vedas (1896 and later).
     Public domain. Kept only as a cross-checking reference layer, not as
     corpus content.

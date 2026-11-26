@@ -464,6 +464,46 @@ def add_fact(subject: str, relation: str, obj: str, citation: str,
 
 # ── Public read API ───────────────────────────────────────────────────────────
 
+# ───────────────────────── G2 held-out filter (eval / training loaders) ─────────────────────────
+# Owner decision 2026-11-21: KG relations whose citations fall in a G2 EXCLUDED unit are TAGGED
+# (knowledge_store/kg_held_out_relations.json, built by tag_kg_held_out.py) and every EVAL / TRAINING
+# loader must filter them. Nothing is deleted — not locally, not in Qdrant. The filter RECOMPUTES the
+# set from the manifest at runtime (so it can never drift from the tags, nor from the effective KG that
+# Qdrant serves) and fails loudly if the manifest is unavailable.
+#   • eval pipeline : set KG_EXCLUDE_HELD_OUT=1 (llm_lab freeze_prompts does this for the corrected layer)
+#   • training code : iterate with iter_relations(exclude_held_out=True)  (the DEFAULT)
+#   • the production app is unchanged (flag unset).
+import os as _os
+
+_HELD_OUT_UNITS = None
+
+
+def held_out_filter_enabled() -> bool:
+    return _os.environ.get("KG_EXCLUDE_HELD_OUT") == "1"
+
+
+def fact_is_held_out(fact: dict) -> bool:
+    """True if any citation of this relation lies in a G2 excluded unit (recomputed from the manifest)."""
+    global _HELD_OUT_UNITS
+    from src.utils import exclusions as EX
+    if _HELD_OUT_UNITS is None:
+        _HELD_OUT_UNITS = EX.load_excluded_units()          # raises loudly if the manifest is missing
+    cites = fact.get("citations") or [fact.get("citation", "")]
+    return any(c and (EX.is_excluded(c, _HELD_OUT_UNITS) or EX.text_hits_excluded(c, _HELD_OUT_UNITS))
+               for c in cites)
+
+
+def iter_relations(exclude_held_out: bool = True):
+    """Yield (entity_key, display_name, fact). Training/eval code should use this; held-out relations
+    are excluded by default."""
+    kg = _load()
+    for key, entity in kg["entities"].items():
+        for fact in entity.get("relations", []):
+            if exclude_held_out and fact_is_held_out(fact):
+                continue
+            yield key, entity.get("display_name", key), fact
+
+
 def get_entity_context(entity_names: list, hops: int = 2) -> str:
     """
     Return a formatted KNOWN RELATIONSHIPS block for the given entities.
@@ -490,6 +530,8 @@ def get_entity_context(entity_names: list, hops: int = 2) -> str:
             entity = kg["entities"][key]
             display = entity.get("display_name", key)
             for fact in entity.get("relations", []):
+                if held_out_filter_enabled() and fact_is_held_out(fact):
+                    continue                                  # G2 held-out relation: never reaches an eval prompt
                 fkey = (key, fact["relation"], _norm(fact["object"]))
                 if fkey in seen_facts:
                     continue
@@ -659,6 +701,8 @@ def to_networkx():
     for key, entity in kg["entities"].items():
         G.add_node(key, display_name=entity.get("display_name", key))
         for fact in entity.get("relations", []):
+            if held_out_filter_enabled() and fact_is_held_out(fact):
+                continue
             obj_key = _norm(fact["object"])
             G.add_edge(key, obj_key,
                        relation=fact["relation"],

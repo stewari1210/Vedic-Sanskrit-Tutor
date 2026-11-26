@@ -1,0 +1,114 @@
+{
+  "source_id": "taittiriya_aranyaka",
+  "code": "ta",
+  "title": "Taittirīya Āraṇyaka (Books 1–9; Book 10 excluded)",
+  "veda": "taittiriya_aranyaka",
+  "provider": "The Sanskrit Library",
+  "retrieved_utc": "2026-11-24T14:11:17Z",
+  "sl_sources": {
+    "ta1": {
+      "url": "https://sanskritlibrary.org/Library/LoadText?text=titus/vedic/ta1&texttype=forTranslation",
+      "catalog_url": "https://sanskritlibrary.org/Catalog/texts.php?text=titus/vedic/ta1",
+      "bytes": 14131,
+      "sha256": "6c68f56ec191d7e62f9e68941fd5bfe645c0cce9c10a33c037f2800ce450c340"
+    },
+    "ta4": {
+      "url": "https://sanskritlibrary.org/Library/LoadText?text=titus/vedic/ta4&texttype=forTranslation",
+      "catalog_url": "https://sanskritlibrary.org/Catalog/texts.php?text=titus/vedic/ta4",
+      "bytes": 50932,
+      "sha256": "5787a4d9140853484f78b485b906c3ef6e49f6c69572926ab3ef73dcce6a7261"
+    },
+    "ta5": {
+      "url": "https://sanskritlibrary.org/Library/LoadText?text=titus/vedic/ta5&texttype=forTranslation",
+      "catalog_url": "https://sanskritlibrary.org/Catalog/texts.php?text=titus/vedic/ta5",
+      "bytes": 59975,
+      "sha256": "96814be1421f141be5be3ac478bd19d6d0fa218435c7068762afae74e7f4d554"
+    },
+    "taittup": {
+      "url": "https://sanskritlibrary.org/Library/LoadText?text=titus/vedic/taittup&texttype=forTranslation",
+      "catalog_url": "https://sanskritlibrary.org/Catalog/texts.php?text=titus/vedic/taittup",
+      "bytes": 25163,
+      "sha256": "a4ea106945ee64530750f6d6be15f05b7df0a58ef6453b424d36604dd8bd7b93"
+    }
+  },
+  "edition": "Prapāṭhakas 1 (Anuvākas 1–6), 4, 5: The Sanskrit Library v0.1 (Scharf & Ahlborn, 2010; TITUS/Gippert 2008; Arlo Griffiths 1997–98; Mitra 1872, Śāstri 1985, Āpaṭe 1897). Prapāṭhakas 7–9 (Taittirīya Upaniṣad): The Sanskrit Library v0.1 (Scharf & Ahlborn, 2010; TITUS/Gippert 2008; Kartik Jayaraman ITRANS).",
+  "licence": "CC BY-NC-SA 3.0 (The Sanskrit Library)",
+  "licence_verbatim": "Copyright (C) 2010 The Sanskrit Library. All rights reserved other than those granted under the Creative Commons Attribution Non-Commercial Share Alike license available in full at http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode , and summarized at http://creativecommons.org/licenses/by-nc-sa/3.0/ . Permission is granted to build upon this work non-commercially, as long as credit is explicitly acknowledged exactly as described herein and derivative work is distributed under the same license.",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose",
+  "source_type": "vedic_text",
+  "book_10_excluded": true,
+  "ekagnikanda_excluded": true,
+  "prapathaka_sources": {
+    "1_anuvakas_1_to_6": "The Sanskrit Library (titus/vedic/ta1, accented, CC BY-NC-SA 3.0)",
+    "1_anuvakas_7_to_32": "sanskritdocuments.org accented .itx (taittirIyaAraNyaka.itx, sha256 4be2a36e...149f6d; personal study & research only)",
+    "2": "sanskritdocuments.org accented .itx (taittirIyaAraNyaka.itx, sha256 4be2a36e...149f6d; personal study & research only)",
+    "3": "sanskritdocuments.org accented .itx (taittirIyaAraNyaka.itx, sha256 4be2a36e...149f6d; personal study & research only)",
+    "4": "The Sanskrit Library (titus/vedic/ta4, accented, CC BY-NC-SA 3.0)",
+    "5": "The Sanskrit Library (titus/vedic/ta5, accented, CC BY-NC-SA 3.0)",
+    "6": "sanskritdocuments.org accented .itx (taittirIyaAraNyaka.itx, sha256 4be2a36e...149f6d; personal study & research only)",
+    "7_siksavalli": "The Sanskrit Library (titus/vedic/taittup, unaccented, CC BY-NC-SA 3.0)",
+    "8_brahmanandavalli": "The Sanskrit Library (titus/vedic/taittup, unaccented, CC BY-NC-SA 3.0)",
+    "9_bhrguvalli": "The Sanskrit Library (titus/vedic/taittup, unaccented, CC BY-NC-SA 3.0)",
+    "10_mahanarayana": "EXCLUDED (late Upaniṣad, excluded per corpus spec)",
+    "ekagnikanda_0": "EXCLUDED (Mantra-pāṭha / Ekāgnikāṇḍa, excluded per corpus spec)"
+  },
+  "manual_ta_dir": {
+    "present": true,
+    "path": "/Users/shivendratewari/claude/vedic_rag/archive/tranche2_manual/ta/taittirIyaAraNyaka.itx",
+    "sha256": "4be2a36e55afc0aec18f61ca50d64a36a7bddc85511842befee78f7374149f6d",
+    "bytes": 355208,
+    "overlap_comparison_doc": "docs/ta_overlap_comparison.md",
+    "overlap_summary": {
+      "TA 1.1–6": {
+        "sl_anuvakas": 6,
+        "itx_anuvakas": 6,
+        "sl_units": 23,
+        "itx_units": 19,
+        "word_jaccard": 0.4204
+      },
+      "TA 4": {
+        "sl_anuvakas": 42,
+        "itx_anuvakas": 42,
+        "sl_units": 42,
+        "itx_units": 93,
+        "word_jaccard": 0.4505
+      },
+      "TA 5": {
+        "sl_anuvakas": 12,
+        "itx_anuvakas": 12,
+        "sl_units": 12,
+        "itx_units": 108,
+        "word_jaccard": 0.3481
+      },
+      "TA 7": {
+        "sl_anuvakas": 12,
+        "itx_anuvakas": 12,
+        "sl_units": 23,
+        "itx_units": 23,
+        "word_jaccard": 0.7771
+      },
+      "TA 8": {
+        "sl_anuvakas": 9,
+        "itx_anuvakas": 9,
+        "sl_units": 13,
+        "itx_units": 9,
+        "word_jaccard": 0.7719
+      },
+      "TA 9": {
+        "sl_anuvakas": 10,
+        "itx_anuvakas": 10,
+        "sl_units": 15,
+        "itx_units": 10,
+        "word_jaccard": 0.6792
+      }
+    },
+    "added_units": {
+      "1_anuvakas_7_to_32": 112,
+      "2": 24,
+      "3": 53,
+      "6": 27
+    }
+  },
+  "manual_itx_licence_verbatim": "This text is prepared by volunteers and is to be used for personal study and research. The file is not to be copied or reposted for promotion of any website or individuals or for commercial purpose without permission. Please help to maintain respect for volunteer spirit."
+}

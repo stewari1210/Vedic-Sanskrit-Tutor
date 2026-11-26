@@ -1,0 +1,18 @@
+{
+  "source_id": "maitrayani_samhita",
+  "code": "ms",
+  "title": "Maitrāyaṇī Saṃhitā",
+  "veda": "maitrayani_samhita",
+  "source_url": "https://gretil.sub.uni-goettingen.de/gretil/1_sanskr/1_veda/1_sam/maitrs_pu.htm",
+  "retrieved_utc": "2026-11-24T03:38:50Z",
+  "bytes": 1233573,
+  "sha256": "23f41104cd16e934bb1612d05b2f87674af5eb3dc74dc9197ded2225d47d5b05",
+  "edition": "Leopold von Schroeder, Maitrāyaṇī Saṃhitā (Leipzig 1881–1886; repr. Wiesbaden 1970–1972)",
+  "inputter": "Makoto Fushimi (Osaka, 2015); TITUS version by Jost Gippert (2016-05-05); GRETIL version 2016-12-01",
+  "licence": "TITUS / GRETIL (scholarly, non-commercial use only)",
+  "licence_verbatim": "All texts that can be downloaded via http from the TITUS server can be used freely for scholarly purposes, provided that they are quoted as sources and the name(s) of the editor(s) and the date of last changes are indicated in publications. The texts must not be used for any kind of commercial usage.",
+  "chronology_layer": 3,
+  "chronology_name": "yv_samhita",
+  "chronology_note": null,
+  "source_type": "vedic_text"
+}

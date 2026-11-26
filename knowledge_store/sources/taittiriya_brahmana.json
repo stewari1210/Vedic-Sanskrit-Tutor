@@ -1,0 +1,22 @@
+{
+  "source_id": "taittiriya_brahmana",
+  "code": "tb",
+  "title": "Taittirīya Brāhmaṇa",
+  "veda": "taittiriya_brahmana",
+  "provider": "The Sanskrit Library",
+  "retrieved_utc": "2026-11-24T14:11:15Z",
+  "sl_sources": {
+    "tb": {
+      "url": "https://sanskritlibrary.org/Library/LoadText?text=titus/vedic/tb&texttype=forTranslation",
+      "catalog_url": "https://sanskritlibrary.org/Catalog/texts.php?text=titus/vedic/tb",
+      "bytes": 945277,
+      "sha256": "e9ad33f30cdeddcac854e9fbfa6aa73763e8e923b0999081c94568496faa55bb"
+    }
+  },
+  "edition": "The Sanskrit Library First XML edition v0.1 (Peter M. Scharf & Matthias H. Ahlborn, 2010); TITUS Black Yajur-Veda Taittirīya-Brāhmaṇa (Jost Gippert, 2008); Makoto Fushimi (Ōsaka)",
+  "licence": "CC BY-NC-SA 3.0 (The Sanskrit Library)",
+  "licence_verbatim": "Copyright (C) 2010 The Sanskrit Library. All rights reserved other than those granted under the Creative Commons Attribution Non-Commercial Share Alike license available in full at http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode , and summarized at http://creativecommons.org/licenses/by-nc-sa/3.0/ . Permission is granted to build upon this work non-commercially, as long as credit is explicitly acknowledged exactly as described herein and derivative work is distributed under the same license.",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose",
+  "source_type": "vedic_text"
+}

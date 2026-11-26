@@ -1,0 +1,18 @@
+{
+  "title": "Bṛhadāraṇyaka Upaniṣad (Kāṇva)",
+  "author": [
+    "Vedic Tradition",
+    "Members of the Sansknet project (www.sansknet.org); Reinhold Grünendahl (GRETIL)"
+  ],
+  "edition": "Checked against V. P. Limaye & R. D. Vadekar, Eighteen Principal Upanisads, vol. 1 (Poona 1958), and TITUS",
+  "creator": "GRETIL (Göttingen Register of Electronic Texts in Indian Languages)",
+  "source_url": "https://gretil.sub.uni-goettingen.de/gretil/1_sanskr/1_veda/4_upa/brup___u.htm",
+  "source_id": "brihadaranyaka_upanisad",
+  "licence": "GRETIL (scholarly, non-commercial; companion TEI CC BY-NC-SA 4.0)",
+  "filename": "bau",
+  "preprocessing": "sanskrit",
+  "source_type": "vedic_text",
+  "veda": "brihadaranyaka_upanisad",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose"
+}

@@ -1,0 +1,1225 @@
+{
+ "_meta": {
+  "built_by": "build_lexicon_flags.py",
+  "spec": "docs/phase1_correction_rules.md",
+  "rules": {
+   "L3": "pure firm name per Zurich glossary (first-sense primacy)",
+   "L3b": "firm VERSE-LOCALISED name sense, applied only at the cited verse(s) (owner-adopted 2026-11-21, after a gold outcome was seen)",
+   "L1": "DISABLED by owner decision 2026-11-21 (0/15 hits fit their context)"
+  },
+  "l1_enabled": false,
+  "excluded_units_loaded": [
+   "RV 1.131",
+   "RV 1.174",
+   "RV 4.38",
+   "RV 5.27",
+   "RV 6.20",
+   "RV 7.96",
+   "RV 8.19",
+   "RV 10.33",
+   "RV 10.75",
+   "AVS 5.4",
+   "AVS 19.39",
+   "PB 13.3",
+   "SB 1.8.1",
+   "SB 11.5.1",
+   "AB 8.21"
+  ],
+  "name_lemmas": 271,
+  "name_tokens": 1208,
+  "l3_already_in_gazetteer": 20,
+  "localised_name_lemmas": 14,
+  "localised_verses": 15,
+  "localised_tokens": 15,
+  "l1_would_be_lemmas": 41,
+  "l1_would_be_tokens": 949
+ },
+ "name_lemmas": {
+  "sárasvant-": {
+   "title": "Sarasvant",
+   "tokens": 69
+  },
+  "púraṃdhi-": {
+   "title": "Puraṃdhi",
+   "tokens": 48
+  },
+  "tváṣṭar-": {
+   "title": "Tvaṣṭar",
+   "tokens": 65
+  },
+  "pūṣán-": {
+   "title": "Pūṣan",
+   "tokens": 120
+  },
+  "kakṣī́vant-": {
+   "title": "Kakṣīvant",
+   "tokens": 14
+  },
+  "bhā́ratī-": {
+   "title": "Bhāratī",
+   "tokens": 12
+  },
+  "indrāṇī́-": {
+   "title": "Indrāṇī",
+   "tokens": 5
+  },
+  "mātaríśvan-": {
+   "title": "Mātariśvan",
+   "tokens": 27
+  },
+  "vivásvant-": {
+   "title": "Vivasvant",
+   "tokens": 27
+  },
+  "purūrávas-": {
+   "title": "Purūravas",
+   "tokens": 6
+  },
+  "návagva-": {
+   "title": "Navagva",
+   "tokens": 14
+  },
+  "ilībíśa-": {
+   "title": "Ilībiśa",
+   "tokens": 1
+  },
+  "kútsa-": {
+   "title": "Kutsa",
+   "tokens": 34
+  },
+  "śvaitreyá-": {
+   "title": "Śvaitreya",
+   "tokens": 2
+  },
+  "médhyātithi-": {
+   "title": "Medhyātithi",
+   "tokens": 9
+  },
+  "upastutá-": {
+   "title": "Upastuta",
+   "tokens": 7
+  },
+  "ugrā́deva-": {
+   "title": "Ugrādeva",
+   "tokens": 1
+  },
+  "návavāstva-": {
+   "title": "Navavāstva",
+   "tokens": 2
+  },
+  "br̥hádratha-": {
+   "title": "Br̥hadratha",
+   "tokens": 2
+  },
+  "turvī́ti-": {
+   "title": "Turvīti",
+   "tokens": 6
+  },
+  "práskaṇva-": {
+   "title": "Praskaṇva",
+   "tokens": 5
+  },
+  "priyámedha-": {
+   "title": "Priyamedha",
+   "tokens": 11
+  },
+  "átri-": {
+   "title": "Atri",
+   "tokens": 46
+  },
+  "vimadá-": {
+   "title": "Vimada",
+   "tokens": 11
+  },
+  "r̥jíśvan-": {
+   "title": "R̥jiśvan",
+   "tokens": 8
+  },
+  "uśánā- 1": {
+   "title": "Uśanā- 1",
+   "tokens": 15
+  },
+  "śāryātá-": {
+   "title": "Śāryāta",
+   "tokens": 2
+  },
+  "vr̥cayā́-": {
+   "title": "Vr̥cayā",
+   "tokens": 1
+  },
+  "tritá-": {
+   "title": "Trita",
+   "tokens": 41
+  },
+  "námī-": {
+   "title": "Namī",
+   "tokens": 2
+  },
+  "kárañja-": {
+   "title": "Karañja",
+   "tokens": 1
+  },
+  "parṇáya-": {
+   "title": "Parṇaya",
+   "tokens": 1
+  },
+  "váṅgr̥da-": {
+   "title": "Vaṅgr̥da",
+   "tokens": 1
+  },
+  "tū́rvayāṇa-": {
+   "title": "Tūrvayāṇa",
+   "tokens": 3
+  },
+  "vayyà-": {
+   "title": "Vayya",
+   "tokens": 6
+  },
+  "bhŕ̥gu-": {
+   "title": "Bhr̥gu",
+   "tokens": 23
+  },
+  "pūrú-": {
+   "title": "Pūru",
+   "tokens": 16
+  },
+  "bharádvāja-": {
+   "title": "Bharadvāja",
+   "tokens": 19
+  },
+  "gótama-": {
+   "title": "Gotama",
+   "tokens": 18
+  },
+  "dáśagva-": {
+   "title": "Daśagva",
+   "tokens": 7
+  },
+  "ráhūgaṇa-": {
+   "title": "Rahūgaṇa",
+   "tokens": 1
+  },
+  "dadhyáñc-": {
+   "title": "Dadhyañc",
+   "tokens": 9
+  },
+  "tā́rkṣya-": {
+   "title": "Tārkṣya",
+   "tokens": 2
+  },
+  "r̥jrā́śva-": {
+   "title": "R̥jrāśva",
+   "tokens": 5
+  },
+  "ambarī́ṣa-": {
+   "title": "Ambarīṣa",
+   "tokens": 1
+  },
+  "sahádeva-": {
+   "title": "Sahadeva",
+   "tokens": 1
+  },
+  "bháyamāna-": {
+   "title": "Bhayamāna",
+   "tokens": 1
+  },
+  "śíphā-": {
+   "title": "Śiphā",
+   "tokens": 1
+  },
+  "kuliśín-": {
+   "title": "Kuliśin",
+   "tokens": 1
+  },
+  "saudhanvaná-": {
+   "title": "Saudhanvana",
+   "tokens": 12
+  },
+  "rebhá-": {
+   "title": "Rebha",
+   "tokens": 20
+  },
+  "vándana- 1": {
+   "title": "Vandana- 1",
+   "tokens": 7
+  },
+  "karkándhu-": {
+   "title": "Karkandhu",
+   "tokens": 1
+  },
+  "śucantí-": {
+   "title": "Śucanti",
+   "tokens": 1
+  },
+  "pŕ̥śnigu-": {
+   "title": "Pr̥śnigu",
+   "tokens": 1
+  },
+  "śrutárya-": {
+   "title": "Śrutarya",
+   "tokens": 1
+  },
+  "aśvyá-": {
+   "title": "Aśvya",
+   "tokens": 4
+  },
+  "kalí-": {
+   "title": "Kali",
+   "tokens": 3
+  },
+  "vyàśva-": {
+   "title": "Vyaśva",
+   "tokens": 5
+  },
+  "pŕ̥thi-": {
+   "title": "Pr̥thi",
+   "tokens": 1
+  },
+  "syū́maraśmi-": {
+   "title": "Syūmaraśmi",
+   "tokens": 2
+  },
+  "páṭharvan-": {
+   "title": "Paṭharvan",
+   "tokens": 1
+  },
+  "śáryāta-": {
+   "title": "Śaryāta",
+   "tokens": 1
+  },
+  "kr̥śā́nu-": {
+   "title": "Kr̥śānu",
+   "tokens": 5
+  },
+  "ārjuneyá-": {
+   "title": "Ārjuneya",
+   "tokens": 4
+  },
+  "dabhī́ti-": {
+   "title": "Dabhīti",
+   "tokens": 9
+  },
+  "dhvasánti-": {
+   "title": "Dhvasanti",
+   "tokens": 1
+  },
+  "puruṣánti-": {
+   "title": "Puruṣanti",
+   "tokens": 2
+  },
+  "túgra-": {
+   "title": "Tugra",
+   "tokens": 5
+  },
+  "pajriyá-": {
+   "title": "Pajriya",
+   "tokens": 3
+  },
+  "khelá-": {
+   "title": "Khela",
+   "tokens": 1
+  },
+  "jāhuṣá-": {
+   "title": "Jāhuṣa",
+   "tokens": 2
+  },
+  "pr̥thuśrávas-": {
+   "title": "Pr̥thuśravas",
+   "tokens": 3
+  },
+  "ārcatká-": {
+   "title": "Ārcatka",
+   "tokens": 1
+  },
+  "kr̥ṣṇiyá-": {
+   "title": "Kr̥ṣṇiya",
+   "tokens": 2
+  },
+  "viṣṇāpū́-": {
+   "title": "Viṣṇāpū",
+   "tokens": 4
+  },
+  "víśvaka-": {
+   "title": "Viśvaka",
+   "tokens": 6
+  },
+  "ghóṣā-": {
+   "title": "Ghoṣā",
+   "tokens": 3
+  },
+  "śyā́va-": {
+   "title": "Śyāva",
+   "tokens": 3
+  },
+  "pedú-": {
+   "title": "Pedu",
+   "tokens": 5
+  },
+  "mā́na- 1": {
+   "title": "Māna- 1",
+   "tokens": 8
+  },
+  "purumitrá-": {
+   "title": "Purumitra",
+   "tokens": 2
+  },
+  "pr̥kṣáyāma-": {
+   "title": "Pr̥kṣayāma",
+   "tokens": 1
+  },
+  "śrutáratha-": {
+   "title": "Śrutaratha",
+   "tokens": 2
+  },
+  "priyáratha-": {
+   "title": "Priyaratha",
+   "tokens": 1
+  },
+  "maśarśā́ra-": {
+   "title": "Maśarśāra",
+   "tokens": 1
+  },
+  "ā́yavasa-": {
+   "title": "Āyavasa",
+   "tokens": 1
+  },
+  "bhāvyá-": {
+   "title": "Bhāvya",
+   "tokens": 1
+  },
+  "svanáya-": {
+   "title": "Svanaya",
+   "tokens": 1
+  },
+  "māmateyá-": {
+   "title": "Māmateya",
+   "tokens": 4
+  },
+  "purumīḷhá-": {
+   "title": "Purumīḷha",
+   "tokens": 4
+  },
+  "aucathyá-": {
+   "title": "Aucathya",
+   "tokens": 2
+  },
+  "traitaná-": {
+   "title": "Traitana",
+   "tokens": 1
+  },
+  "dīrghátama-": {
+   "title": "Dīrghatama",
+   "tokens": 2
+  },
+  "māndāryá-": {
+   "title": "Māndārya",
+   "tokens": 4
+  },
+  "rodasī́-": {
+   "title": "Rodasī",
+   "tokens": 6
+  },
+  "lópāmudrā-": {
+   "title": "Lopāmudrā",
+   "tokens": 1
+  },
+  "aurṇavābhá-": {
+   "title": "Aurṇavābha",
+   "tokens": 3
+  },
+  "nārmará-": {
+   "title": "Nārmara",
+   "tokens": 1
+  },
+  "dāsáveśa-": {
+   "title": "Dāsaveśa",
+   "tokens": 1
+  },
+  "rudhikrā́-": {
+   "title": "Rudhikrā",
+   "tokens": 1
+  },
+  "varcín-": {
+   "title": "Varcin",
+   "tokens": 4
+  },
+  "cúmuri-": {
+   "title": "Cumuri",
+   "tokens": 5
+  },
+  "śunáhotra-": {
+   "title": "Śunahotra",
+   "tokens": 3
+  },
+  "sinīvālī́-": {
+   "title": "Sinīvālī",
+   "tokens": 4
+  },
+  "dadhikrā́-": {
+   "title": "Dadhikrā",
+   "tokens": 9
+  },
+  "devávāta-": {
+   "title": "Devavāta",
+   "tokens": 5
+  },
+  "deváśravas-": {
+   "title": "Devaśravas",
+   "tokens": 2
+  },
+  "dr̥ṣádvatī-": {
+   "title": "Dr̥ṣadvatī",
+   "tokens": 1
+  },
+  "āpayā́-": {
+   "title": "Āpayā",
+   "tokens": 1
+  },
+  "kuśiká-": {
+   "title": "Kuśika",
+   "tokens": 10
+  },
+  "kī́kaṭa-": {
+   "title": "Kīkaṭa",
+   "tokens": 1
+  },
+  "naicāśākhá-": {
+   "title": "Naicāśākha",
+   "tokens": 1
+  },
+  "jamádagni-": {
+   "title": "Jamadagni",
+   "tokens": 4
+  },
+  "díti-": {
+   "title": "Diti",
+   "tokens": 3
+  },
+  "ápnavāna-": {
+   "title": "Apnavāna",
+   "tokens": 1
+  },
+  "sŕ̥ñjaya-": {
+   "title": "Sr̥ñjaya",
+   "tokens": 2
+  },
+  "sāhadevyá-": {
+   "title": "Sāhadevya",
+   "tokens": 4
+  },
+  "sómaka-": {
+   "title": "Somaka",
+   "tokens": 1
+  },
+  "vaidathiná-": {
+   "title": "Vaidathina",
+   "tokens": 2
+  },
+  "vāmádeva-": {
+   "title": "Vāmadeva",
+   "tokens": 1
+  },
+  "vibālī́-": {
+   "title": "Vibālī",
+   "tokens": 1
+  },
+  "kaulitará-": {
+   "title": "Kaulitara",
+   "tokens": 1
+  },
+  "turváśāyádu-": {
+   "title": "Turvaśāyadu",
+   "tokens": 1
+  },
+  "saráyu-": {
+   "title": "Sarayu",
+   "tokens": 3
+  },
+  "dadhikrā́van-": {
+   "title": "Dadhikrāvan",
+   "tokens": 10
+  },
+  "purukútsānī-": {
+   "title": "Purukutsānī",
+   "tokens": 1
+  },
+  "gáviṣṭhira-": {
+   "title": "Gaviṣṭhira",
+   "tokens": 2
+  },
+  "dvitá-": {
+   "title": "Dvita",
+   "tokens": 2
+  },
+  "viśvasāman-": {
+   "title": "Viśvasāman",
+   "tokens": 1
+  },
+  "gaúrivīti-": {
+   "title": "Gaurivīti",
+   "tokens": 1
+  },
+  "ruśáma-": {
+   "title": "Ruśama",
+   "tokens": 4
+  },
+  "r̥ṇaṃcayá-": {
+   "title": "R̥ṇaṃcaya",
+   "tokens": 2
+  },
+  "paurukutsyá-": {
+   "title": "Paurukutsya",
+   "tokens": 1
+  },
+  "gairikṣitá-": {
+   "title": "Gairikṣita",
+   "tokens": 1
+  },
+  "mārutā́śva-": {
+   "title": "Mārutāśva",
+   "tokens": 1
+  },
+  "cyávatāna-": {
+   "title": "Cyavatāna",
+   "tokens": 1
+  },
+  "lakṣmaṇyà-": {
+   "title": "Lakṣmaṇya",
+   "tokens": 1
+  },
+  "śátri-": {
+   "title": "Śatri",
+   "tokens": 1
+  },
+  "svàrbhānu-": {
+   "title": "Svarbhānu",
+   "tokens": 4
+  },
+  "avatsārá-": {
+   "title": "Avatsāra",
+   "tokens": 1
+  },
+  "bāhuvr̥ktá-": {
+   "title": "Bāhuvr̥kta",
+   "tokens": 1
+  },
+  "śrutavíd-": {
+   "title": "Śrutavid",
+   "tokens": 1
+  },
+  "śyāvā́śva-": {
+   "title": "Śyāvāśva",
+   "tokens": 8
+  },
+  "ánitabhā-": {
+   "title": "Anitabhā",
+   "tokens": 1
+  },
+  "kúbhā-": {
+   "title": "Kubhā",
+   "tokens": 1
+  },
+  "tarantá-": {
+   "title": "Taranta",
+   "tokens": 1
+  },
+  "dārbhyá-": {
+   "title": "Dārbhya",
+   "tokens": 1
+  },
+  "ráthavīti-": {
+   "title": "Rathavīti",
+   "tokens": 2
+  },
+  "saptávadhri-": {
+   "title": "Saptavadhri",
+   "tokens": 4
+  },
+  "satyáśravas-": {
+   "title": "Satyaśravas",
+   "tokens": 3
+  },
+  "śaucadrathá-": {
+   "title": "Śaucadratha",
+   "tokens": 1
+  },
+  "mamátā-": {
+   "title": "Mamatā",
+   "tokens": 1
+  },
+  "vetasú-": {
+   "title": "Vetasu",
+   "tokens": 2
+  },
+  "túji-": {
+   "title": "Tuji",
+   "tokens": 2
+  },
+  "prā́tardani-": {
+   "title": "Prātardani",
+   "tokens": 1
+  },
+  "varáśikha-": {
+   "title": "Varaśikha",
+   "tokens": 2
+  },
+  "abhyāvartín-": {
+   "title": "Abhyāvartin",
+   "tokens": 2
+  },
+  "cāyamāná-": {
+   "title": "Cāyamāna",
+   "tokens": 2
+  },
+  "pārthavá-": {
+   "title": "Pārthava",
+   "tokens": 1
+  },
+  "br̥bú-": {
+   "title": "Br̥bu",
+   "tokens": 2
+  },
+  "prastoká-": {
+   "title": "Prastoka",
+   "tokens": 1
+  },
+  "aśvathá-": {
+   "title": "Aśvatha",
+   "tokens": 1
+  },
+  "sārñjayá-": {
+   "title": "Sārñjaya",
+   "tokens": 1
+  },
+  "vadhryaśvá-": {
+   "title": "Vadhryaśva",
+   "tokens": 7
+  },
+  "púraya-": {
+   "title": "Puraya",
+   "tokens": 1
+  },
+  "sumīḷhá-": {
+   "title": "Sumīḷha",
+   "tokens": 1
+  },
+  "peruká-": {
+   "title": "Peruka",
+   "tokens": 1
+  },
+  "purupánthā-": {
+   "title": "Purupanthā",
+   "tokens": 1
+  },
+  "járūtha-": {
+   "title": "Jarūtha",
+   "tokens": 3
+  },
+  "bhalānás-": {
+   "title": "Bhalānas",
+   "tokens": 1
+  },
+  "kaváṣa-": {
+   "title": "Kavaṣa",
+   "tokens": 1
+  },
+  "śígru-": {
+   "title": "Śigru",
+   "tokens": 1
+  },
+  "śatáyātu-": {
+   "title": "Śatayātu",
+   "tokens": 1
+  },
+  "yudhyāmadhí-": {
+   "title": "Yudhyāmadhi",
+   "tokens": 1
+  },
+  "paúrukutsi-": {
+   "title": "Paurukutsi",
+   "tokens": 1
+  },
+  "pā́śadyumna-": {
+   "title": "Pāśadyumna",
+   "tokens": 1
+  },
+  "sārameyá-": {
+   "title": "Sārameya",
+   "tokens": 3
+  },
+  "kāṇvá-": {
+   "title": "Kāṇva",
+   "tokens": 7
+  },
+  "ninditā́śva-": {
+   "title": "Ninditāśva",
+   "tokens": 1
+  },
+  "rúśama-": {
+   "title": "Ruśama",
+   "tokens": 3
+  },
+  "śyā́vaka-": {
+   "title": "Śyāvaka",
+   "tokens": 2
+  },
+  "kŕ̥pa-": {
+   "title": "Kr̥pa",
+   "tokens": 2
+  },
+  "pā́kasthāman-": {
+   "title": "Pākasthāman",
+   "tokens": 3
+  },
+  "kaúrayāṇa-": {
+   "title": "Kaurayāṇa",
+   "tokens": 1
+  },
+  "rúma-": {
+   "title": "Ruma",
+   "tokens": 1
+  },
+  "kuruṅgá-": {
+   "title": "Kuruṅga",
+   "tokens": 1
+  },
+  "śiñjā́ra-": {
+   "title": "Śiñjāra",
+   "tokens": 2
+  },
+  "sóbhari-": {
+   "title": "Sobhari",
+   "tokens": 4
+  },
+  "kaśú-": {
+   "title": "Kaśu",
+   "tokens": 1
+  },
+  "cedí-": {
+   "title": "Cedi",
+   "tokens": 1
+  },
+  "tiríndira-": {
+   "title": "Tirindira",
+   "tokens": 1
+  },
+  "médhātithi-": {
+   "title": "Medhātithi",
+   "tokens": 1
+  },
+  "dáśavraja-": {
+   "title": "Daśavraja",
+   "tokens": 3
+  },
+  "góśarya-": {
+   "title": "Gośarya",
+   "tokens": 3
+  },
+  "pŕ̥thī-": {
+   "title": "Pr̥thī",
+   "tokens": 2
+  },
+  "vainyá-": {
+   "title": "Vainya",
+   "tokens": 1
+  },
+  "cítra-": {
+   "title": "Citra",
+   "tokens": 1
+  },
+  "sóbharī-": {
+   "title": "Sobharī",
+   "tokens": 2
+  },
+  "varu-": {
+   "title": "Varu",
+   "tokens": 3
+  },
+  "suṣā́man-": {
+   "title": "Suṣāman",
+   "tokens": 4
+  },
+  "gomatī́-": {
+   "title": "Gomatī",
+   "tokens": 1
+  },
+  "ukṣaṇyā́yana-": {
+   "title": "Ukṣaṇyāyana",
+   "tokens": 1
+  },
+  "hárayāṇa-": {
+   "title": "Harayāṇa",
+   "tokens": 1
+  },
+  "sŕ̥binda-": {
+   "title": "Sr̥binda",
+   "tokens": 1
+  },
+  "ánarśani-": {
+   "title": "Anarśani",
+   "tokens": 1
+  },
+  "vásurocis-": {
+   "title": "Vasurocis",
+   "tokens": 1
+  },
+  "nabhākavánt-": {
+   "title": "Nabhākavant",
+   "tokens": 2
+  },
+  "nābhāká-": {
+   "title": "Nābhāka",
+   "tokens": 1
+  },
+  "kānītá-": {
+   "title": "Kānīta",
+   "tokens": 2
+  },
+  "balbūthá-": {
+   "title": "Balbūtha",
+   "tokens": 1
+  },
+  "tárukṣa-": {
+   "title": "Tarukṣa",
+   "tokens": 1
+  },
+  "nī́pātithi-": {
+   "title": "Nīpātithi",
+   "tokens": 2
+  },
+  "dīrghánītha-": {
+   "title": "Dīrghanītha",
+   "tokens": 1
+  },
+  "sā́ṃvaraṇi-": {
+   "title": "Sāṃvaraṇi",
+   "tokens": 1
+  },
+  "púṣṭigu-": {
+   "title": "Puṣṭigu",
+   "tokens": 1
+  },
+  "śrúṣṭigu-": {
+   "title": "Śruṣṭigu",
+   "tokens": 1
+  },
+  "pārṣadvāṇá-": {
+   "title": "Pārṣadvāṇa",
+   "tokens": 1
+  },
+  "pávīru-": {
+   "title": "Pavīru",
+   "tokens": 1
+  },
+  "pŕ̥ṣadhra-": {
+   "title": "Pr̥ṣadhra",
+   "tokens": 1
+  },
+  "dáśaśipra-": {
+   "title": "Daśaśipra",
+   "tokens": 1
+  },
+  "dáśoṇya-": {
+   "title": "Daśoṇya",
+   "tokens": 1
+  },
+  "ŕ̥jūnas-": {
+   "title": "R̥jūnas",
+   "tokens": 1
+  },
+  "saṃvartá-": {
+   "title": "Saṃvarta",
+   "tokens": 1
+  },
+  "kāṇvāyana-": {
+   "title": "Kāṇvāyana",
+   "tokens": 1
+  },
+  "pautakratá-": {
+   "title": "Pautakrata",
+   "tokens": 1
+  },
+  "pūtákratā-": {
+   "title": "Pūtakratā",
+   "tokens": 1
+  },
+  "purumā́yya-": {
+   "title": "Purumāyya",
+   "tokens": 1
+  },
+  "indrotá-": {
+   "title": "Indrota",
+   "tokens": 2
+  },
+  "āśvamedhá-": {
+   "title": "Āśvamedha",
+   "tokens": 2
+  },
+  "ārkṣá-": {
+   "title": "Ārkṣa",
+   "tokens": 3
+  },
+  "pūtákratu-": {
+   "title": "Pūtakratu",
+   "tokens": 1
+  },
+  "vājabandhu-": {
+   "title": "Vājabandhu",
+   "tokens": 1
+  },
+  "puruhanman-": {
+   "title": "Puruhanman",
+   "tokens": 1
+  },
+  "śrutárvan-": {
+   "title": "Śrutarvan",
+   "tokens": 3
+  },
+  "apālā́-": {
+   "title": "Apālā",
+   "tokens": 1
+  },
+  "śrutákakṣa-": {
+   "title": "Śrutakakṣa",
+   "tokens": 1
+  },
+  "tiraścī́-": {
+   "title": "Tiraścī",
+   "tokens": 1
+  },
+  "śarabhá-": {
+   "title": "Śarabha",
+   "tokens": 1
+  },
+  "alā́yya-": {
+   "title": "Alāyya",
+   "tokens": 1
+  },
+  "kaśyapa-": {
+   "title": "Kaśyapa",
+   "tokens": 1
+  },
+  "pūṣaṇá-": {
+   "title": "Pūṣaṇa",
+   "tokens": 1
+  },
+  "kuruśrávaṇa-": {
+   "title": "Kuruśravaṇa",
+   "tokens": 1
+  },
+  "vaibhūvasá-": {
+   "title": "Vaibhūvasa",
+   "tokens": 1
+  },
+  "guṅgú-": {
+   "title": "Guṅgu",
+   "tokens": 1
+  },
+  "sāpyá-": {
+   "title": "Sāpya",
+   "tokens": 1
+  },
+  "smádibha-": {
+   "title": "Smadibha",
+   "tokens": 1
+  },
+  "sávya-": {
+   "title": "Savya",
+   "tokens": 1
+  },
+  "ráthaproṣṭha-": {
+   "title": "Rathaproṣṭha",
+   "tokens": 1
+  },
+  "āśvaghná-": {
+   "title": "Āśvaghna",
+   "tokens": 1
+  },
+  "sāvarṇyá-": {
+   "title": "Sāvarṇya",
+   "tokens": 1
+  },
+  "turvá-": {
+   "title": "Turva",
+   "tokens": 1
+  },
+  "sā́varṇi-": {
+   "title": "Sāvarṇi",
+   "tokens": 1
+  },
+  "platí-": {
+   "title": "Plati",
+   "tokens": 2
+  },
+  "kamadyū́-": {
+   "title": "Kamadyū",
+   "tokens": 1
+  },
+  "nr̥médha-": {
+   "title": "Nr̥medha",
+   "tokens": 2
+  },
+  "déṣṭrī-": {
+   "title": "Deṣṭrī",
+   "tokens": 1
+  },
+  "pūṣáṇa-": {
+   "title": "Pūṣaṇa",
+   "tokens": 1
+  },
+  "duḥśī́ma-": {
+   "title": "Duḥśīma",
+   "tokens": 1
+  },
+  "tā́nva- 2": {
+   "title": "Tānva- 2",
+   "tokens": 1
+  },
+  "śáṃtanu-": {
+   "title": "Śaṃtanu",
+   "tokens": 3
+  },
+  "devā́pi-": {
+   "title": "Devāpi",
+   "tokens": 6
+  },
+  "ārṣṭiṣeṇá-": {
+   "title": "Ārṣṭiṣeṇa",
+   "tokens": 3
+  },
+  "múdgala-": {
+   "title": "Mudgala",
+   "tokens": 2
+  },
+  "bhūtā́ṃśa-": {
+   "title": "Bhūtāṃśa",
+   "tokens": 1
+  },
+  "vr̥ṣṭihávya-": {
+   "title": "Vr̥ṣṭihavya",
+   "tokens": 1
+  },
+  "śákapūta-": {
+   "title": "Śakapūta",
+   "tokens": 1
+  },
+  "híraṇyastūpa-": {
+   "title": "Hiraṇyastūpa",
+   "tokens": 1
+  },
+  "śirímbiṭha-": {
+   "title": "Śirimbiṭha",
+   "tokens": 1
+  },
+  "iṭát-": {
+   "title": "Iṭat",
+   "tokens": 1
+  },
+  "āstrabudhná-": {
+   "title": "Āstrabudhna",
+   "tokens": 1
+  }
+ },
+ "localised_name_lemmas": {
+  "daivavātá-": {
+   "title": "Daivavāta",
+   "verses": [
+    "3.023.03"
+   ],
+   "tokens": 1
+  },
+  "babhrú-": {
+   "title": "Babhru",
+   "verses": [
+    "5.030.14",
+    "8.022.10"
+   ],
+   "tokens": 2
+  },
+  "pāyú-": {
+   "title": "Pāyu",
+   "verses": [
+    "6.047.24"
+   ],
+   "tokens": 1
+  },
+  "mátsya-": {
+   "title": "Matsya",
+   "verses": [
+    "7.018.06"
+   ],
+   "tokens": 1
+  },
+  "parāśará-": {
+   "title": "Parāśara",
+   "verses": [
+    "7.018.21"
+   ],
+   "tokens": 1
+  },
+  "devávant-": {
+   "title": "Devavant",
+   "verses": [
+    "7.018.22"
+   ],
+   "tokens": 1
+  },
+  "pā́nta-": {
+   "title": "Pānta",
+   "verses": [
+    "7.033.02"
+   ],
+   "tokens": 1
+  },
+  "prapathín-": {
+   "title": "Prapathin",
+   "verses": [
+    "8.001.30"
+   ],
+   "tokens": 1
+  },
+  "párśu-": {
+   "title": "Parśu",
+   "verses": [
+    "8.006.46"
+   ],
+   "tokens": 1
+  },
+  "dhvasrá-": {
+   "title": "Dhvasra",
+   "verses": [
+    "9.058.03"
+   ],
+   "tokens": 1
+  },
+  "saraṇyú-": {
+   "title": "Saraṇyu",
+   "verses": [
+    "10.017.02"
+   ],
+   "tokens": 1
+  },
+  "nr̥ṣád-": {
+   "title": "Nr̥ṣad",
+   "verses": [
+    "10.031.11"
+   ],
+   "tokens": 1
+  },
+  "śundhyú-": {
+   "title": "Śundhyu",
+   "verses": [
+    "10.039.07"
+   ],
+   "tokens": 1
+  },
+  "rāmá-": {
+   "title": "Rāma",
+   "verses": [
+    "10.093.14"
+   ],
+   "tokens": 1
+  }
+ },
+ "dual_sense_lemmas": {}
+}

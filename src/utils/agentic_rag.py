@@ -31,6 +31,7 @@ from src.utils.citation_enhancer import (
     CitationFormatter
 )
 from src.utils.devanagari_lexical import query_terms
+import os
 import re
 import json
 import threading
@@ -44,6 +45,22 @@ except Exception as _kg_err:
     logger.warning(f"🕸️  KG disabled: {_kg_err}")
 
 llm = Settings.get_llm()
+
+
+def set_llm(new_llm):
+    """Override the synthesis LLM used by the agentic pipeline at runtime.
+
+    The module builds its LLM from config (Settings.get_llm → .env) at import, so by
+    default the RAG uses the configured provider/model. The frontend calls this when
+    the user picks a different model in the sidebar, so the selection actually drives
+    the answer (otherwise it would be cosmetic). Pass None to keep the current LLM.
+    """
+    global llm
+    if new_llm is not None:
+        llm = new_llm
+        logger.info(f"[AGENT] Synthesis LLM overridden by frontend selection: "
+                    f"{getattr(new_llm, 'model', getattr(new_llm, 'model_name', type(new_llm).__name__))}")
+
 
 # How many retrieved docs reach the synthesis LLM. Was 5 — starved the
 # synthesizer (Gemini Flash has ~1M-token context; 12 docs ≈ a few thousand
@@ -77,33 +94,36 @@ _SHARED_DOCS = None
 def extract_source_texts(corpus_docs: List[Document]) -> str:
     """
     Extract unique source texts from corpus documents.
-    Returns a formatted string like 'Rigveda, Pancavimsa Brahmana, and Satapatha Brahmana'
+    Returns a formatted string like 'Ṛgveda Saṃhitā, Pañcaviṃśa Brāhmaṇa, and Śatapatha Brāhmaṇa'
     """
+    from src.utils.citations import BY_VEDA
     sources = set()
     for doc in corpus_docs:
+        veda = (doc.metadata.get("veda") or "").lower().strip()
+        if veda and veda in BY_VEDA:
+            sources.add(BY_VEDA[veda].display_name)
+            continue
         source = doc.metadata.get("source", "")
         if source:
-            # Normalize source names
             if "rigveda" in source.lower():
-                sources.add("Rigveda")
+                sources.add("Ṛgveda Saṃhitā")
             elif "yajurveda" in source.lower():
                 sources.add("Yajurveda")
             elif "pancavimsa" in source.lower() or "pancavamsa" in source.lower():
                 sources.add("Pañcaviṃśa Brāhmaṇa")
-            elif "satapatha" in source.lower():
+            elif "satapatha" in source.lower() or "shatapatha" in source.lower():
                 sources.add("Śatapatha Brāhmaṇa")
             elif "macdonell" in source.lower():
                 sources.add("Macdonell's Vedic Grammar")
             elif "ramayana" in source.lower():
                 sources.add("Ramayana")
             else:
-                # Clean up generic source names
                 clean = source.replace("_", " ").title()
                 sources.add(clean)
-    
+
     if not sources:
         return "the Vedic corpus"
-    
+
     sources_list = sorted(list(sources))
     if len(sources_list) == 1:
         return sources_list[0]
@@ -295,7 +315,15 @@ def llm_expand_query(question: str) -> list:
 
     Retrieval-only (recall booster); never reaches the answer, so hallucinated
     or absent terms are harmless (they match no verses). Returns [] on any error.
+
+    Set ``DISABLE_LLM_QUERY_EXPANSION=1`` to skip the LLM call entirely (returns
+    []). Used by offline/no-cloud runs — e.g. llm_lab prompt-freezing — so that
+    retrieval never touches Gemini. Logged loudly, never silent.
     """
+    if os.environ.get("DISABLE_LLM_QUERY_EXPANSION") == "1":
+        logger.info("🔎 LLM query expansion DISABLED (DISABLE_LLM_QUERY_EXPANSION=1) — "
+                    "returning no expansion terms")
+        return []
     try:
         resp = Settings.invoke_llm(
             llm, [SystemMessage(content=_QUERY_EXPANSION_PROMPT.format(question=question))])
@@ -766,21 +794,18 @@ Provide a clear, educational answer with proper citations:"""
 
         diachronic_block = """
 7. This is a COMPARATIVE / CHRONOLOGICAL question. Passages carry [SOURCE: ...
-   chronology: early_rigveda / late_rigveda] tags. STRUCTURE YOUR ANSWER BY
-   LAYER: first what EARLY-layer passages (family books, Mandalas 2-7, oldest)
-   show, then what LATE-layer passages (Mandalas 1, 8-10) show, then an explicit
-   comparison of concrete details (weapons, chariots, horses, forts/pur,
-   metals, tactics, social organization).
+   chronology: ..., layer N] tags. STRUCTURE YOUR ANSWER BY LAYER: first what
+   EARLY-layer passages (Layer 1: RV family books 2-7, oldest) show, then
+   Layer 2 (Late RV 1, 8-10), Layer 3 (Post-RV Saṃhitās: AVŚ, AVP, VS, TS, MS, KS),
+   Layer 4 (Brāhmaṇas, Āraṇyakas & Early Upaniṣads: AB, PB, SB, KB, GB [late Brāhmaṇa],
+   JB, JUB, TB, TA 1-9, BĀU, ChU), and Layer 5 (Sūtra/Vedāṅga: BŚS; plus Nirukta
+   ONLY as etymological commentary, never primary verse evidence).
 8. Do NOT retreat to a generic disclaimer if layer-specific evidence exists in
    the passages — extract and contrast whatever they DO show, however partial,
    and clearly mark inference vs attestation.
-9. The full diachronic span is now indexed — use it: Rigveda (layer 1 = family
-   books 2-7, earliest; layer 2 = maṇḍalas 1, 8-10), the Atharvaveda Śaunaka
-   (layer 3, post-RV saṃhitā), both Yajurveda saṃhitās (Vājasaneyi/Śukla and
-   Taittirīya/Kṛṣṇa), and the Brāhmaṇa prose (Aitareya, Pañcaviṃśa, Śatapatha;
-   layer 4, the latest Vedic period). Frame conclusions across the WHOLE Vedic
-   range (early RV → Brāhmaṇa prose), not just 'early vs late Rigveda', and name
-   which text/layer each piece of evidence comes from.""" if is_diachronic else ""
+9. Frame conclusions across the WHOLE Vedic range present in the passages
+   (Layer 1 early RV → Layer 5 Sūtra/Vedāṅga), not just 'early vs late Rigveda',
+   and name which text and layer each piece of evidence comes from.""" if is_diachronic else ""
 
         # ── Pinned-verse grounding (home-module verse interpretation) ─────────
         # When the user's question cited a specific verse, the frontend resolves
@@ -804,6 +829,15 @@ Provide a clear, educational answer with proper citations:"""
                     "complete, or invent any verse text:\n")
                 for _v in mv:
                     pinned_block += f"\n{_v['citation']}:\n{_v['text']}\n"
+                # Stored padapāṭha + morphology (RV only; other corpora return "").
+                try:
+                    from src.utils.padapatha import padapatha_block
+                    for _v in mv[:8]:
+                        _pb = padapatha_block(_v['citation'])
+                        if _pb:
+                            pinned_block += "\n" + _pb
+                except Exception as _pp_e:
+                    logger.warning(f"📖 padapāṭha injection failed (non-fatal): {_pp_e}")
             if missing_ids:
                 pinned_block += (
                     "\nNOT IN INDEX — these requested citations are absent from "
@@ -828,6 +862,13 @@ Provide a clear, educational answer with proper citations:"""
 
             focus_cite = pinned_verse["citation"]
             focus_text = pinned_verse["text"]
+            try:
+                from src.utils.padapatha import padapatha_block
+                _pb = padapatha_block(focus_cite)
+                if _pb:
+                    pinned_block += _pb + "\n"
+            except Exception as _pp_e:
+                logger.warning(f"📖 padapāṭha injection failed (non-fatal): {_pp_e}")
             sukta_text = pinned_verse.get("sukta_text")
             sukta_cite = pinned_verse.get("sukta_citation", "")
             if sukta_text and sukta_text.strip() != focus_text.strip():
@@ -855,7 +896,7 @@ QUESTION: {question}
 {pinned_block}{support}
 INSTRUCTIONS:
 1. Answer the QUESTION directly. Treat the PINNED VERSES as the exact, authoritative corpus text for those citations: quote their wording verbatim and NEVER alter, complete, or invent verse text. For any citation listed under NOT IN INDEX, state plainly it is not in the corpus and give no text for it.
-2. OUTPUT FORMAT — if the question asks for a specific format (a CSV block, a table, an edge list, JSON), produce EXACTLY that. For CSV, emit ONE fenced ```csv code block whose first line is the header row, wrap any field containing a comma in double quotes, and keep one record per line; then add any additional prose the question asks for AFTER the block. If no format is requested, handle each citation under its own heading with Devanāgarī (as given), IAST, a word-by-word padapāṭha with sandhi resolution, grammar, and a morphology-grounded interpretation.
+2. OUTPUT FORMAT — if the question asks for a specific format (a CSV block, a table, an edge list, JSON), produce EXACTLY that. For CSV, emit ONE fenced ```csv code block whose first line is the header row, wrap any field containing a comma in double quotes, and keep one record per line; then add any additional prose the question asks for AFTER the block. If no format is requested, handle each citation under its own heading with Devanāgarī (as given), IAST, a word-by-word padapāṭha with sandhi resolution, grammar, and a morphology-grounded interpretation. Where a STORED PADAPĀṬHA AND MORPHOLOGY block is given for a citation, take the word division and the grammatical tags from it verbatim (do not re-split the text or re-derive the tags); where none is given, do the sandhi resolution yourself and mark it as your own analysis.
 3. Cover every requested citation. Do not pad the answer with verses that were not requested unless the question calls for them.
 4. For every linguistic, grammatical, or genealogical claim, work from the Sanskrit itself and Vedic grammar (Macdonell, Monier-Williams); justify each claim from the words, never from a borrowed translation.
 5. Clearly distinguish what the text ATTESTS from INFERENCE; where genuine ambiguity remains, give the evidence on each side rather than asserting one reading. Use the SUPPORTING CORPUS PASSAGES only as corroboration, never as a source of verse text for a pinned citation.
@@ -869,7 +910,7 @@ QUESTION: {question}
 {pinned_block}{support}
 INSTRUCTIONS:
 1. Interpret the FOCUS VERSE. If a FULL SŪKTA is provided, read the whole hymn FIRST and use it to fix the subject and referents of the focus verse — do NOT treat the focus verse as isolated. Resolving who/what the verse is about almost always requires the surrounding verses.
-2. Provide: the Devanagari (as given), IAST transliteration, a word-by-word breakdown with sandhi resolution, grammatical analysis, and an English interpretation grounded in that morphology.
+2. Provide: the Devanagari (as given), IAST transliteration, a word-by-word breakdown with sandhi resolution, grammatical analysis, and an English interpretation grounded in that morphology. If a STORED PADAPĀṬHA AND MORPHOLOGY block is provided, the word division and grammatical tags MUST be taken from it verbatim — do not re-split the saṃhitā text and do not re-derive case/number/tense/mood from scratch (where a tag is a slash-ambiguity, present both options and argue from context). If no such block is provided, do the sandhi resolution yourself and mark it as your own analysis.
 3. Work from the Sanskrit itself and Vedic grammar (Macdonell, Monier-Williams). You MAY reach conclusions that differ from earlier translators (Wilson, Griffith, etc.), but every claim must be justified from the words and grammar — never borrowed from an external translation.
 4. Before deciding whether a word is a PROPER NOUN or an EPITHET, check the rest of the sūkta: do relative pronouns (yáḥ "who", yásya "whose") or later verses describe the same entity as a person, king, or agent (e.g. one who acts, rules, is served by others)? A coherent referent across the hymn outweighs an isolated etymological reading. Test your reading for semantic coherence — a single accusative string can describe more than one entity (e.g. a patron AND his chariot); do not force a 'lord/protector' word to modify an inanimate object.
 5. Clearly distinguish what the text ATTESTS from what is INFERENCE. Where genuine ambiguity remains after using the whole sūkta, give the grammatical evidence on each side rather than asserting one reading.
@@ -893,7 +934,7 @@ INSTRUCTIONS:
 5. Use Sanskrit terms with transliteration when appropriate
 6. If the passages mention the topic, explain what they say about it and reference which verse(s)
 7. If the KNOWLEDGE GRAPH section above contains relevant facts, USE them to make connections the corpus passages alone may not make explicit (e.g. inherited dynasty membership, kinship chains)
-8. GROUNDING — base every claim about what the CORPUS says strictly on the passages above. NEVER invent verse text, citations, events, or numbers. If the passages do not cover the question, say so plainly and note the gap rather than filling it in.
+8. GROUNDING — base every claim about what the CORPUS says strictly on the passages above. NEVER invent verse text, citations, events, or numbers. If the passages do not cover the question, say so plainly and note the gap rather than filling it in. Passages labelled `[Commentary — NOT primary verse evidence]` (such as Yāska's Nirukta) are later Vedāṅga commentary/etymology: cite them only as traditional commentary, never as primary Vedic verse evidence.
 9. HONESTY & CALIBRATION — clearly distinguish (a) what the passages ATTEST, (b) your own INFERENCE, and (c) wider tradition/scholarship. You MAY add relevant, clearly-attributed context beyond the passages ("in the wider tradition…", "scholars read this as…"), but never present it as a corpus quote. Flag genuine ambiguities or scholarly disputes (e.g. proper-noun vs epithet, individual vs clan, contested lineage) instead of asserting one reading as settled.{diachronic_block}
 10. OUTPUT FORMAT — if the question requests a specific format (a CSV block, a table, an edge list, JSON), produce exactly that. For CSV, emit ONE fenced ```csv code block whose first line is the header row, wrap any field containing a comma in double quotes, and keep one record per line; then add any prose the question also asks for AFTER the block.
 
@@ -908,9 +949,9 @@ CORPUS STATUS: No relevant passages found in the current corpus ({source_texts})
 INSTRUCTIONS:
 Please inform the user that this specific topic is not found in the available corpus and suggest:
 1. Rephrasing the question
-2. Asking about topics in the indexed corpus — the Rigveda (all 10 maṇḍalas), the
-   Atharvaveda (Śaunaka), both Yajurveda saṃhitās (Vājasaneyi & Taittirīya), and the
-   Aitareya, Pañcaviṃśa & Śatapatha Brāhmaṇas
+2. Asking about topics in the indexed corpus — the Saṃhitās (RV, AVŚ, AVP, VS, TS, MS, KS),
+   Brāhmaṇas, Āraṇyakas & Early Upaniṣads (AB, PB, SB, KB, GB, JB, JUB, TB, TA 1–9, BĀU, ChU),
+   and Sūtra/Vedāṅga texts (BŚS; Nirukta as commentary)
 3. Or provide very brief general knowledge if you have it (but note it's not from the corpus)
 
 Provide a helpful response:"""

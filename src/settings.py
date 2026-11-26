@@ -247,6 +247,8 @@ class Settings:
                 base_url=get_config_value("OLLAMA_BASE_URL", "http://localhost:11434"),
                 model=get_config_value("OLLAMA_MODEL", "llama3.1:8b"),
                 temperature=get_config_value("TEMPERATURE", 0.0, float),
+                reasoning=False,  # direct answer; a reasoning model (Qwen3.6) would
+                                  # otherwise fill the budget thinking → empty content
                 num_ctx=get_config_value("OLLAMA_QA_NUM_CTX", 8192, int),  # Context window size
                 num_thread=get_config_value("OLLAMA_QA_NUM_THREAD", 4, int),  # CPU threads for parallel processing
                 num_gpu=get_config_value("OLLAMA_QA_NUM_GPU", 1, int),  # Enable GPU (Mac: 1=enabled)
@@ -309,6 +311,7 @@ class Settings:
                 base_url=get_config_value("OLLAMA_BASE_URL", "http://localhost:11434"),
                 model=get_config_value("OLLAMA_EVAL_MODEL", "llama3.1:8b"),
                 temperature=0.3,  # Lower temperature for evaluation
+                reasoning=False,  # evaluator must emit a verdict, not hidden thinking
                 num_ctx=get_config_value("OLLAMA_EVAL_NUM_CTX", 8192, int),
                 num_thread=get_config_value("OLLAMA_EVAL_NUM_THREAD", 4, int),
                 num_gpu=get_config_value("OLLAMA_EVAL_NUM_GPU", 1, int),

@@ -1,0 +1,16 @@
+{
+  "title": "Jaiminīya Upaniṣad Brāhmaṇa",
+  "author": [
+    "Vedic Tradition",
+    "The Sanskrit Library First XML edition v0.1 (Peter M. Scharf & Matthias H. Ahlborn, 2010); TITUS (Jost Gippert, 2008); Masato Fujii & Mieko Kajihara (1995), based on Hanns Oertel (JAOS 16, 1896)"
+  ],
+  "creator": "The Sanskrit Library (CC BY-NC-SA 3.0)",
+  "source_id": "jaiminiya_upanisad_brahmana",
+  "licence": "CC BY-NC-SA 3.0 (The Sanskrit Library)",
+  "filename": "jub",
+  "preprocessing": "sanskrit",
+  "source_type": "vedic_text",
+  "veda": "jaiminiya_upanisad_brahmana",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose"
+}

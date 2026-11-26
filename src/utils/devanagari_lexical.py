@@ -14,6 +14,7 @@ index supersedes it for general vocabulary, but a gazetteer remains the most
 reliable route for proper names.
 """
 import re
+import unicodedata
 from typing import List, Tuple
 
 from src.helper import logger
@@ -32,7 +33,7 @@ GAZETTEER = {
     "trtsu":        ["तृत्सु"],
     "tritsu":       ["तृत्सु"],
     "bharata":      ["भरत"],
-    "puru":         ["पूरु"],
+    "puru":         ["पूरुं", "पूरुम्", "पूरुभ्य", "पूरुर्", "पूरुः", "पूरवे", "पूरवो", "पौरव"],  # Pūru people/king; excludes common noun पूरुष ("man") and पूरुहूत ("much-invoked")
     "turvasha":     ["तुर्वश"],
     "turvasa":      ["तुर्वश"],
     "yadu":         ["यदु"],
@@ -89,7 +90,8 @@ GAZETTEER = {
     "panchavimsa":  ["पञ्चविंश"],
     "pancavimsa":   ["पञ्चविंश"],
     "tandya":       ["ताण्ड्य"],
-    "videha":       ["विदेह"],
+    "videha":       ["विदेह", "वैदेह"],
+    "vaideha":      ["वैदेह"],
     "mathava":      ["माथव"],
     "harishchandra":["हरिश्चन्द्र"],
     "haricandra":   ["हरिश्चन्द्र"],
@@ -99,7 +101,7 @@ GAZETTEER = {
     "videgha":      ["विदेघ"],              # Videgha Mathava — personal name in SB 1.4.1
     "sadanira":     ["सदानीर", "सदनीर"],    # river (Gandak) = eastern limit of Aryan culture in SB
     "sadaniri":     ["सदानीर", "सदनीर"],
-    "janaka":       ["जनक"],                # king of Videha (SB)
+    "janaka":       ["जनको", "जनकः", "जनकं", "जनकम्", "जनकस्य", "जनकश्", "जनकाय", "जानकय", "जानकि"],  # king of Videha (SB/BĀU) + patronymic Jānaki (AB 7.34.9); avoids substring match on जनकल्पाः (AB 6.32.23, GB 2.6.12)
     "yajnavalkya":  ["याज्ञवल्क्य"],
     "yajnavalky":   ["याज्ञवल्क्य"],
     "pravahana":    ["प्रवाहण"],            # Pravahana Jaivali — eastern king (SB 3.1.2)
@@ -142,10 +144,79 @@ GAZETTEER = {
     "atharvan":     ["अथर्वन्", "अथर्व"],     # the Atharvan priests/seers
     "jangida":      ["जङ्गिड"],              # protective amulet-plant (AVŚ 2.4, 19.34-35)
     "sadanva":      ["सदान्वा", "सदान्व"],    # class of female demons (AVŚ 2.14 etc.)
+    # --- Tranche 1 corpus-verified proper nouns & patronymics (L3–L5) ---
+    "kurupancala":  ["कुरुपञ्चाल"],
+    "kurupanchala": ["कुरुपञ्चाल"],
+    "kasi":         ["काशिभ्य", "काशिकौशल", "काशिविदेह", "काशीना", "काशयो", "काश्यस्य", "काशिराज"],  # unambiguous Kāśi forms (also context-gated for काश्यं/काश्यो below; excludes काश्यप/आकाश्य)
+    "kashi":        ["काशिभ्य", "काशिकौशल", "काशिविदेह", "काशीना", "काशयो", "काश्यस्य", "काशिराज"],
+    "matsya":       ["मत्स्य"],
+    "vasa":         ["वशमश्व्य", "वशो अश्व्य", "वशोशीनर", "सवशोशीनर"],  # Vaśa Aśvya / Vaśa-Uśīnara only; avoids common noun वश/वशा ("will/cow")
+    "vasha":        ["वशमश्व्य", "वशो अश्व्य", "वशोशीनर", "सवशोशीनर"],
+    # Note: `ayu` and `parsu`/`parshu` are intentionally omitted from plain GAZETTEER
+    # and enforced via CONTEXT_GATED_GAZETTEER below to avoid common-noun flooding
+    # (आयुस् "lifespan", पर्शु/पार्श्व "rib/sickle/flank").
+    "bhagiratha":   ["भगीरथ", "भागीरथ", "भगेरथ"],  # भगेरथ attested in JUB 4.6.1 (Oertel/Fujii)
+    "bhagirathi":   ["भगीरथ", "भागीरथ", "भगेरथ"],
+    "asvapati":     ["अश्वपति"],
+    "ashvapati":    ["अश्वपति"],
+    "kaikeya":      ["कैकेय"],
+    "kekaya":       ["कैकेय"],
+    "uddalaka":     ["उद्दालक"],
+    "aruni":        ["आरुणि"],
+    "svetaketu":    ["श्वेतकेतु"],
+    "shvetaketu":   ["श्वेतकेतु"],
+    "gargi":        ["गार्गी", "वाचक्नवी"],
+    "vacaknavi":    ["वाचक्नवी"],
+    "maitreyi":     ["मैत्रेयी"],
+    "ajatashatru":  ["अजातशत्रु"],
+    "ajatasatru":   ["अजातशत्रु"],
+    "satyakama":    ["सत्यकाम"],
+    "jabala":       ["जाबाल"],
+    "sandilya":     ["शाण्डिल्य"],
+    "shandilya":    ["शाण्डिल्य"],
+    "ushasti":      ["उषस्ति", "चाक्रायण"],
+    "usasti":       ["उषस्ति", "चाक्रायण"],
+    "cakrayana":    ["चाक्रायण"],
+    "raikva":       ["रैक्व"],
+    "janashruti":   ["जानश्रुति", "पौत्रायण"],
+    "janasruti":    ["जानश्रुति", "पौत्रायण"],
+    "balaki":       ["बालाकि"],
+    "gargya":       ["गार्ग्य"],
+    "sakalya":      ["शाकल्य", "विदग्ध"],
+    "shakalya":     ["शाकल्य", "विदग्ध"],
+    "kahola":       ["कहोल", "कौषीतकेय"],
+    "bhujyu":       ["भुज्यु", "लाह्यायनि"],
+    "artabhaga":    ["आर्तभाग", "जारत्कारव"],
+    "kausitaki":    ["कौषीतकि"],
+    "kaushitaki":   ["कौषीतकि"],
+    "paingya":      ["पैङ्ग्य"],
+    "sakapuni":     ["शाकपूणि"],
+    "shakapuni":    ["शाकपूणि"],
+    "aupamanyava":  ["औपमन्यव"],
+    "aurnavabha":   ["और्णवाभ"],
+    "sakatayana":   ["शाकटायन"],
+    "shakatayana":  ["शाकटायन"],
+    "kautsa":       ["कौत्स"],
+    "audumbarayana":["औदुम्बरायण"],
+    "madra":        ["मद्र"],
+    "srnjaya":      ["सृञ्जय"],
+    "srinjaya":     ["सृञ्जय"],
+    "kurukshetra":  ["कुरुक्षेत्र"],
+    "kuruksetra":   ["कुरुक्षेत्र"],
+    "naimisha":     ["नैमिष"],
+    "naimisa":      ["नैमिष"],
+    "salva":        ["शाल्व"],
+    "shalva":       ["शाल्व"],
 }
 
 _DEV_WORD = re.compile(r"[ऀ-ॿ]{2,}")
-_LAT_WORD = re.compile(r"[A-Za-z][A-Za-z\-]{2,}")
+_LAT_CHAR = r"(?:[A-Za-z\u00C0-\u024F\u1E00-\u1EFF][\u0300-\u036F]*)"
+_LAT_WORD = re.compile(rf"{_LAT_CHAR}(?:{_LAT_CHAR}|-){{2,}}")
+
+
+def _extract_latin_words(query: str) -> List[str]:
+    """NFC-normalise first, then extract Latin/IAST tokens including diacritics & combining marks."""
+    return _LAT_WORD.findall(unicodedata.normalize("NFC", query or ""))
 
 # ── Auto-transliteration ─────────────────────────────────────────────────────
 # English words that must NOT be passed to the Sanskrit transliterator.
@@ -311,7 +382,7 @@ THEME_GAZETTEER = {
 _SKIP = {"which", "verses", "verse", "describe", "describes", "talk", "talks",
          "about", "what", "where", "when", "tell", "hymn",
          "hymns", "mention", "mentions", "there",
-         "this", "that", "with", "from", "does", "have", "veda", "rigveda",
+         "this", "that", "with", "from", "does", "have", "veda", "rigveda", "rgveda",
          "mandala", "sanskrit", "their", "story", "meaning"}
 # Note: "king", "kings", "river", "rivers", "battle", "history", "lineage",
 # "sattra", "sacrifice", "ritual", "migration" removed from _SKIP — they are
@@ -416,6 +487,53 @@ def lexicon_lookup(word: str, lexicon=None, max_tokens: int = 12,
     return results[:max_tokens]
 
 
+# Curated GAZETTEER keys whose bare stem collides with unrelated compounds or common nouns
+# (e.g. "janaka" -> "जनकल्पाः", "puru" -> "पूरुषम्", "kasi" -> "काश्यप"/"आकाश्य").
+# For these keys, Stage 3b lexicon prefix expansion & Stage 4 auto-transliteration are skipped.
+_CURATED_EXACT_GAZETTEER = frozenset({
+    "janaka", "puru", "kasi", "kashi", "vasa", "vasha", "ayu", "parsu", "parshu",
+})
+
+# Context-gated proper-noun entries: `norm_token -> (primary_forms, required_context_forms)`.
+# A document matches only when BOTH a primary form AND at least one required context marker
+# co-occur in `_doc_search_text(doc)`, preventing common nouns (आयुस्, पर्शु/पार्श्व, काश्य)
+# from flooding retrieval.
+CONTEXT_GATED_GAZETTEER = {
+    "ayu": (
+        ["आयुं", "आयुर्", "आयुः", "आयोः", "आयव"],
+        ["पुरूरव", "उर्वश", "अमावसु", "कुत्स", "अतिथिग्व"],
+    ),
+    "parsu": (
+        ["पर्शव", "पर्शो", "स्पर्शव", "पर्शुर्ह नाम", "पर्शुर् ह नाम"],
+        ["मानवी", "गन्धार", "अरट्ट", "पृथु", "तिरश्चि"],
+    ),
+    "parshu": (
+        ["पर्शव", "पर्शो", "स्पर्शव", "पर्शुर्ह नाम", "पर्शुर् ह नाम"],
+        ["मानवी", "गन्धार", "अरट्ट", "पृथु", "तिरश्चि"],
+    ),
+    "kasi": (
+        ["काश्यं", "काश्यः", "काश्यो"],
+        ["जातशत्रु", "विदेह", "वैदेह", "कोसल", "कौसल", "भरत", "शतानीक", "धृतराष्ट्र"],
+    ),
+    "kashi": (
+        ["काश्यं", "काश्यः", "काश्यो"],
+        ["जातशत्रु", "विदेह", "वैदेह", "कोसल", "कौसल", "भरत", "शतानीक", "धृतराष्ट्र"],
+    ),
+}
+
+
+def _active_context_gates(query: str) -> List[Tuple[str, List[str], List[str]]]:
+    gates = []
+    seen_keys = set()
+    for w in _extract_latin_words(query):
+        norm = _normalize_latin(w)
+        if norm in CONTEXT_GATED_GAZETTEER and norm not in seen_keys:
+            seen_keys.add(norm)
+            p_forms, ctx_forms = CONTEXT_GATED_GAZETTEER[norm]
+            gates.append((norm, p_forms, ctx_forms))
+    return gates
+
+
 def query_terms(query: str, deep: bool = False) -> List[str]:
     """Devanagari search terms implied by the query (both scripts).
     deep=True widens the lexicon expansion (for exhaustive concordance).
@@ -440,7 +558,7 @@ def query_terms(query: str, deep: bool = False) -> List[str]:
     # Pass Devanagari words in the query through directly
     _add(_DEV_WORD.findall(query))
 
-    for w in _LAT_WORD.findall(query):
+    for w in _extract_latin_words(query):
         norm = _normalize_latin(w)
 
         # Stage 1: theme concepts
@@ -460,9 +578,11 @@ def query_terms(query: str, deep: bool = False) -> List[str]:
         _add(gaz)
 
         # Stage 3b: corpus lexicon (built from indexed text — catches
-        # inflected/sandhi forms the GAZETTEER doesn't enumerate)
+        # inflected/sandhi forms the GAZETTEER doesn't enumerate).
+        # Skip for curated exact-form entries whose bare stem collides with
+        # unrelated compounds (e.g. "janaka" -> "जनकलपाः" / "जनकल्पाः").
         lex_hits: List[str] = []
-        if len(norm) >= 4:
+        if len(norm) >= 4 and norm not in _CURATED_EXACT_GAZETTEER:
             lex_hits = lexicon_lookup(w, **kw)
             _add(lex_hits)
 
@@ -472,11 +592,22 @@ def query_terms(query: str, deep: bool = False) -> List[str]:
         # e.g. "harishchandra" → hariścandra → हरिश्चन्द्र (verified in corpus)
         #      "ajigarta"      → ajīgarta   → अजीगर्त
         #      "parikshit"     → pārikṣita → पारिक्षित
-        if not gaz and not lex_hits and norm not in _ENGLISH_STOP and len(norm) >= 4:
+        if not gaz and not lex_hits and norm not in _ENGLISH_STOP and norm not in _CURATED_EXACT_GAZETTEER and len(norm) >= 4:
             auto = _auto_transliterate_token(w)
             if auto:
                 logger.info(f"🔤 Auto-transliterate '{w}' → {auto}")
             _add(auto)
+
+    # Stage 5: lemma → inflected-form expansion from the stored VedaWeb lemma index
+    # (local sidecar, no Qdrant). Skip when the query only contains curated/gated keys
+    # so lemma expansion doesn't re-inject bare common-noun forms.
+    try:
+        from src.utils.padapatha import expand_terms
+        raw_lat_norms = {_normalize_latin(w) for w in _extract_latin_words(query)} - _ENGLISH_STOP - _SKIP
+        if terms and not (raw_lat_norms and raw_lat_norms.issubset(_CURATED_EXACT_GAZETTEER)):
+            _add(expand_terms(list(terms)))
+    except Exception as e:
+        logger.warning(f"🪷 lemma expansion failed (non-fatal, retrieval continues without it): {e}")
 
     return terms
 
@@ -487,31 +618,45 @@ def _normalize_latin(word: str) -> str:
     return "".join(c for c in w if unicodedata.category(c) != "Mn").replace("-", "")
 
 
-_VERSE_LINE_ID = re.compile(r"^(.+?॥ (\d+\.\d+\.\d+) ॥)\s*$", re.M)
+_VERSE_LINE_ID = re.compile(
+    r"^(.+?॥\s*(?:(?:RV|AVŚ|AVP|VS|TS|MS|KS|KapS|AB|PB|SB|KB|GB|JB|JUB|TB|TA|BĀU|ChU|BŚS|Nir)\s+)?(\d+(?:\.\d+)+)\s*॥)\s*$",
+    re.M,
+)
+
+
+def _doc_search_text(doc) -> str:
+    """Return accent-stripped search text when available, falling back to page_content."""
+    meta = getattr(doc, "metadata", None) or {}
+    return meta.get("text_search") or getattr(doc, "page_content", "")
 
 
 def concordance(query: str, docs: list, max_verses: int = 60):
     """Exhaustive scan: EVERY verse in the corpus containing any Devanagari
     term implied by the query. Top-k retrieval cannot answer 'which verses
     mention X' completely; this can. Returns (text_block_or_None, terms)."""
+    from src.utils.citations import strip_vedic_accents, parse_marker_citation
     terms = query_terms(query, deep=True)
     if not terms or not docs:
         return None, terms
     found = {}
     for d in docs:
-        content = getattr(d, "page_content", "")
-        if not any(t in content for t in terms):
+        search_content = _doc_search_text(d)
+        if not any(t in search_content for t in terms):
             continue
-        for m in _VERSE_LINE_ID.finditer(content):
-            line, vid = m.group(1).strip(), m.group(2)
-            if vid not in found and any(t in line for t in terms):
+        raw_content = getattr(d, "page_content", "")
+        for m in _VERSE_LINE_ID.finditer(raw_content):
+            line = m.group(1).strip()
+            vid = parse_marker_citation(line) or m.group(2)
+            if vid not in found and any(t in strip_vedic_accents(line) for t in terms):
                 found[vid] = line
     if not found:
         return None, terms
 
     def _key(v):
-        a, b, c = v.split(".")
-        return (int(a), int(b), int(c))
+        parts = v.split()
+        corpus = parts[0] if len(parts) > 1 else "RV"
+        nums = tuple(int(x) for x in parts[-1].split(".") if x.isdigit())
+        return (corpus, nums)
 
     vids = sorted(found, key=_key)
     trunc = " (list truncated)" if len(vids) > max_verses else ""
@@ -525,39 +670,37 @@ def concordance(query: str, docs: list, max_verses: int = 60):
 
 
 def devanagari_lexical_hits(query: str, docs: list, top_k: int = 5) -> Tuple[list, List[str]]:
-    """Substring-scan `docs` for Devanagari terms implied by `query`.
-
-    Scoring is RARITY-FIRST: a verse is ranked primarily by the rarest (most
-    discriminating) query term it contains, then by how many distinct terms it
-    matches, then by total hits. This is what makes a mixed query like "metals in
-    WARFARE" surface the rare `अयस` / `लोह` / iron verses instead of being flooded
-    by verses that merely pile up common warfare terms (वज्र, सेना, पृतना…). It
-    also keeps the old behaviour where a rare co-occurrence (सरस्वत + विनश in
-    PB 25.10) beats a high-frequency single term.
-
-    Returns (matched_docs_sorted_by_score, terms_used).
-    """
+    """Substring-scan `docs` for Devanagari terms implied by `query` (plus context-gated
+    proper-noun rules in `CONTEXT_GATED_GAZETTEER`)."""
     terms = query_terms(query)
-    if not terms or not docs:
+    gates = _active_context_gates(query)
+    if (not terms and not gates) or not docs:
         return [], terms
 
-    # Pass 1: cache contents + document frequency per term (for the rarity guard).
+    # Pass 1: cache accent-stripped search text + document frequency per term.
     contents = []
     df = {t: 0 for t in terms}
     for doc in docs:
-        c = getattr(doc, "page_content", "")
+        c = _doc_search_text(doc)
         contents.append((c, doc))
         for t in terms:
             if t in c:
                 df[t] += 1
 
-    # Primary ranking (unchanged, well-tuned): distinct terms then total hits.
+    # Primary ranking (unchanged, well-tuned): distinct terms then total hits,
+    # plus context-gated proper-noun matches when primary + context co-occur.
     scored = []
     for c, doc in contents:
         matched = [t for t in terms if t in c]
+        gate_hits = 0
+        for _, p_forms, ctx_forms in gates:
+            p_m = [pf for pf in p_forms if pf in c]
+            if p_m and any(cf in c for cf in ctx_forms):
+                matched.append(p_m[0])
+                gate_hits += sum(c.count(pf) for pf in p_m)
         if not matched:
             continue
-        score = len(matched) * 1000 + sum(c.count(t) for t in matched)
+        score = len(matched) * 1000 + sum(c.count(t) for t in matched if t in df) + gate_hits
         scored.append((score, doc, set(matched)))
     scored.sort(key=lambda x: x[0], reverse=True)
 
@@ -573,12 +716,27 @@ def devanagari_lexical_hits(query: str, docs: list, top_k: int = 5) -> Tuple[lis
     rare_terms = sorted((t for t in terms if 0 < df[t] <= rare_cut),
                         key=lambda t: df[t])[:6]
     for rt in rare_terms:
-        if any(rt in getattr(h, "page_content", "") for h in hits):
-            continue  # already represented
+        present = {(h.metadata.get("veda") if getattr(h, "metadata", None) else None)
+                   for h in hits if rt in _doc_search_text(h)}
+        if len(present) >= 2:
+            continue  # already represented in two different vedas
+        # Guarantee the best doc for this term AND the best doc from a DIFFERENT veda: the
+        # retriever's later strict source filter (e.g. rigveda-only for a Rigveda question)
+        # may drop the first pick, which previously lost the guarantee entirely
+        # (पूरवे's top chunk was Taittirīya, so every Rigveda chunk was missed).
+        vedas_added = set(present)
+        if len(vedas_added) >= 2:
+            continue
         for _, doc, matched in scored:
-            if rt in matched and id(doc) not in hit_ids:
-                hits.append(doc)
-                hit_ids.add(id(doc))
+            if rt not in matched or id(doc) in hit_ids:
+                continue
+            v = doc.metadata.get("veda") if getattr(doc, "metadata", None) else None
+            if v in vedas_added:
+                continue
+            hits.append(doc)
+            hit_ids.add(id(doc))
+            vedas_added.add(v)
+            if len(vedas_added) >= 2:
                 break
 
     if hits:

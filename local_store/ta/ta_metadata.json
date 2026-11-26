@@ -1,0 +1,16 @@
+{
+  "title": "Taittirīya Āraṇyaka (Books 1–9; Book 10 excluded)",
+  "author": [
+    "Vedic Tradition",
+    "Prapāṭhakas 1 (Anuvākas 1–6), 4, 5: The Sanskrit Library v0.1 (Scharf & Ahlborn, 2010; TITUS/Gippert 2008; Arlo Griffiths 1997–98; Mitra 1872, Śāstri 1985, Āpaṭe 1897). Prapāṭhakas 7–9 (Taittirīya Upaniṣad): The Sanskrit Library v0.1 (Scharf & Ahlborn, 2010; TITUS/Gippert 2008; Kartik Jayaraman ITRANS)."
+  ],
+  "creator": "The Sanskrit Library (CC BY-NC-SA 3.0)",
+  "source_id": "taittiriya_aranyaka",
+  "licence": "CC BY-NC-SA 3.0 (The Sanskrit Library)",
+  "filename": "ta",
+  "preprocessing": "sanskrit",
+  "source_type": "vedic_text",
+  "veda": "taittiriya_aranyaka",
+  "chronology_layer": 4,
+  "chronology_name": "brahmana_prose"
+}
